@@ -1,5 +1,7 @@
 package com.mobilemoney.common.request;
 
+import com.mobilemoney.base.model.HttpErrorResponse;
+import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.model.AccountNameResponse;
 import com.mobilemoney.common.model.AuthorisationCodeRequest;
 import com.mobilemoney.common.model.AuthorisationCodeResponse;
@@ -34,6 +36,14 @@ public class AuthorizationCodeRequest extends ResourceUtils {
      * @throws MobileMoneyException
      */
     public AsyncResponse createAuthorisationCode(Identifiers identifiers, final String clientCorrelationId) throws MobileMoneyException {
+        if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
+
+        if (authorisationCodeRequest == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.AUTH_CODE_OBJECT_INIT_ERROR).build());
+        }
+
         String resourcePath = getResourcePath(API.ACCOUNT_AUTHORISATION_CODE, identifiers);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, clientCorrelationId);
 
@@ -48,6 +58,14 @@ public class AuthorizationCodeRequest extends ResourceUtils {
      * @throws MobileMoneyException
      */
     public AuthorisationCodeResponse viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
+        if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
+
+        if (StringUtils.isNullOrEmpty(authorisationCode)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         String resourcePath = getResourcePath(API.VIEW_ACCOUNT_AUTHORISATION_CODE, identifiers).replace(Constants.AUTHORISATION_CODE, authorisationCode);
 
         return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, AuthorisationCodeResponse.class);
@@ -61,6 +79,10 @@ public class AuthorizationCodeRequest extends ResourceUtils {
      * @throws MobileMoneyException
      */
     public AccountNameResponse viewAccountName(Identifiers identifiers) throws MobileMoneyException {
+        if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
+        
         return createRequest(HttpMethod.GET, getResourcePath(API.VIEW_ACCOUNT_NAME, identifiers), AccountNameResponse.class);
     }
 

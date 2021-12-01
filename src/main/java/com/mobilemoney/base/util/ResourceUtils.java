@@ -1,7 +1,6 @@
 package com.mobilemoney.base.util;
 
 import com.mobilemoney.base.*;
-import com.mobilemoney.base.constants.API;
 import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.constants.HttpStatusCode;
@@ -17,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/***
+ * Class ResourceUtils
+ */
 public class ResourceUtils {
 
     // Used for dynamic configuration
@@ -63,6 +65,7 @@ public class ResourceUtils {
 
     /***
      * Configure requests first and then execute
+     *
      * @param httpMethod
      * @param resourcePath
      * @return
@@ -74,6 +77,7 @@ public class ResourceUtils {
 
     /***
      * Configure requests first and then execute - with payload
+     *
      * @param httpMethod
      * @param resourcePath
      * @param payLoad
@@ -86,6 +90,7 @@ public class ResourceUtils {
 
     /***
      * Configure requests first and then execute - with payload and callBack
+     *
      * @param httpMethod
      * @param resourcePath
      * @param payLoad
@@ -101,7 +106,6 @@ public class ResourceUtils {
 
         if (apiContext != null) {
             String accessToken = apiContext.fetchAccessToken();
-            //String accessToken = "eyJraWQiOiJcL0V4YXNlMmpqdkVtcUtLNTdmNEwyMkUyUUx2MDhndkFqTGlZVHl3bFhzUT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1OXZ0aG1xM2Y2aTE1djZqbWNqc2tma21oIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJvYXV0aFwvcmVhZCIsImF1dGhfdGltZSI6MTYzNzIxNzEwMywiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTJfTWJqdUR6cUJjIiwiZXhwIjoxNjM3MjIwNzAzLCJpYXQiOjE2MzcyMTcxMDMsInZlcnNpb24iOjIsImp0aSI6IjBiOTRkZTdiLTViMDMtNDhlYS1hNTU4LTNjM2U1NTBjZjAwZiIsImNsaWVudF9pZCI6IjU5dnRobXEzZjZpMTV2NmptY2pza2ZrbWgifQ.KmNAlBezmEw6lC_LxiRqSTZZ6b4Pbxk2tuxWCn23FhtAArCZx8IRZcu6VABNXZf6qi6zwgG_3SmsX3rMhrou2GPRg92cKa_ojJYuKAMDWffRS9Zu9dG4OrUaUJrjXrpIqWoHAnkumwRK-lWgNRS2nZ0WMGSySB_qePcnkxSC6aGm11XZ2YxVMA5lu5PfSFUvxxATlRxfsM68dk1ecyxOFDhV32Uts1ENoTnirof35RGDcKJ6H5j4fe9-2ZXonwzZOYbnIhGJC8YDzAoxfjkxP1eKyUlA9HD4ZyjCevm6Iuvh-9Qt91nNS-SpzqZMlfkFDtPt0XoagyM5DCB5zk6ECw";
             if (accessToken == null) {
                 throw new IllegalArgumentException(Constants.EMPTY_ACCESS_TOKEN_MESSAGE);
             }
@@ -145,10 +149,10 @@ public class ResourceUtils {
             responseData = executeWithRetries(apiContext, () -> execute(apiManager, httpConfiguration));
 
             if (responseData == null || responseData.getPayLoad() == null) {
-                //TODO: Construct null exception message object
-                throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder("", "").errorDescription("").build());
+                throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.GENRAL_ERROR).build());
             } else if (!responseData.isSuccess() && responseData.getPayLoad() instanceof String) {
-                throw new MobileMoneyException((String)responseData.getPayLoad());
+                HttpErrorResponse errorResponse = JSONFormatter.fromJSON((String)responseData.getPayLoad(), HttpErrorResponse.class);
+                throw new MobileMoneyException(errorResponse);
             }
         }
 
@@ -171,8 +175,9 @@ public class ResourceUtils {
      * @throws MobileMoneyException
      */
     protected static String getResourcePath(final String requestEndPoint, Identifiers identifiers) throws MobileMoneyException {
-        // TODO: Exception object
-        if (identifiers == null || identifiers.getIdentifiers() == null || identifiers.getIdentifiers().isEmpty()) throw new MobileMoneyException();
+        if (identifiers == null || identifiers.getIdentifiers() == null || identifiers.getIdentifiers().isEmpty()) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
 
         String resourcePath;
         if (identifiers.getIdentifiers().size() == 1) {
@@ -181,8 +186,9 @@ public class ResourceUtils {
             resourcePath = requestEndPoint.replace(Constants.MULTI_IDENTIFIER, identifiers.getIdentifiers().stream().map(identifier -> identifier.getKey().concat("@").concat(identifier.getValue())).collect(Collectors.joining("$")));
         }
 
-        // TODO: Exception object
-        if (StringUtils.isNullOrEmpty(resourcePath)) throw new MobileMoneyException();
+        if (StringUtils.isNullOrEmpty(resourcePath)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
 
         return resourcePath;
     }
@@ -254,8 +260,7 @@ public class ResourceUtils {
                 throw new UnauthorizedException();
             }
         } catch (IOException e) {
-            // TODO: Construct exception message object
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder("", "").errorDescription("").build());
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.GENRAL_ERROR).build());
         }
 
         return responseData;

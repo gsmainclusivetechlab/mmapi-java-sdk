@@ -48,7 +48,7 @@ public class MobileMoneyContext {
             this.credential.getAccessToken();
             instance = this;
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 

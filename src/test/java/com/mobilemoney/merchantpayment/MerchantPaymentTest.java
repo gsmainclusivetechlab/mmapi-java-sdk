@@ -190,11 +190,11 @@ public class MerchantPaymentTest {
     void viewResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         PaymentRequest merchantPayment = new PaymentRequest();
-        String clientCorrelationId = merchantPayment.getClientCorrelationId();
 
         merchantPayment.setTransaction(getTransactionObject("200.00", "RWF"));
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPayment).createMerchantTransaction();
 
+        String clientCorrelationId = merchantPayment.getClientCorrelationId();
         TransactionResponse transaction = mmClient.addRequest(merchantPayment).viewResponse(clientCorrelationId, TransactionResponse.class);
 
         assertNotNull(transaction);

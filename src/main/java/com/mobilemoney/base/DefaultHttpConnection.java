@@ -1,5 +1,6 @@
 package com.mobilemoney.base;
 
+import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.exception.SSLConfigurationException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -32,12 +33,11 @@ public class DefaultHttpConnection extends HttpConnection {
             ((HttpsURLConnection) this.connection).setSSLSocketFactory(this.sslContext.getSocketFactory());
         }
 
-        System.setProperty("http.maxConnections",String.valueOf(this.config.getMaxHttpConnection()));
-        System.setProperty("sun.net.http.errorstream.enableBuffering", "true");
+        System.setProperty(Constants.HTTP_CONNECTION_MAX_CONNECTION, String.valueOf(this.config.getMaxHttpConnection()));
+        System.setProperty(Constants.ENABLE_HTTP_ERROR_BUFFERING, "true");
 
         this.connection.setDoInput(true);
         this.connection.setDoOutput(true);
-        //setRequestMethodViaJreBugWorkaround(this.connection, config.getHttpMethod());
         this.connection.setConnectTimeout(this.config.getConnectionTimeout());
         this.connection.setReadTimeout(this.config.getReadTimeout());
     }

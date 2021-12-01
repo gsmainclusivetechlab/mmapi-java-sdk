@@ -5,6 +5,8 @@ import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.context.MobileMoneyContext;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.base.model.HttpErrorResponse;
+import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Transaction;
@@ -22,18 +24,17 @@ public class InternationalTransferRequest extends TransferRequest {
     private Transaction transaction;
 
     /***
-     * Default constructor
-     */
-    public InternationalTransferRequest() {
-        super(UUID.randomUUID().toString());
-    }
-
-    /***
      *
      * @return
      * @throws MobileMoneyException
      */
     public AsyncResponse createInternationalTransaction() throws MobileMoneyException {
+        this.clientCorrelationId = UUID.randomUUID().toString();
+
+        if (transaction == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
+        }
+
         String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.INT_TRANSFER);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
 
@@ -47,6 +48,10 @@ public class InternationalTransferRequest extends TransferRequest {
      * @throws MobileMoneyException
      */
     public InternationalTransferResponse viewInternationalTransaction(final String transactionReference) throws MobileMoneyException {
+        if (StringUtils.isNullOrEmpty(transactionReference)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         String resourcePath = API.RETRIEVE_TRANSACTION.replace(Constants.TRANSACTION_REFERENCE, transactionReference);
         return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, InternationalTransferResponse.class);
     }

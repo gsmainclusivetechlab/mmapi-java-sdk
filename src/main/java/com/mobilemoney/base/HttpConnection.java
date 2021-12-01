@@ -49,8 +49,7 @@ public abstract class HttpConnection {
             result = executeWithStream(url, payload, headers);
 
             if (result == null) {
-                // TODO: Construct exception message object
-                throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder("", "").errorDescription("").build());
+                throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
             } else if (result.getPayLoad() instanceof  InputStream) {
                 reader = new BufferedReader(new InputStreamReader((InputStream)result.getPayLoad(), Constants.ENCODING_FORMAT));
                 result.setPayLoad(read(reader));
@@ -82,7 +81,7 @@ public abstract class HttpConnection {
         this.overrideRequestMethod();
 
         if (payload != null) {
-            this.connection.setRequestProperty("Content-Length", String.valueOf(payload.trim().length()));
+            this.connection.setRequestProperty(Constants.HTTP_CONTENT_LENGTH, String.valueOf(payload.trim().length()));
         }
 
         try {

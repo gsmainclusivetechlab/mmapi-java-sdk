@@ -9,6 +9,7 @@ public class MobileMoneyException extends Exception {
 private HttpErrorResponse error;
     /***
      * Default constructor
+     *
      */
     public MobileMoneyException() {
         super();
@@ -16,6 +17,7 @@ private HttpErrorResponse error;
 
     /***
      * Constructing exception with detailed message
+     *
      * @param message
      */
     public MobileMoneyException(String message) {
@@ -24,6 +26,7 @@ private HttpErrorResponse error;
 
     /***
      * Constructing exception with detailed message and cause
+     *
      * @param message
      * @param cause
      */
@@ -31,10 +34,18 @@ private HttpErrorResponse error;
         super(message, cause);
     }
 
+    /***
+     *
+     * @param error
+     */
     public MobileMoneyException(HttpErrorResponse error) {
-    this.error=error;
+        this.error=error;
     }
 
+    /***
+     *
+     * @return
+     */
     public HttpErrorResponse getError() {
         return error;
     }

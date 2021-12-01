@@ -6,7 +6,9 @@ import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.context.MobileMoneyContext;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.base.model.HttpErrorResponse;
 import com.mobilemoney.base.util.JSONFormatter;
+import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.PatchData;
@@ -32,17 +34,18 @@ public class DisbursementRequest extends ViewTransactionRequest {
     private List<PatchData> patchData;
 
     /***
-     * Default constructor
-     */
-    public DisbursementRequest() { super(UUID.randomUUID().toString()); }
-
-    /***
      * Initiates Individual Disbursement
      *
      * @return
      * @throws MobileMoneyException
      */
     public AsyncResponse createDisbursementTransaction() throws MobileMoneyException {
+        this.clientCorrelationId = UUID.randomUUID().toString();
+
+        if (this.transaction == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
+        }
+
         String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.DISBURSEMENT);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
         return createRequest(HttpMethod.POST, resourcePath, this.transaction.toJSON(), notificationType, callBackURL, AsyncResponse.class);
@@ -55,6 +58,12 @@ public class DisbursementRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse createBatchTransaction() throws MobileMoneyException {
+        this.clientCorrelationId = UUID.randomUUID().toString();
+
+        if (this.disbursementTransaction == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.DISBURSEMENT_TRANSACTION_OBJECT_INIT_ERROR).build());
+        }
+
         String resourcePath = API.CREATE_BATCH_TRANSACTIONS;
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
 
@@ -71,6 +80,10 @@ public class DisbursementRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public DisbursementTransactionResponse viewBatchTransaction(final String batchId) throws MobileMoneyException {
+        if (StringUtils.isNullOrEmpty(batchId)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         String resourcePath = API.VIEW_BATCH_TRANSACTION.replace(Constants.BATCH_ID, batchId);
         return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, DisbursementTransactionResponse.class);
     }
@@ -83,6 +96,10 @@ public class DisbursementRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public List<DisbursementCompletedTransactionResponse> viewBatchCompletions(final String batchId) throws MobileMoneyException {
+        if (StringUtils.isNullOrEmpty(batchId)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         List<DisbursementCompletedTransactionResponse> completedTransactions = null;
         String resourcePath = API.VIEW_BATCH_TRANSACTION_COMPLETED.replace(Constants.BATCH_ID, batchId);
         HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath);
@@ -101,6 +118,10 @@ public class DisbursementRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public List<DisbursementRejectedTransactionResponse> viewBatchRejections(final String batchId) throws MobileMoneyException {
+        if (StringUtils.isNullOrEmpty(batchId)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         List<DisbursementRejectedTransactionResponse> completedTransactions = null;
         String resourcePath = API.VIEW_BATCH_TRANSACTION_REJECTED.replace(Constants.BATCH_ID, batchId);
         HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath);
@@ -119,6 +140,12 @@ public class DisbursementRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse updateBatchTransaction(final String batchId) throws MobileMoneyException {
+        this.clientCorrelationId = UUID.randomUUID().toString();
+
+        if (StringUtils.isNullOrEmpty(batchId)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         String resourcePath = API.UPDATE_BATCH_TRANSACTION.replace(Constants.BATCH_ID, batchId);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
         return createRequest(HttpMethod.PATCH, resourcePath, JSONFormatter.toJSONArray(this.patchData), notificationType, callBackURL, AsyncResponse.class);
@@ -184,29 +211,5 @@ public class DisbursementRequest extends ViewTransactionRequest {
      */
     public void setPatchData(List<PatchData> patchData) {
         this.patchData = patchData;
-    }
-
-    /***
-     * Type: Utility class
-     */
-    private static class Type {
-        // Transaction type
-        private String type;
-
-        /***
-         * Constructor with single parameter
-         * @param type
-         */
-        public Type(String type) {
-            this.type = type;
-        }
-
-        /***
-         * Returns JSON object
-         * @return
-         */
-        public String toJSON() {
-            return JSONFormatter.toJSON(this);
-        }
     }
 }

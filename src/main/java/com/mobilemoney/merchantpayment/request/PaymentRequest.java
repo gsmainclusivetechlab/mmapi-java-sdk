@@ -31,9 +31,8 @@ public class PaymentRequest extends ViewTransactionRequest {
      *
      */
     public PaymentRequest() {
-        super(UUID.randomUUID().toString());
         this.authorizationCodeRequest = new AuthorizationCodeRequest();
-        this.createTransactionRequest = new CreateTransactionRequest(this.clientCorrelationId);
+        this.createTransactionRequest = new CreateTransactionRequest();
     }
 
     /***
@@ -43,7 +42,8 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse createMerchantTransaction() throws MobileMoneyException {
-        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL);
+        this.clientCorrelationId = UUID.randomUUID().toString();
+        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
     }
 
     /***
@@ -53,7 +53,8 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse createRefundTransaction() throws MobileMoneyException {
-        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL);
+        this.clientCorrelationId = UUID.randomUUID().toString();
+        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
     }
 
     /***
@@ -63,6 +64,7 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse createAuthorisationCode(Identifiers identifiers) throws MobileMoneyException {
+        this.clientCorrelationId = UUID.randomUUID().toString();
         return this.authorizationCodeRequest.createAuthorisationCode(identifiers, this.clientCorrelationId);
     }
 
@@ -120,6 +122,6 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @return
      */
     public String getClientCorrelationId() {
-        return clientCorrelationId;
+        return this.clientCorrelationId;
     }
 }

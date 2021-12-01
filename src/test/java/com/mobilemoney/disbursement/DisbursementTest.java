@@ -214,11 +214,11 @@ public class DisbursementTest {
     void retrieveMissingResponse() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         DisbursementRequest disbursementRequest = new DisbursementRequest();
-        String clientCorrelationId = disbursementRequest.getClientCorrelationId();
 
         disbursementRequest.setTransaction(getTransactionObject("200.00", "RWF"));
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction();
 
+        String clientCorrelationId = disbursementRequest.getClientCorrelationId();
         DisbursementTransactionResponse transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, DisbursementTransactionResponse.class);
 
         assertNotNull(transaction);

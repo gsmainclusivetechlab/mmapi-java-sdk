@@ -121,7 +121,6 @@ public final class MobileMoneyAuthentication {
                 JsonParser parser = new JsonParser();
                 JsonElement jsonElement = parser.parse((String)jsonResponse.getPayLoad());
                 this.accessToken = jsonElement.getAsJsonObject().get(Constants.ACCESS_TOKEN).getAsString();
-                //this.accessToken = "eyJraWQiOiJcL0V4YXNlMmpqdkVtcUtLNTdmNEwyMkUyUUx2MDhndkFqTGlZVHl3bFhzUT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1OXZ0aG1xM2Y2aTE1djZqbWNqc2tma21oIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJvYXV0aFwvcmVhZCIsImF1dGhfdGltZSI6MTYzNzIxNzEwMywiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTJfTWJqdUR6cUJjIiwiZXhwIjoxNjM3MjIwNzAzLCJpYXQiOjE2MzcyMTcxMDMsInZlcnNpb24iOjIsImp0aSI6IjBiOTRkZTdiLTViMDMtNDhlYS1hNTU4LTNjM2U1NTBjZjAwZiIsImNsaWVudF9pZCI6IjU5dnRobXEzZjZpMTV2NmptY2pza2ZrbWgifQ.KmNAlBezmEw6lC_LxiRqSTZZ6b4Pbxk2tuxWCn23FhtAArCZx8IRZcu6VABNXZf6qi6zwgG_3SmsX3rMhrou2GPRg92cKa_ojJYuKAMDWffRS9Zu9dG4OrUaUJrjXrpIqWoHAnkumwRK-lWgNRS2nZ0WMGSySB_qePcnkxSC6aGm11XZ2YxVMA5lu5PfSFUvxxATlRxfsM68dk1ecyxOFDhV32Uts1ENoTnirof35RGDcKJ6H5j4fe9-2ZXonwzZOYbnIhGJC8YDzAoxfjkxP1eKyUlA9HD4ZyjCevm6Iuvh-9Qt91nNS-SpzqZMlfkFDtPt0XoagyM5DCB5zk6ECw";
                 return this.accessToken;
             }
 
@@ -177,7 +176,7 @@ public final class MobileMoneyAuthentication {
                 case SANDBOX:
                     endPointUrl = API.SANDBOX_ACCESS_TOKEN_URL; break;
                 case PRODUCTION:
-                    endPointUrl = API.SANDBOX_ACCESS_TOKEN_URL; break;
+                    endPointUrl = API.PRODUCTION_ACCESS_TOKEN_URL; break;
                 default:
                     endPointUrl = "";
             }
@@ -185,17 +184,12 @@ public final class MobileMoneyAuthentication {
 
         // If none of the option works, throw exception.
         if (endPointUrl == null || endPointUrl.trim().length() <= 0) {
-            throw new MalformedURLException("not configured to sandbox/production ");
+            throw new MalformedURLException(String.format("Not configured to %s/%s", Environment.SANDBOX, Environment.PRODUCTION));
         }
 
         endPointUrl = (endPointUrl.endsWith("/")) ? endPointUrl.substring(0, endPointUrl.length() - 1) : endPointUrl;
 
         httpConfiguration.setEndPointUrl(endPointUrl);
-        //httpConfiguration.setConnectionTimeout(Integer.parseInt(configurationMap.get(Constants.HTTP_CONNECTION_TIMEOUT)));
-        /*httpConfiguration.setMaxRetry(Integer.parseInt(configurationMap.get(Constants.HTTP_CONNECTION_RETRY)));
-        httpConfiguration.setReadTimeout(Integer.parseInt(configurationMap.get(Constants.HTTP_CONNECTION_READ_TIMEOUT)));
-        httpConfiguration.setMaxHttpConnection(Integer.parseInt(configurationMap.get(Constants.HTTP_CONNECTION_MAX_CONNECTION)));
-        httpConfiguration.setIpAddress(configurationMap.get(Constants.DEVICE_IP_ADDRESS));*/
 
         return httpConfiguration;
     }
@@ -245,11 +239,7 @@ public final class MobileMoneyAuthentication {
      * @return
      */
     protected String getRequestPayload() {
-        //if (this.refreshToken != null) {
-            //return String.format("grant_type=refresh_token&refresh_token=%s", this.refreshToken);
-        //} else {
-            return "grant_type=client_credentials";
-        //}
+        return "grant_type=client_credentials";
     }
 
     /***

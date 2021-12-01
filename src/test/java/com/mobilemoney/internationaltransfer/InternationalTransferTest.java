@@ -99,12 +99,11 @@ public class InternationalTransferTest {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
-        String clientCorrelationId = internationalTransferRequest.getClientCorrelationId();
-
         internationalTransferRequest.setTransaction(createInternationalTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).createInternationalTransaction();
 
+        String clientCorrelationId = internationalTransferRequest.getClientCorrelationId();
         TransactionResponse transaction = mmClient.addRequest(internationalTransferRequest).viewResponse(clientCorrelationId, TransactionResponse.class);
 
         assertNotNull(transaction);
