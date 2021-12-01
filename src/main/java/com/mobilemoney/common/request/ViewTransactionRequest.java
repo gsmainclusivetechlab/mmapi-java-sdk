@@ -1,5 +1,6 @@
 package com.mobilemoney.common.request;
 
+import com.mobilemoney.base.model.HttpErrorResponse;
 import com.mobilemoney.common.model.AccountBalance;
 import com.mobilemoney.base.HttpResponse;
 import com.mobilemoney.base.constants.API;
@@ -17,14 +18,12 @@ import com.mobilemoney.merchantpayment.constants.TransactionType;
 import com.mobilemoney.merchantpayment.model.TransactionResponse;
 
 import java.util.List;
+import java.util.UUID;
 
+/***
+ * Class ViewTransactionRequest
+ */
 public class ViewTransactionRequest extends CommonRequest {
-
-    /***
-     * Default constructor
-     */
-    public ViewTransactionRequest(final String clientCorrelationId) { this.clientCorrelationId = clientCorrelationId; }
-
     /***
      * Returns account balance of a specific account
      *
@@ -33,6 +32,10 @@ public class ViewTransactionRequest extends CommonRequest {
      * @throws MobileMoneyException
      */
     public AccountBalance viewAccountBalance(Identifiers identifiers) throws MobileMoneyException {
+        if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
+
         return createRequest(HttpMethod.GET, getResourcePath(API.ACCOUNT_BALANCE_REQUEST, identifiers), AccountBalance.class);
     }
 
@@ -54,6 +57,10 @@ public class ViewTransactionRequest extends CommonRequest {
      * @throws MobileMoneyException
      */
     public List<TransactionResponse> viewAccountTransactions(Identifiers identifiers, final TransactionFilter filter) throws MobileMoneyException {
+        if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
+
         List<TransactionResponse> transactions = null;
         StringBuilder resourcePath = new StringBuilder(getResourcePath(API.ACCOUNT_TRANSACTIONS, identifiers));
 
@@ -78,6 +85,10 @@ public class ViewTransactionRequest extends CommonRequest {
      * @throws MobileMoneyException
      */
     public TransactionResponse viewTransaction(final String transactionReference) throws MobileMoneyException {
+        if (StringUtils.isNullOrEmpty(transactionReference)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         String resourcePath = API.RETRIEVE_TRANSACTION.replace(Constants.TRANSACTION_REFERENCE, transactionReference);
         return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, TransactionResponse.class);
     }
@@ -89,6 +100,12 @@ public class ViewTransactionRequest extends CommonRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse createReversal(final String transactionReference) throws MobileMoneyException {
+        this.clientCorrelationId = UUID.randomUUID().toString();
+
+        if (StringUtils.isNullOrEmpty(transactionReference)) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         String resourcePath = API.CREATE_TRANSACTION_REVERSAL.replace(Constants.TRANSACTION_TYPE, "reversals").replace(Constants.TRANSACTION_REFERENCE, transactionReference);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
         return createRequest(HttpMethod.POST, resourcePath, new Type(TransactionType.REVERSAL).toJSON(), notificationType, callBackURL, AsyncResponse.class);

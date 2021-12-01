@@ -1,12 +1,25 @@
 # GSMA Mobile Money Payments Java SDK
-Mobile Money Java SDK requires a minimum JDK (Java Development Kit) version 1.8 and above.
+Use this SDK to integrate GSMA Mobile Money payments into your app.
 
+## Prerequisites
+- Java JDK-1.8 or higher
+- Apache Maven 3 or higher
+
+## To build this application
+In order to build the SDK from the source code you need to use Apache Maven and Java 1.8+
+- Run 'mvn clean package' to build jar file
+
+## Include GSMA Java SDK in your Java application
+1. Build the jar file using  'mvn clean package' command
+2. Import 'mmapi-java-sdk' jar file to your project's classpath
+
+
+# Configure the SDK
 To write an app using the mobile money SDK:
 
 - Register for sandbox account and get your consumer key, consumer secret and API key
 - You always need to create MMClient instance before making any API calls
 
-# Create MMClient Instance
 Create an instance of the MMClient with consumer key, consumer secret and API key.
 ```java
 MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
@@ -275,13 +288,46 @@ transaction.setCurrency("<currency>");
 
 paymentRequest.setTransaction(transaction);
 
-String clientCorrelationId = paymentRequest.getClientCorrelationId();
-
 AsyncResponse sdkResponse = mmClient.addRequest(paymentRequest).addCallBack("<Place your callback URL>").createMerchantTransaction();
 
+String clientCorrelationId = paymentRequest.getClientCorrelationId();
 TransactionResponse transaction = mmClient.addRequest(paymentRequest).viewResponse(clientCorrelationId, TransactionResponse.class);
 ```
 
+## Error Object
+The mobile money SDK uses a common error object to provide error details. The following properties are included:
+
+```java
+{
+  "errorCategory": "businessRule",
+  "errorCode": "genericError",
+  "errordescription": "string",
+  "errorDateTime": "2021-12-01T10:26:02.015Z",
+  "errorParameters": [
+    {
+      "key": "string",
+      "value": "string"
+    }
+  ]
+}
+```
+
+Example:
+
+```java
+{
+  "errorCategory": "identification",
+  "errorCode": "identifierError",
+  "errorDescription": "Transaction does not exists",
+  "errorDateTime": "2021-12-01T10:36:02.015Z",
+  "errorParameters": [
+    {
+      "key": "providedValue",
+      "value": "txnRef"
+    }
+  ]
+}
+```
 
 # Disbursement
 

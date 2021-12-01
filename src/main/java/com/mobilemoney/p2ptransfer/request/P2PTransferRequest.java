@@ -29,9 +29,8 @@ public class P2PTransferRequest extends TransferRequest {
      * Default constructor
      */
     public P2PTransferRequest() {
-        super(UUID.randomUUID().toString());
         this.authorizationCodeRequest = new AuthorizationCodeRequest();
-        this.createTransactionRequest = new CreateTransactionRequest(this.clientCorrelationId);
+        this.createTransactionRequest = new CreateTransactionRequest();
     }
 
     /***
@@ -50,7 +49,8 @@ public class P2PTransferRequest extends TransferRequest {
      * @throws MobileMoneyException
      */
     public AsyncResponse createTransferTransaction() throws MobileMoneyException {
-        return this.createTransactionRequest.createTransferTransaction(this.transaction, this.callBackURL);
+        this.clientCorrelationId = UUID.randomUUID().toString();
+        return this.createTransactionRequest.createTransferTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
     }
 
     /***

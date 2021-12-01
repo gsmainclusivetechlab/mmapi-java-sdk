@@ -100,6 +100,9 @@ public final class Constants {
     // HTTP Connection Retry
     public static final String HTTP_CONNECTION_RETRY = "http.Retry";
 
+    // HTTP Error Buffering
+    public static final String ENABLE_HTTP_ERROR_BUFFERING = "sun.net.http.errorstream.enableBuffering";
+
     // HTTP Read timeout
     public static final String HTTP_CONNECTION_READ_TIMEOUT = "http.ReadTimeOut";
 
@@ -118,7 +121,45 @@ public final class Constants {
     // HTTP Content-Type Header
     public static final String HTTP_CONTENT_TYPE_HEADER = "Content-Type";
 
+    // HTTP Content-Length Header
+    public static final String HTTP_CONTENT_LENGTH = "Content-Length";
+
     // HTTP Content Type Default
     public static final String HTTP_CONFIG_DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
 
+    // Validation Error Category
+    public static final String VALIDATION_ERROR_CATEGORY = "Validation";
+
+    // Internal Error Category
+    public static final String INTERNAL_ERROR_CATEGORY = "Internal";
+
+    // Mandatory Value Not Supplied
+    public static final String VALUE_NOT_SUPPLIED_ERROR_CODE = "MandatoryValueNotSupplied";
+
+    // Generic Error
+    public static final String GENERIC_ERROR_CODE = "GenericError";
+
+    // Transaction Object Is Null
+    public static final String TRANSACTION_OBJECT_INIT_ERROR = "Transaction object is not initialized";
+
+    // General Error
+    public static final String GENRAL_ERROR = "The request could not be completed";
+
+    // Null Value
+    public static final String NULL_VALUE_ERROR = "The request could not be processed due to NULL value";
+
+    // Disbursement Transaction Object Is Null
+    public static final String DISBURSEMENT_TRANSACTION_OBJECT_INIT_ERROR = "Disbursement transaction object is not initialized";
+
+    // Identifier Object Is Null
+    public static final String IDENTIFIER_OBJECT_INIT_ERROR = "Identifier object is not initialized";
+
+    // Quotation Object Is Null
+    public static final String QUOTATION_OBJECT_INIT_ERROR = "Quotation object is not initialized";
+
+    // Debit Mandate Object Is Null
+    public static final String DEBIT_MANDATE_OBJECT_INIT_ERROR = "Debit mandate object is not initialized";
+
+    // Auth Code Object Is Null
+    public static final String AUTH_CODE_OBJECT_INIT_ERROR = "Authorization code object is not initialized";
 }

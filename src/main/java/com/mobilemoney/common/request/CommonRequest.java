@@ -6,8 +6,10 @@ import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.constants.HttpStatusCode;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.base.model.HttpErrorResponse;
 import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.ResourceUtils;
+import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.ServiceStatusResponse;
@@ -45,6 +47,10 @@ public class CommonRequest extends ResourceUtils {
      * @throws MobileMoneyException
      */
     public <T> T viewResponse(final String clientCorrelationId, final Class<T> objectReference) throws MobileMoneyException {
+        if (StringUtils.isNullOrEmpty(clientCorrelationId) || objectReference == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+        }
+
         T response = null;
         String retrieveResponse = processMissingAPI(clientCorrelationId);
 
@@ -61,7 +67,7 @@ public class CommonRequest extends ResourceUtils {
      * @throws MobileMoneyException
      */
     public ServiceStatusResponse viewServiceAvailability() throws MobileMoneyException {
-        return createRequest(HttpMethod.GET, API.HEARTBEAT_REQUEST, null, null, null, ServiceStatusResponse.class);
+        return createRequest(HttpMethod.GET, API.HEARTBEAT_REQUEST, ServiceStatusResponse.class);
     }
 
     /***
