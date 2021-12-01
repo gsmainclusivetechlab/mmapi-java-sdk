@@ -22,6 +22,9 @@ public final class Constants {
     // Transaction Reference
     public static final String TRANSACTION_REFERENCE = "{transactionReference}";
 
+    // Debit Mandate Reference
+    public static final String DEBIT_MANDATE_REFERENCE = "{debitMandateReference}";
+
     // Quotation Reference
     public static final String QUOTATION_REFERENCE = "{quotationReference}";
 
