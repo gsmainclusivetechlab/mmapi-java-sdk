@@ -789,3 +789,160 @@ Use this SDK when a callback is not received from the mobile money provider.
 ```java
 TransactionResponse transaction = mmClient.addRequest(p2pTransferRequestObject).viewResponse("<client correlation id>", TransactionResponse.class);
 ```
+
+# Recurring Payments
+
+The Recurring Payments Mobile Money SDKs allow service providers to setup electronic payment mandates for mobile money customers and initiate payments against payment mandates.
+
+## Setup a Recurring Payment
+A debit mandate object is to be created before submitting the request. The service provider then initiates the request which is authorised by the account holding customer.
+
+Creating debit mandate object:
+```java
+DebitMandate debitMandate = new DebitMandate();
+List<Party> payee = new ArrayList<>();
+List<CustomData> customData = new ArrayList<>();
+
+payee.add(new Party("accountid", "2999"));
+customData.add(new CustomData("keytest", "keyvalue"));
+
+debitMandate.setRequestDate("2018-07-03T10:43:27.405Z");
+debitMandate.setStartDate("2018-07-03T10:43:27.405Z");
+debitMandate.setEndDate("2028-07-03T10:43:27.405Z");
+debitMandate.setCurrency("GBP");
+debitMandate.setAmountLimit("1000.00");
+debitMandate.setNumberOfPayments(2);
+debitMandate.setFrequencyType("sixmonths");
+debitMandate.setPayee(payee);
+debitMandate.setCustomData(customData);
+```
+
+Setting-up of a recurring payment via a debit mandate;
+```java
+RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+recurringPaymentRequest.setDebitMandate(debitMandate);
+
+AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack("<Place your callback URL>").createAccountDebitMandate(new Identifiers(identifierList));
+```
+
+## Take a Recurring Payment
+
+Initiates a payment request to the FSP to debit the account-holders account as per the debit mandate.
+```java
+List<DebitParty> debitPartyList = new ArrayList<>();
+List<CreditParty> creditPartyList = new ArrayList<>();
+
+debitPartyList.add(new DebitParty("<identifier type>", "<identifier type value>"));
+creditPartyList.add(new CreditParty("<identifier type>", "<identifier type value>"));
+
+Transaction transaction = new Transaction();
+transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount(amount);
+transaction.setCurrency(currency);
+
+RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+recurringPaymentRequest.setTransaction(transaction);
+
+AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack("<Place your callback URL>").createMerchantTransaction();
+```
+
+## Take a Recurring Payment using the Polling Method
+
+The client polls against the request state object to determine the outcome of the payment request.
+```java
+RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+recurringPaymentRequest.setDebitMandate(debitMandate);
+
+AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).setNotificationType(NotificationType.POLLING).createAccountDebitMandate(new Identifiers(identifierList));
+
+sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+DebitMandateResponse debitMandateResponse = mmClient.addRequest(recurringPaymentRequest).viewAccountDebitMandate(new Identifiers(identifierList), sdkResponse.getObjectReference());
+```
+
+## Recurring Payment Refund
+
+We can use the following code to perform a refund for a recurring payment using the Mobile Money SDK.
+```java
+RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+List<DebitParty> debitPartyList = new ArrayList<>();
+List<CreditParty> creditPartyList = new ArrayList<>();
+
+debitPartyList.add(new DebitParty("<identifier type>", "<identifier type value>"));
+creditPartyList.add(new CreditParty("mandateReference", "<mandate reference>"));
+
+Transaction transaction = new Transaction();
+transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
+
+recurringPaymentRequest = new RecurringPaymentRequest();
+recurringPaymentRequest.setTransaction(transaction);
+sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack("<Place your callback URL>").createRefundTransaction();
+```
+
+## Recurring Payment Reversal
+
+We can use the following code to submits the reversal request - need to pass the reference of the transaction that is to be reversed.
+```java
+AsyncResponse sdkResponse =  mmClient.addRequest(new RecurringPaymentRequest()).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
+```
+
+## Payer sets up a Recurring Payment using MMP Channel
+
+The process is same as like a normal recurring payment, submits the debit mandate request for processing the recurring payment. 
+```java
+RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+recurringPaymentRequest.setDebitMandate(debitMandate);
+
+AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack("<Place your callback URL>").createAccountDebitMandate(new Identifiers(identifierList));
+```
+
+## Obtain a Service Provider Balance
+
+Use the following code to obtain the balance of the requested account.
+```java
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+
+AccountBalance accountBalance = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountBalance(new Identifiers(identifierList));
+```
+
+## Retrieve Payments for a Service Provider
+
+The following code returns the first 10 transactions of the given account. 
+```java
+TransactionFilter filter = new TransactionFilter();
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+filter.setLimit(10);
+filter.setOffset(0);
+
+List<TransactionResponse> transactions = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+```
+
+## Check for Service Availability
+
+The application should perform service availability check before submit a request
+```java
+ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new RecurringPaymentRequest()).viewServiceAvailability();
+```
+
+## Retrieve a Missing API Response
+
+Use this SDK when a callback is not received - using the service provider's clientCorrelationId.
+```java
+DebitMandateResponse debitMandateResponse = mmClient.addRequest(recurringPaymentRequestObject).viewResponse("<client correlation id>", DebitMandateResponse.class);
+```
