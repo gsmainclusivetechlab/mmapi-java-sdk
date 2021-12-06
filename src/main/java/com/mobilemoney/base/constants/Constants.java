@@ -79,6 +79,12 @@ public final class Constants {
     // Authorisation Code
     public static final String AUTHORISATION_CODE = "{authorisationCode}";
 
+    // Link Reference
+    public static final String LINK_REFERENCE = "{linkReference}";
+    
+    // Account Id
+    public static final String ACCOUNT_ID = "{accountId}";
+    
     // Default SDK configuration file name
     public static final String DEFAULT_CONFIGURATION_FILE = "sdk_config.properties";
 
