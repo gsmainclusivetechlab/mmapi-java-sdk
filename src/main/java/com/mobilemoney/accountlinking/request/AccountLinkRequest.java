@@ -71,6 +71,9 @@ public class AccountLinkRequest extends ViewTransactionRequest{
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
+        if (accountLink == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.ACCOUNT_LINK_OBJECT_INIT_ERROR).build());
+        }
         String resourcePath = getResourcePath(API.CREATE_ACCOUNT_LINKS, identifiers);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
         return createRequest(HttpMethod.POST, resourcePath, accountLink.toJSON(), notificationType, callBackURL, AsyncResponse.class);

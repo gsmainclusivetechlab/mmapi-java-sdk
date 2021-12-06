@@ -171,4 +171,7 @@ public final class Constants {
 
     // Auth Code Object Is Null
     public static final String AUTH_CODE_OBJECT_INIT_ERROR = "Authorization code object is not initialized";
+    
+    // Auth Code Object Is Null
+    public static final String ACCOUNT_LINK_OBJECT_INIT_ERROR = "Account link object is not initialized";
 }
