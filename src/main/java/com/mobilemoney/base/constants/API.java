@@ -75,4 +75,11 @@ public final class API {
 
     // REST Endpoint: View Debit Mandates
     public static final String VIEW_DEBIT_MANDATES = "/accounts/{identifierType}/{identifier}/debitmandates/{debitMandateReference}";
+    
+    // REST Endpoint: Create Account Link
+    public static final String CREATE_ACCOUNT_LINKS = "/accounts/{identifierType}/{identifier}/links";
+    
+    // REST Endpoint: View Account Link
+    public static final String VIEW_ACCOUNT_LINK = "/accounts/{accountId}/links/{linkReference}";
+
 }

@@ -79,6 +79,12 @@ public final class Constants {
     // Authorisation Code
     public static final String AUTHORISATION_CODE = "{authorisationCode}";
 
+    // Link Reference
+    public static final String LINK_REFERENCE = "{linkReference}";
+    
+    // Account Id
+    public static final String ACCOUNT_ID = "{accountId}";
+    
     // Default SDK configuration file name
     public static final String DEFAULT_CONFIGURATION_FILE = "sdk_config.properties";
 
@@ -165,4 +171,7 @@ public final class Constants {
 
     // Auth Code Object Is Null
     public static final String AUTH_CODE_OBJECT_INIT_ERROR = "Authorization code object is not initialized";
+    
+    // Auth Code Object Is Null
+    public static final String ACCOUNT_LINK_OBJECT_INIT_ERROR = "Account link object is not initialized";
 }

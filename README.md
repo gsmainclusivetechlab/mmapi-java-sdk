@@ -946,3 +946,239 @@ Use this SDK when a callback is not received - using the service provider's clie
 ```java
 DebitMandateResponse debitMandateResponse = mmClient.addRequest(recurringPaymentRequestObject).viewResponse("<client correlation id>", DebitMandateResponse.class);
 ```
+
+# Account Linking
+
+The Account Linking Mobile Money APIs allow financial service providers to link customer accounts to mobile money accounts, thus allowing their customers to push funds to and pull funds from mobile money. Conversely, mobile money providers can use the APIs to link their customers mobile money accounts to financial service providers.
+
+## Setup an Account Link
+
+Following code illustrates how to create an Account Link using an asynchronous flow with the notification provided via a callback.
+
+```java
+List<DebitParty> sourceAccountIdentifiers = new ArrayList<>();
+RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
+List<CustomData> customDataList = new ArrayList<>();
+        
+sourceAccountIdentifiers.add(new DebitParty("accountid", "<Place your account id of debit party here>"));
+
+customDataList.add(new CustomData("keytest", "keyvalue"));
+        
+requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
+requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
+        
+AccountLink accountLink = new AccountLink();
+accountLink.setSourceAccountIdentifiers(sourceAccountIdentifiers);
+accountLink.setMode("active");
+accountLink.setStatus("both");
+accountLink.setRequestingOrganisation(requestingOrganisation);
+accountLink.setRequestDate("2018-07-03T11:43:27.405Z");
+accountLink.setCustomData(customDataList);
+
+accountLinkRequest.setAccountLink(accountLink);
+        
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+```
+
+## Perform a Transfer for a Linked Account
+
+To perform transfer for a Linked Account, you have to create transaction object first.
+
+```java
+Transaction transaction = new Transaction();
+KYC senderKyc = new KYC();
+KYCSubject kycSubject = new KYCSubject();
+RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
+PostalAddress postalAddress = new PostalAddress("GB");
+Identification identification = new Identification("nationalidcard");
+InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
+
+List<DebitParty> debitPartyList = new ArrayList<>();
+List<CreditParty> creditPartyList = new ArrayList<>();
+List<Identification> identificationList = new ArrayList<>();
+
+identification.setIdNumber("1234567");
+identification.setIssuer("UKPA");
+identification.setIssuerPlace("GB");
+identification.setIssuerCountry("GB");
+identification.setIssueDate("2018-07-03T11:43:27.405Z");
+identification.setExpiryDate("2021-07-03T11:43:27.405Z");
+identification.setOtherIddescription("test");
+identificationList.add(identification);
+
+kycSubject.setTitle("Mr");
+kycSubject.setFirstName("Luke");
+kycSubject.setMiddleName("R");
+kycSubject.setLastName("Skywalker");
+kycSubject.setFullName("Luke R Skywalker");
+kycSubject.setNativeName("ABC");
+
+senderKyc.setNationality("GB");
+senderKyc.setBirthCountry("GB");
+senderKyc.setOccupation("Manager");
+senderKyc.setEmployerName("MFX");
+senderKyc.setContactPhone("+447125588999");
+senderKyc.setGender("m");
+senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
+senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
+senderKyc.setIdDocument(identificationList);
+senderKyc.setPostalAddress(postalAddress);
+senderKyc.setSubjectName(kycSubject);
+
+requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
+requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
+
+debitPartyList.add(new DebitParty("walletid", "1"));
+creditPartyList.add(new CreditParty("msisdn", "+44012345678"));
+
+transaction.setAmount("100.00");
+transaction.setCurrency("GBP");
+transaction.setInternationalTransferInformation(transferInformation);
+transaction.setSenderKyc(senderKyc);
+transaction.setRequestingOrganisation(requestingOrganisation);
+transaction.setCreditParty(creditPartyList);
+transaction.setDebitParty(debitPartyList);
+```
+
+Perform transfer for a Linked Account using transaction request
+
+```java
+AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+
+accountLinkRequest.setTransaction(transaction);
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(CALLBACK_URL).createTransferTransaction();
+
+sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+String txnRef = sdkResponse.getObjectReference();
+
+TransactionResponse transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
+```
+
+## Perform a Transfer using an Account Link via the Polling Method
+
+To perform a transfer using an Account Link via the Polling Method, follow the given code
+
+```java
+AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+
+List<DebitParty> debitPartyList = new ArrayList<>();
+List<CreditParty> creditPartyList = new ArrayList<>();
+debitPartyList.add(new DebitParty("accountid", "<Place your account id of debit party here>"));
+creditPartyList.add(new CreditParty("accountid", "<Place your account id of credit party here>"));
+Transaction transaction = new Transaction();
+transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
+
+accountLinkRequest.setTransaction(transaction);
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).setNotificationType(NotificationType.POLLING).createTransferTransaction();
+
+sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+TransactionResponse transactionResponse = mmClient.addRequest(accountLinkRequest).viewTransaction(sdkResponse.getObjectReference());
+```
+
+## Perform a Transfer Reversal
+
+In some failure scenarios, merchant may need to reverse a transaction
+
+```java
+AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+
+List<DebitParty> debitPartyList = new ArrayList<>();
+List<CreditParty> creditPartyList = new ArrayList<>();
+debitPartyList.add(new DebitParty("accountid", "<Place your account id of debit party here>"));
+creditPartyList.add(new CreditParty("accountid", "<Place your account id of credit party here>"));
+Transaction transaction = new Transaction();
+transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
+
+accountLinkRequest.setTransaction(transaction);
+        
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createTransferTransaction();
+
+sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+String txnRef = sdkResponse.getObjectReference();
+
+sdkResponse =  mmClient.addRequest(new PaymentRequest()).createReversal(txnRef);
+```
+
+## Obtain a Financial Service Provider Balance
+
+Obtain the balance of a requested account.
+
+```java
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+
+AccountBalance accountBalance = mmClient.addRequest(new AccountLinkRequest()).viewAccountBalance(new Identifiers(identifierList));
+```
+
+## Retrieve Transfers for a Financial Service Provider
+
+The following code illustrates the mechanism to retrieve transfers
+
+```java
+TransactionFilter filter = new TransactionFilter();
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+filter.setLimit(10);
+filter.setOffset(0);
+
+List<TransactionResponse> transactions = mmClient.addRequest(new AccountLinkRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+```
+
+## Check for Service Availability
+
+The application should perform service availability check before before submit a request
+
+```java
+ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new AccountLinkRequest()).viewServiceAvailability();
+```
+
+## Retrieve a Missing API Response
+
+Merchant to retrieve a link to the final representation of the resource for which it attempted to create. Use this SDK when a callback is not received from the mobile money provider.
+
+```java
+AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+
+List<DebitParty> sourceAccountIdentifiers = new ArrayList<>();
+RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
+List<CustomData> customDataList = new ArrayList<>();
+        
+sourceAccountIdentifiers.add(new DebitParty("accountid", "2999"));
+
+customDataList.add(new CustomData("keytest", "keyvalue"));
+        
+requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
+requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
+        
+AccountLink accountLink = new AccountLink();
+accountLink.setSourceAccountIdentifiers(sourceAccountIdentifiers);
+accountLink.setMode("active");
+accountLink.setStatus("both");
+accountLink.setRequestingOrganisation(requestingOrganisation);
+accountLink.setRequestDate("2018-07-03T11:43:27.405Z");
+
+accountLink.setCustomData(customDataList);
+
+accountLinkRequest.setAccountLink(accountLink);
+        
+List<IdentifierData> identifierList = new ArrayList<>();
+
+identifierList.add(new IdentifierData("<identifier type>", "<identifier type value>"));
+
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+
+String clientCorrelationId = accountLinkRequest.getClientCorrelationId();
+AccountLinkResponse accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewResponse(clientCorrelationId, AccountLinkResponse.class);
+```
