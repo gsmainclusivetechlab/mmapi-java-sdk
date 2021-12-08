@@ -19,6 +19,7 @@ import com.mobilemoney.common.model.RequestingOrganisation;
 import com.mobilemoney.common.model.ServiceStatusResponse;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
+import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.Identification;
 import com.mobilemoney.internationaltransfer.model.KYC;
 import com.mobilemoney.internationaltransfer.model.PostalAddress;
@@ -27,21 +28,23 @@ import com.mobilemoney.merchantpayment.request.PaymentRequest;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 
 import org.junit.jupiter.api.Test;
 
 class AccountLinkRequestTest {
-    private static final String CONSUMER_KEY = "59vthmq3f6i15v6jmcjskfkmh";
-    private static final String CONSUMER_SECRET = "ef8tl4gihlpfd7r8jpc1t1nda33q5kcnn32cj375lq6mg2nv7rb";
-    private static final String API_KEY = "oVN89kXyTx1cKT3ZohH7h6foEmQmjqQm3OK2U8Ue";
-    private static final String CALLBACK_URL = "https://0b11de7c-a436-4932-a947-aec37cb63408.mock.pstmn.io/mobilemoneymock/cb/transaction/type/merchantpay";
+    static PropertiesLoader loader;
 
-
+    @BeforeAll
+    public static void init(){
+        loader = new PropertiesLoader();
+    }
+    
     @Test
     @DisplayName("Create Account Link Success")
     void createAccountLinkTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setAccountLink(getAccountsLinkSuccessObject());
@@ -53,12 +56,16 @@ class AccountLinkRequestTest {
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getStatus(), "pending");
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        
     }
     
     @Test
     @DisplayName("Create Account Link Failed")
     void createAccountLinkTestFailed() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setAccountLink(getAccountsLinkFailedObject());
@@ -73,14 +80,18 @@ class AccountLinkRequestTest {
     @Test
     @DisplayName("Perform a Transfer for a Linked Account Success")
     void viewTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setTransaction(createAccountLinkTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(CALLBACK_URL).createTransferTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(loader.get("CALLBACK_URL")).createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
+        
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getStatus(), "completed");
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
 
         TransactionResponse transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
 
@@ -90,14 +101,18 @@ class AccountLinkRequestTest {
     @Test
     @DisplayName("Perform a Transfer for a Linked Account Failed")
     void viewTransactionTestFailed() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setTransaction(createAccountLinkTransactionFailedObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(CALLBACK_URL).createTransferTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(loader.get("CALLBACK_URL")).createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
+        
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getStatus(), "completed");
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
 
         TransactionResponse transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
 
@@ -107,13 +122,18 @@ class AccountLinkRequestTest {
     @Test
     @DisplayName("Perform a Transfer using an Account Link via the Polling Method")
     void accountLinkRequestUsingPollingTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setTransaction(getTransactionObject("200.00", "RWF"));
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).setNotificationType(NotificationType.POLLING).createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getStatus(), "completed");
+        assertEquals(sdkResponse.getNotificationMethod(), "polling");
+        
         TransactionResponse transactionResponse = mmClient.addRequest(accountLinkRequest).viewTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(transactionResponse);
@@ -122,7 +142,7 @@ class AccountLinkRequestTest {
     @Test
     @DisplayName("Perform a Transfer Reversal")
     void createReversalTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setTransaction(getTransactionObject("200.00", "RWF"));
@@ -135,12 +155,15 @@ class AccountLinkRequestTest {
         sdkResponse =  mmClient.addRequest(new PaymentRequest()).createReversal(txnRef);
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getStatus(), "pending");
+        assertEquals(sdkResponse.getNotificationMethod(), "polling");
     }
     
     @Test
     @DisplayName("Obtain a Financial Service Provider Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<IdentifierData> identifierList = new ArrayList<>();
 
         identifierList.add(new IdentifierData("accountid", "15523"));
@@ -153,7 +176,7 @@ class AccountLinkRequestTest {
     @Test
     @DisplayName("Retrieve Transfers for a Financial Service Provider")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
         List<IdentifierData> identifierList = new ArrayList<>();
 
@@ -162,14 +185,14 @@ class AccountLinkRequestTest {
         filter.setOffset(0);
 
         List<TransactionResponse> transactions = mmClient.addRequest(new AccountLinkRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
-
+        
         assertNotNull(transactions);
     }
     
     @Test
     @DisplayName("Check for Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new AccountLinkRequest()).viewServiceAvailability();
 
         assertNotNull(serviceStatusResponse);
@@ -178,7 +201,7 @@ class AccountLinkRequestTest {
     @Test
     @DisplayName("Retrieve a Missing API Response")
     void viewResponseTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
 
         accountLinkRequest.setAccountLink(getAccountsLinkSuccessObject());
@@ -189,6 +212,10 @@ class AccountLinkRequestTest {
 
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
 
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getStatus(), "pending");
+        assertEquals(sdkResponse.getNotificationMethod(), "polling");
+        
         String clientCorrelationId = accountLinkRequest.getClientCorrelationId();
         AccountLinkResponse accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewResponse(clientCorrelationId, AccountLinkResponse.class);
 
