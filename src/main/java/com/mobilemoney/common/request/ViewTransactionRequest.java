@@ -13,6 +13,7 @@ import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Identifiers;
+import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
 import com.mobilemoney.merchantpayment.constants.TransactionType;
 import com.mobilemoney.merchantpayment.model.TransactionResponse;
@@ -24,6 +25,9 @@ import java.util.UUID;
  * Class ViewTransactionRequest
  */
 public class ViewTransactionRequest extends CommonRequest {
+	// Transaction Reference
+	public Transaction transaction;
+	
     /***
      * Returns account balance of a specific account
      *
@@ -102,13 +106,19 @@ public class ViewTransactionRequest extends CommonRequest {
     public AsyncResponse createReversal(final String transactionReference) throws MobileMoneyException {
         this.clientCorrelationId = UUID.randomUUID().toString();
 
+        if (this.transaction == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
+        }
+        
         if (StringUtils.isNullOrEmpty(transactionReference)) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
         }
 
+        this.transaction.setType(TransactionType.REVERSAL);
+        
         String resourcePath = API.CREATE_TRANSACTION_REVERSAL.replace(Constants.TRANSACTION_TYPE, "reversals").replace(Constants.TRANSACTION_REFERENCE, transactionReference);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, new Type(TransactionType.REVERSAL).toJSON(), notificationType, callBackURL, AsyncResponse.class);
+        return createRequest(HttpMethod.POST, resourcePath, this.transaction.toJSON(), notificationType, callBackURL, AsyncResponse.class);
     }
 
     /***
@@ -136,32 +146,5 @@ public class ViewTransactionRequest extends CommonRequest {
         if (!StringUtils.isNullOrEmpty(filter.getTransactionType())) resourcePath.append("transactionType=").append(filter.getTransactionType()).append("&");
 
         return resourcePath;
-    }
-
-    /***
-     * Type: Utility class
-     *
-     */
-    private static class Type {
-        // Transaction type
-        private String type;
-
-        /***
-         * Constructor with single parameter
-         *
-         * @param type
-         */
-        public Type(String type) {
-            this.type = type;
-        }
-
-        /***
-         * Returns JSON object
-         *
-         * @return
-         */
-        public String toJSON() {
-            return JSONFormatter.toJSON(this);
-        }
     }
 }

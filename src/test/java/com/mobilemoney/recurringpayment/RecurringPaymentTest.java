@@ -35,7 +35,7 @@ public class RecurringPaymentTest {
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -168,7 +168,10 @@ public class RecurringPaymentTest {
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
 
-        sdkResponse =  mmClient.addRequest(new RecurringPaymentRequest())
+        Transaction transaction = new Transaction();
+        transaction.setType("reversal");
+        recurringPaymentRequest.setTransaction(transaction);
+        sdkResponse =  mmClient.addRequest(recurringPaymentRequest)
                 .addCallBack(CALLBACK_URL)
                 .createReversal(txnRef);
 

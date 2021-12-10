@@ -25,7 +25,7 @@ public class DisbursementTransactionResponse implements Serializable {
     private String batchTitle;
 
     // Description of the batch
-    private String batchdescription;
+    private String batchDescription;
 
     // Indicates whether the batch is currently undergoing processing by the API Provider
     private String processingFlag;
@@ -141,16 +141,16 @@ public class DisbursementTransactionResponse implements Serializable {
      *
      * @return
      */
-    public String getBatchdescription() {
-        return batchdescription;
+    public String getBatchDescription() {
+        return batchDescription;
     }
 
     /***
      *
      * @param batchdescription
      */
-    public void setBatchdescription(String batchdescription) {
-        this.batchdescription = batchdescription;
+    public void setBatchDescription(String batchDescription) {
+        this.batchDescription = batchDescription;
     }
 
     /***

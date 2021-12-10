@@ -1,7 +1,5 @@
 package com.mobilemoney.p2ptransfer;
 
-import com.mobilemoney.common.model.AccountBalance;
-import com.mobilemoney.common.model.AccountNameResponse;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
@@ -36,7 +34,7 @@ public class P2PTransferTest {
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
                 .addCallBack(CALLBACK_URL)
                 .createQuotation();
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -68,7 +66,11 @@ public class P2PTransferTest {
                 .createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        sdkResponse = mmClient.addRequest(new P2PTransferRequest()).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
+        
+        Transaction transaction = new Transaction();
+        transaction.setType("reversal");
+        p2PTransferRequest.setTransaction(transaction);
+        sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
     }

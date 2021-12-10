@@ -31,7 +31,7 @@ public class MerchantPaymentTest {
         merchantPayment.setTransaction(getTransactionObject("200.00", "RWF"));
 
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPayment).createMerchantTransaction();
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -65,7 +65,7 @@ public class MerchantPaymentTest {
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPayment)
                 .addCallBack(CALLBACK_URL)
                 .createAuthorisationCode(new Identifiers(identifierList));
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -85,7 +85,7 @@ public class MerchantPaymentTest {
 
         merchantPayment.setAuthorisationCodeRequest(authorisationCode);
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPayment).createAuthorisationCode(new Identifiers(identifierList));
-
+        
         sdkResponse = mmClient.addRequest(merchantPayment).viewRequestState(sdkResponse.getServerCorrelationId());
         AuthorisationCodeResponse authorisationCodeResponse = mmClient.addRequest(merchantPayment).viewAuthorisationCode(new Identifiers(identifierList), sdkResponse.getObjectReference());
 
@@ -96,7 +96,7 @@ public class MerchantPaymentTest {
         merchantPayment.setTransaction(transaction);
 
         sdkResponse = mmClient.addRequest(merchantPayment).createMerchantTransaction();
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -138,8 +138,8 @@ public class MerchantPaymentTest {
         PaymentRequest merchantPayment = new PaymentRequest();
 
         merchantPayment.setTransaction(getTransactionObject("200.00", "RWF"));
-        AsyncResponse sdkResponse = mmClient.addRequest(merchantPayment).createRefundTransaction();
-
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPayment).addCallBack(CALLBACK_URL).createRefundTransaction();
+        
         assertNotNull(sdkResponse);
     }
 
@@ -155,8 +155,11 @@ public class MerchantPaymentTest {
         sdkResponse = mmClient.addRequest(merchantPayment).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
 
-        sdkResponse =  mmClient.addRequest(new PaymentRequest()).createReversal(txnRef);
-
+        Transaction transaction = new Transaction();
+        transaction.setType("reversal");
+        merchantPayment.setTransaction(transaction);
+        sdkResponse =  mmClient.addRequest(merchantPayment).addCallBack(CALLBACK_URL).createReversal(txnRef);
+        
         assertNotNull(sdkResponse);
     }
 
@@ -167,7 +170,7 @@ public class MerchantPaymentTest {
         TransactionFilter filter = new TransactionFilter();
         List<IdentifierData> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "2000"));
+        identifierList.add(new IdentifierData("walletid", "1"));
         filter.setLimit(10);
         filter.setOffset(0);
 

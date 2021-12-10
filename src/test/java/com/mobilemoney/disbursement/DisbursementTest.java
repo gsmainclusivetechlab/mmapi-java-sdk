@@ -1,6 +1,5 @@
 package com.mobilemoney.disbursement;
 
-import com.mobilemoney.common.model.AccountBalance;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
@@ -34,7 +33,7 @@ public class DisbursementTest {
 
         disbursementRequest.setTransaction(getTransactionObject("200.00", "RWF"));
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction();
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -187,7 +186,7 @@ public class DisbursementTest {
 
         disbursementRequest.setTransaction(getTransactionObject("200.00", "RWF"));
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).setNotificationType(NotificationType.POLLING).createDisbursementTransaction();
-
+        
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         TransactionResponse transactionResponse = mmClient.addRequest(disbursementRequest).viewTransaction(sdkResponse.getObjectReference());
 
@@ -204,7 +203,11 @@ public class DisbursementTest {
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction();
 
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        sdkResponse = mmClient.addRequest(new DisbursementRequest()).createReversal(sdkResponse.getObjectReference());
+        
+        Transaction transaction = new Transaction();
+        transaction.setType("reversal");
+        disbursementRequest.setTransaction(transaction);
+        sdkResponse = mmClient.addRequest(disbursementRequest).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
     }

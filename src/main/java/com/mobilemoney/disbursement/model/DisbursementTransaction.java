@@ -18,7 +18,7 @@ public class DisbursementTransaction implements Serializable {
     private String batchTitle;
 
     // Description of the batch
-    private String batchdescription;
+    private String batchDescription;
 
     // Expected start time
     private String scheduledStartDate;
@@ -74,16 +74,16 @@ public class DisbursementTransaction implements Serializable {
      *
      * @return
      */
-    public String getBatchdescription() {
-        return batchdescription;
+    public String getBatchDescription() {
+        return batchDescription;
     }
 
     /***
      *
      * @param batchdescription
      */
-    public void setBatchdescription(String batchdescription) {
-        this.batchdescription = batchdescription;
+    public void setBatchDescription(String batchDescription) {
+        this.batchDescription = batchDescription;
     }
 
     public String getScheduledStartDate() {

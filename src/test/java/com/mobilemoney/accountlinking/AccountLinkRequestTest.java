@@ -54,7 +54,7 @@ class AccountLinkRequestTest {
         identifierList.add(new IdentifierData("accountid", "15523"));
 
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
-
+        
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getStatus(), "pending");
@@ -152,7 +152,10 @@ class AccountLinkRequestTest {
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
 
-        sdkResponse =  mmClient.addRequest(new PaymentRequest()).createReversal(txnRef);
+        Transaction transaction = new Transaction();
+        transaction.setType("reversal");
+        accountLinkRequest.setTransaction(transaction);
+        sdkResponse =  mmClient.addRequest(accountLinkRequest).createReversal(txnRef);
 
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());

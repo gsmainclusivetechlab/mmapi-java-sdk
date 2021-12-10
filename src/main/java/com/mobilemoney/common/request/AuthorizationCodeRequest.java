@@ -31,11 +31,12 @@ public class AuthorizationCodeRequest extends ResourceUtils {
     /***
      *
      * @param identifiers
+     * @param callBackURL
      * @param clientCorrelationId
      * @return
      * @throws MobileMoneyException
      */
-    public AsyncResponse createAuthorisationCode(Identifiers identifiers, final String clientCorrelationId) throws MobileMoneyException {
+    public AsyncResponse createAuthorisationCode(Identifiers identifiers, final String callBackURL, final String clientCorrelationId) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }

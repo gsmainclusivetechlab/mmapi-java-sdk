@@ -1,6 +1,5 @@
 package com.mobilemoney.internationaltransfer;
 
-import com.mobilemoney.common.model.AccountBalance;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
@@ -33,7 +32,7 @@ public class InternationalTransferTest {
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
                 .addCallBack(CALLBACK_URL)
                 .createQuotation();
-
+        
         assertNotNull(sdkResponse);
     }
 
@@ -88,7 +87,11 @@ public class InternationalTransferTest {
                 .createInternationalTransaction();
 
         sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        sdkResponse = mmClient.addRequest(new InternationalTransferRequest()).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
+        
+        Transaction transaction = new Transaction();
+        transaction.setType("reversal");
+        internationalTransferRequest.setTransaction(transaction);
+        sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
     }

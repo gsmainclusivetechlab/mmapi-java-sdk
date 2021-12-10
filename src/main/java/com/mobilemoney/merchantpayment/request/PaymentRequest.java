@@ -17,9 +17,6 @@ import java.util.UUID;
  * Class PaymentRequest
  */
 public class PaymentRequest extends ViewTransactionRequest {
-    // Transaction Reference
-    private Transaction transaction;
-
     // AuthorizationCodeRequest Reference
     private AuthorizationCodeRequest authorizationCodeRequest;
 
@@ -65,7 +62,7 @@ public class PaymentRequest extends ViewTransactionRequest {
      */
     public AsyncResponse createAuthorisationCode(Identifiers identifiers) throws MobileMoneyException {
         this.clientCorrelationId = UUID.randomUUID().toString();
-        return this.authorizationCodeRequest.createAuthorisationCode(identifiers, this.clientCorrelationId);
+        return this.authorizationCodeRequest.createAuthorisationCode(identifiers, this.callBackURL, this.clientCorrelationId);
     }
 
     /***

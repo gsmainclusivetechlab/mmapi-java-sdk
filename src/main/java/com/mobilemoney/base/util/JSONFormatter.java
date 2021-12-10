@@ -75,8 +75,13 @@ public final class JSONFormatter {
      * @return
      */
     public static <T> List<T> fromJSONList(String responseString, Class<T> clazz) {
+    	List<T> resultList = new ArrayList<>();
         try {
-            return new Gson().fromJson(responseString.trim(), new TypeToken<List<T>>(){}.getType());
+            List<T> objectList = new Gson().fromJson(responseString.trim(), new TypeToken<List<T>>(){}.getType());
+            for(T object : objectList) {
+                resultList.add(GSON.fromJson(GSON.toJson(object), clazz));
+            }
+            return resultList;
         } catch(Exception e) {
             return new ArrayList<>();
         }
