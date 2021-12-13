@@ -5,7 +5,6 @@ import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
 import com.mobilemoney.internationaltransfer.model.*;
 import com.mobilemoney.internationaltransfer.request.InternationalTransferRequest;
-import com.mobilemoney.merchantpayment.model.TransactionResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -60,10 +59,10 @@ public class InternationalTransferTest {
         Transaction internationalTransaction = createInternationalTransactionObject();
         internationalTransaction.setAmount("00.00");
 
-        /*List<DebitParty> debitPartyList = new ArrayList<>();
+        /*List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<CreditParty> creditPartyList = new ArrayList<>();
 
-        debitPartyList.add(new DebitParty("walletid", "1"));
+        debitPartyList.add(new AccountIdentifier("walletid", "1"));
         creditPartyList.add(new CreditParty("walletid", "1"));
 
         internationalTransaction.setCreditParty(creditPartyList);
@@ -88,9 +87,9 @@ public class InternationalTransferTest {
 
         sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         
-        Transaction transaction = new Transaction();
-        transaction.setType("reversal");
-        internationalTransferRequest.setTransaction(transaction);
+        Reversal reversal = new Reversal();
+        reversal.setType("reversal");
+        internationalTransferRequest.setReversal(reversal);
         sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
@@ -107,7 +106,7 @@ public class InternationalTransferTest {
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).createInternationalTransaction();
 
         String clientCorrelationId = internationalTransferRequest.getClientCorrelationId();
-        TransactionResponse transaction = mmClient.addRequest(internationalTransferRequest).viewResponse(clientCorrelationId, TransactionResponse.class);
+        Transaction transaction = mmClient.addRequest(internationalTransferRequest).viewResponse(clientCorrelationId, Transaction.class);
 
         assertNotNull(transaction);
     }
@@ -116,27 +115,26 @@ public class InternationalTransferTest {
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
 
-        AccountBalance accountBalance = mmClient.addRequest(new InternationalTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
+        Balance balance = mmClient.addRequest(new InternationalTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
 
-        assertNotNull(accountBalance);
+        assertNotNull(balance);
     }
 
     @Test
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithMultipleIdentifiersTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
-        identifierList.add(new IdentifierData("msisdn", "+123456789102345"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
 
-        AccountBalance accountBalance = mmClient.addRequest(new InternationalTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
+        Balance balance = mmClient.addRequest(new InternationalTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
 
-        assertNotNull(accountBalance);
+        assertNotNull(balance);
     }
 
     @Test
@@ -154,25 +152,25 @@ public class InternationalTransferTest {
      */
     private Transaction createInternationalTransactionObject() {
         Transaction transaction = new Transaction();
-        KYC senderKyc = new KYC();
-        KYCSubject kycSubject = new KYCSubject();
+        KYCInformation senderKyc = new KYCInformation();
+        Name kycSubject = new Name();
         RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-        PostalAddress postalAddress = new PostalAddress("GB");
-        Identification identification = new Identification("nationalidcard");
+        Address address = new Address("GB");
+        IdDocument idDocument = new IdDocument("nationalidcard");
         InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
 
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
-        List<Identification> identificationList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-        identification.setIdNumber("1234567");
-        identification.setIssuer("UKPA");
-        identification.setIssuerPlace("GB");
-        identification.setIssuerCountry("GB");
-        identification.setIssueDate("2018-07-03T11:43:27.405Z");
-        identification.setExpiryDate("2021-07-03T11:43:27.405Z");
-        identification.setOtherIddescription("test");
-        identificationList.add(identification);
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
         kycSubject.setTitle("Mr");
         kycSubject.setFirstName("Luke");
@@ -190,14 +188,16 @@ public class InternationalTransferTest {
         senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
         senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
         senderKyc.setIdDocument(identificationList);
-        senderKyc.setPostalAddress(postalAddress);
+        senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
         requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
         requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-        debitPartyList.add(new DebitParty("walletid", "1"));
-        creditPartyList.add(new CreditParty("msisdn", "+44012345678"));
+        //debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        //creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
+        creditPartyList.add(new AccountIdentifier("accountid", "2999"));
 
         transaction.setAmount("100.00");
         transaction.setCurrency("GBP");
@@ -215,24 +215,24 @@ public class InternationalTransferTest {
      * @return
      */
     private Quotation createQuotationObject() {
-        Identification identification = new Identification("nationalidcard");
-        PostalAddress postalAddress = new PostalAddress("GB");
-        KYCSubject kycSubject = new KYCSubject();
-        KYC senderKyc = new KYC();
+        IdDocument idDocument = new IdDocument("nationalidcard");
+        Address address = new Address("GB");
+        Name kycSubject = new Name();
+        KYCInformation senderKyc = new KYCInformation();
 
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
         List<CustomData> customDataList = new ArrayList<>();
-        List<Identification> identificationList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-        identification.setIdNumber("1234567");
-        identification.setIssuer("UKPA");
-        identification.setIssuerPlace("GB");
-        identification.setIssuerCountry("GB");
-        identification.setIssueDate("2018-07-03T11:43:27.405Z");
-        identification.setExpiryDate("2021-07-03T11:43:27.405Z");
-        identification.setOtherIddescription("test");
-        identificationList.add(identification);
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
         kycSubject.setTitle("Mr");
         kycSubject.setFirstName("Luke");
@@ -250,11 +250,11 @@ public class InternationalTransferTest {
         senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
         senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
         senderKyc.setIdDocument(identificationList);
-        senderKyc.setPostalAddress(postalAddress);
+        senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
-        debitPartyList.add(new DebitParty("accountid", "2999"));
-        creditPartyList.add(new CreditParty("accountid", "2999"));
+        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
+        creditPartyList.add(new AccountIdentifier("accountid", "2000"));
         customDataList.add(new CustomData("keytest", "keyvalue"));
 
         Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);

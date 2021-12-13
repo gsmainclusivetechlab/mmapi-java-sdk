@@ -3,11 +3,10 @@ package com.mobilemoney.p2ptransfer;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
-import com.mobilemoney.internationaltransfer.model.Identification;
-import com.mobilemoney.internationaltransfer.model.KYC;
-import com.mobilemoney.internationaltransfer.model.PostalAddress;
+import com.mobilemoney.internationaltransfer.model.IdDocument;
+import com.mobilemoney.internationaltransfer.model.KYCInformation;
+import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.Quotation;
-import com.mobilemoney.merchantpayment.model.TransactionResponse;
 import com.mobilemoney.p2ptransfer.request.P2PTransferRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,9 +66,9 @@ public class P2PTransferTest {
 
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         
-        Transaction transaction = new Transaction();
-        transaction.setType("reversal");
-        p2PTransferRequest.setTransaction(transaction);
+        Reversal reversal = new Reversal();
+        reversal.setType("reversal");
+        p2PTransferRequest.setReversal(reversal);
         sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
@@ -80,13 +79,13 @@ public class P2PTransferTest {
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         TransactionFilter filter = new TransactionFilter();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "2000"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<TransactionResponse> transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        List<Transaction> transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
     }
@@ -95,11 +94,11 @@ public class P2PTransferTest {
     @DisplayName("View account name success")
     void viewAccountNameTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("walletid", "1"));
-        AccountNameResponse accountNameResponse = mmClient.addRequest(new P2PTransferRequest()).viewAccountName(new Identifiers(identifierList));
-        assertNotNull(accountNameResponse);
+        identifierList.add(new AccountIdentifier("walletid", "1"));
+        AccountHolderName accountHolderName = mmClient.addRequest(new P2PTransferRequest()).viewAccountName(new Identifiers(identifierList));
+        assertNotNull(accountHolderName);
     }
 
     @Test
@@ -115,27 +114,27 @@ public class P2PTransferTest {
     @DisplayName("Get Account Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
 
-        AccountBalance accountBalance = mmClient.addRequest(new P2PTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
+        Balance balance = mmClient.addRequest(new P2PTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
 
-        assertNotNull(accountBalance);
+        assertNotNull(balance);
     }
 
     @Test
     @DisplayName("Get Account Balance")
     void viewAccountBalanceWithMultipleIdentifiersTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
-        identifierList.add(new IdentifierData("msisdn", "+123456789102345"));
+        //identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
 
-        AccountBalance accountBalance = mmClient.addRequest(new P2PTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
+        Balance balance = mmClient.addRequest(new P2PTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
 
-        assertNotNull(accountBalance);
+        assertNotNull(balance);
     }
 
     /***
@@ -144,25 +143,25 @@ public class P2PTransferTest {
      */
     private Transaction createP2PTransactionObject() {
         Transaction transaction = new Transaction();
-        KYC senderKyc = new KYC();
-        KYCSubject kycSubject = new KYCSubject();
+        KYCInformation senderKyc = new KYCInformation();
+        Name kycSubject = new Name();
         RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-        PostalAddress postalAddress = new PostalAddress("GB");
-        Identification identification = new Identification("nationalidcard");
+        Address address = new Address("GB");
+        IdDocument idDocument = new IdDocument("nationalidcard");
         InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
 
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
-        List<Identification> identificationList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-        identification.setIdNumber("1234567");
-        identification.setIssuer("UKPA");
-        identification.setIssuerPlace("GB");
-        identification.setIssuerCountry("GB");
-        identification.setIssueDate("2018-07-03T11:43:27.405Z");
-        identification.setExpiryDate("2021-07-03T11:43:27.405Z");
-        identification.setOtherIddescription("test");
-        identificationList.add(identification);
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
         kycSubject.setTitle("Mr");
         kycSubject.setFirstName("Luke");
@@ -180,17 +179,17 @@ public class P2PTransferTest {
         senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
         senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
         senderKyc.setIdDocument(identificationList);
-        senderKyc.setPostalAddress(postalAddress);
+        senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
         requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
         requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-        debitPartyList.add(new DebitParty("walletid", "1"));
-        creditPartyList.add(new CreditParty("msisdn", "+44012345678"));
+        debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
-        transaction.setAmount("100.00");
-        transaction.setCurrency("GBP");
+        transaction.setAmount("16.00");
+        transaction.setCurrency("USD");
         transaction.setInternationalTransferInformation(transferInformation);
         transaction.setSenderKyc(senderKyc);
         transaction.setRequestingOrganisation(requestingOrganisation);
@@ -205,24 +204,24 @@ public class P2PTransferTest {
      * @return
      */
     private Quotation createQuotationObject() {
-        Identification identification = new Identification("nationalidcard");
-        PostalAddress postalAddress = new PostalAddress("GB");
-        KYCSubject kycSubject = new KYCSubject();
-        KYC senderKyc = new KYC();
+        IdDocument idDocument = new IdDocument("nationalidcard");
+        Address address = new Address("GB");
+        Name kycSubject = new Name();
+        KYCInformation senderKyc = new KYCInformation();
 
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
         List<CustomData> customDataList = new ArrayList<>();
-        List<Identification> identificationList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-        identification.setIdNumber("1234567");
-        identification.setIssuer("UKPA");
-        identification.setIssuerPlace("GB");
-        identification.setIssuerCountry("GB");
-        identification.setIssueDate("2018-07-03T11:43:27.405Z");
-        identification.setExpiryDate("2021-07-03T11:43:27.405Z");
-        identification.setOtherIddescription("test");
-        identificationList.add(identification);
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
         kycSubject.setTitle("Mr");
         kycSubject.setFirstName("Luke");
@@ -240,14 +239,14 @@ public class P2PTransferTest {
         senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
         senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
         senderKyc.setIdDocument(identificationList);
-        senderKyc.setPostalAddress(postalAddress);
+        senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
-        debitPartyList.add(new DebitParty("accountid", "2999"));
-        creditPartyList.add(new CreditParty("accountid", "2999"));
+        debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        creditPartyList.add(new AccountIdentifier("walletid", "1"));
         customDataList.add(new CustomData("keytest", "keyvalue"));
 
-        Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);
+        Quotation quotation = new Quotation("16.00", "USD", creditPartyList, debitPartyList);
         quotation.setSubType("abc");
         quotation.setChosenDeliveryMethod("agent");
         quotation.setSendingServiceProviderCountry("AD");

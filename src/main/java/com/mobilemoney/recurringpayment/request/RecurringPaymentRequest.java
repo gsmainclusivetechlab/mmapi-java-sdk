@@ -10,11 +10,11 @@ import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Identifiers;
+import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.request.CreateTransactionRequest;
 import com.mobilemoney.common.request.ViewTransactionRequest;
 import com.mobilemoney.recurringpayment.model.DebitMandate;
-import com.mobilemoney.recurringpayment.model.DebitMandateResponse;
 
 import java.util.UUID;
 
@@ -82,7 +82,7 @@ public class RecurringPaymentRequest extends ViewTransactionRequest {
      * @return
      * @throws MobileMoneyException
      */
-    public DebitMandateResponse viewAccountDebitMandate(Identifiers identifiers, final String debitMandateReference) throws MobileMoneyException {
+    public DebitMandate viewAccountDebitMandate(Identifiers identifiers, final String debitMandateReference) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
@@ -92,7 +92,7 @@ public class RecurringPaymentRequest extends ViewTransactionRequest {
         }
 
         String resourcePath = getResourcePath(API.VIEW_DEBIT_MANDATES, identifiers).replace(Constants.DEBIT_MANDATE_REFERENCE, debitMandateReference);
-        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, DebitMandateResponse.class);
+        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, DebitMandate.class);
     }
 
     /***
@@ -142,5 +142,13 @@ public class RecurringPaymentRequest extends ViewTransactionRequest {
      */
     public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
+    }
+    
+    /***
+     * 
+     * @param reversal
+     */
+    public void setReversal(Reversal reversal) {
+    	this.reversal = reversal;
     }
 }

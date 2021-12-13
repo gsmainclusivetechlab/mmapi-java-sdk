@@ -4,10 +4,7 @@ import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.*;
-import com.mobilemoney.merchantpayment.model.TransactionResponse;
 import com.mobilemoney.recurringpayment.model.DebitMandate;
-import com.mobilemoney.recurringpayment.model.DebitMandateResponse;
-import com.mobilemoney.recurringpayment.model.Party;
 import com.mobilemoney.recurringpayment.request.RecurringPaymentRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +26,9 @@ public class RecurringPaymentTest {
     void createAccountDebitMandateTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
@@ -44,9 +41,9 @@ public class RecurringPaymentTest {
     void createAccountDebitMandateTestFailure() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateFailedObject());
 
         assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList)));
@@ -57,9 +54,9 @@ public class RecurringPaymentTest {
     void createAccountDebitMandateUsingPollingTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
@@ -67,7 +64,7 @@ public class RecurringPaymentTest {
                 .createAccountDebitMandate(new Identifiers(identifierList));
 
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        DebitMandateResponse debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
+        DebitMandate debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
                 .viewAccountDebitMandate(new Identifiers(identifierList), sdkResponse.getObjectReference());
 
         assertNotNull(debitMandateResponse);
@@ -79,7 +76,7 @@ public class RecurringPaymentTest {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
-        recurringPaymentRequest.setTransaction(getTransactionObject("200.00", "RWF"));
+        recurringPaymentRequest.setTransaction(getTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
                 .addCallBack(CALLBACK_URL)
@@ -94,7 +91,7 @@ public class RecurringPaymentTest {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
-        recurringPaymentRequest.setTransaction(getTransactionObject("00.00", "RWF"));
+        recurringPaymentRequest.setTransaction(getTransactionFailedObject());
 
         assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(recurringPaymentRequest).addCallBack(CALLBACK_URL).createMerchantTransaction());
     }
@@ -105,14 +102,14 @@ public class RecurringPaymentTest {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
-        recurringPaymentRequest.setTransaction(getTransactionObject("200.00", "RWF"));
+        recurringPaymentRequest.setTransaction(getTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
                 .setNotificationType(NotificationType.POLLING)
                 .createMerchantTransaction();
 
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        TransactionResponse transactionResponse = mmClient.addRequest(recurringPaymentRequest).viewTransaction(sdkResponse.getObjectReference());
+        Transaction transactionResponse = mmClient.addRequest(recurringPaymentRequest).viewTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(transactionResponse);
     }
@@ -122,11 +119,11 @@ public class RecurringPaymentTest {
     void createRefundTransactionTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "2999"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
@@ -135,14 +132,14 @@ public class RecurringPaymentTest {
 
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
-        debitPartyList.add(new DebitParty("accountid", "2999"));
-        creditPartyList.add(new CreditParty("mandateReference", sdkResponse.getObjectReference()));
+        debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        creditPartyList.add(new AccountIdentifier("mandateReference", sdkResponse.getObjectReference()));
 
         Transaction transaction = new Transaction();
         transaction.setDebitParty(debitPartyList);
         transaction.setCreditParty(creditPartyList);
-        transaction.setAmount("200.00");
-        transaction.setCurrency("RWF");
+        transaction.setAmount("16.00");
+        transaction.setCurrency("USD");
 
         recurringPaymentRequest = new RecurringPaymentRequest();
         recurringPaymentRequest.setTransaction(transaction);
@@ -159,7 +156,7 @@ public class RecurringPaymentTest {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
-        recurringPaymentRequest.setTransaction(getTransactionObject("200.00", "RWF"));
+        recurringPaymentRequest.setTransaction(getTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
                 .addCallBack(CALLBACK_URL)
@@ -168,9 +165,9 @@ public class RecurringPaymentTest {
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
 
-        Transaction transaction = new Transaction();
-        transaction.setType("reversal");
-        recurringPaymentRequest.setTransaction(transaction);
+        Reversal reversal = new Reversal();
+        reversal.setType("reversal");
+        recurringPaymentRequest.setReversal(reversal);
         sdkResponse =  mmClient.addRequest(recurringPaymentRequest)
                 .addCallBack(CALLBACK_URL)
                 .createReversal(txnRef);
@@ -182,13 +179,13 @@ public class RecurringPaymentTest {
     @DisplayName("Get Service Provider Balance Test Success")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
 
-        AccountBalance accountBalance = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountBalance(new Identifiers(identifierList));
+        Balance balance = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountBalance(new Identifiers(identifierList));
 
-        assertNotNull(accountBalance);
+        assertNotNull(balance);
     }
 
     @Test
@@ -196,13 +193,13 @@ public class RecurringPaymentTest {
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
         TransactionFilter filter = new TransactionFilter();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "2000"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<TransactionResponse> transactions = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        List<Transaction> transactions = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
     }
@@ -221,15 +218,15 @@ public class RecurringPaymentTest {
     void viewResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
         String clientCorrelationId = recurringPaymentRequest.getClientCorrelationId();
-        DebitMandateResponse debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
-                .viewResponse(clientCorrelationId, DebitMandateResponse.class);
+        DebitMandate debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
+                .viewResponse(clientCorrelationId, DebitMandate.class);
 
         assertNotNull(debitMandateResponse);
     }
@@ -240,16 +237,16 @@ public class RecurringPaymentTest {
      */
     private DebitMandate getAccountDebitMandateObject() {
         DebitMandate debitMandate = new DebitMandate();
-        List<Party> payee = new ArrayList<>();
+        List<AccountIdentifier> payee = new ArrayList<>();
         List<CustomData> customData = new ArrayList<>();
 
-        payee.add(new Party("accountid", "2999"));
+        payee.add(new AccountIdentifier("walletid", "1"));
         customData.add(new CustomData("keytest", "keyvalue"));
 
         debitMandate.setRequestDate("2018-07-03T10:43:27.405Z");
         debitMandate.setStartDate("2018-07-03T10:43:27.405Z");
         debitMandate.setEndDate("2028-07-03T10:43:27.405Z");
-        debitMandate.setCurrency("GBP");
+        debitMandate.setCurrency("USD");
         debitMandate.setAmountLimit("1000.00");
         debitMandate.setNumberOfPayments(2);
         debitMandate.setFrequencyType("sixmonths");
@@ -265,16 +262,16 @@ public class RecurringPaymentTest {
      */
     private DebitMandate getAccountDebitMandateFailedObject() {
         DebitMandate debitMandate = new DebitMandate();
-        List<Party> payee = new ArrayList<>();
+        List<AccountIdentifier> payee = new ArrayList<>();
         List<CustomData> customData = new ArrayList<>();
 
-        payee.add(new Party("accountid", "2999"));
+        payee.add(new AccountIdentifier("walletid", "1"));
         customData.add(new CustomData("keytest", "keyvalue"));
 
         debitMandate.setRequestDate("2018-07-03T10:43:27.405Z");
         debitMandate.setStartDate("2018-07-03T10:43:27.405Z");
         debitMandate.setEndDate("2028-07-03T10:43:27.405Z");
-        debitMandate.setCurrency("GBP");
+        debitMandate.setCurrency("USD");
         debitMandate.setAmountLimit("000.00");
         debitMandate.setNumberOfPayments(2);
         debitMandate.setFrequencyType("sixmonths");
@@ -286,23 +283,33 @@ public class RecurringPaymentTest {
 
     /***
      *
-     * @param amount
-     * @param currency
      * @return
      */
-    private Transaction getTransactionObject(String amount, String currency) {
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
+    private Transaction getTransactionObject() {
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-        debitPartyList.add(new DebitParty("accountid", "2999"));
-        creditPartyList.add(new CreditParty("accountid", "2999"));
+        debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        creditPartyList.add(new AccountIdentifier("walletid", "1"));
 
         Transaction transaction = new Transaction();
         transaction.setDebitParty(debitPartyList);
         transaction.setCreditParty(creditPartyList);
-        transaction.setAmount(amount);
-        transaction.setCurrency(currency);
+        transaction.setAmount("16.00");
+        transaction.setCurrency("USD");
 
         return transaction;
     }
+    
+    /***
+    *
+    * @return
+    */
+   private Transaction getTransactionFailedObject() {
+       Transaction transaction = new Transaction();
+       transaction.setAmount("00.00");
+       transaction.setCurrency("USD");
+
+       return transaction;
+   }
 }

@@ -10,14 +10,14 @@ public class Identifiers implements Serializable {
     private static final long serialVersionUID = 3045928371007947053L;
 
     // List of identifiers
-    private List<IdentifierData> identifiers;
+    private List<AccountIdentifier> identifiers;
 
     /***
      * Constructor with arguments
      *
      * @param identifiers
      */
-    public Identifiers(List<IdentifierData> identifiers) {
+    public Identifiers(List<AccountIdentifier> identifiers) {
         this.identifiers = identifiers;
     }
 
@@ -25,7 +25,7 @@ public class Identifiers implements Serializable {
      *
      * @return
      */
-    public List<IdentifierData> getIdentifiers() {
+    public List<AccountIdentifier> getIdentifiers() {
         return identifiers;
     }
 }

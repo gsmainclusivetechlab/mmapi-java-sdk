@@ -1,48 +1,48 @@
 package com.mobilemoney.internationaltransfer.model;
 
-import com.mobilemoney.common.model.KYCSubject;
+import com.mobilemoney.common.model.Name;
 
 import java.io.Serializable;
 import java.util.List;
 
 /***
- * Class KYC
+ * Class KYCInformation
  */
-public class KYC implements Serializable {
+public class KYCInformation implements Serializable {
     private static final long serialVersionUID = 5971130314871094354L;
 
-    // Country of birth of the KYC subject
+    // Country of birth of the KYCInformation subject
     private String birthCountry;
 
-    // Contact phone number of the KYC subject
+    // Contact phone number of the KYCInformation subject
     private String contactPhone;
 
-    // Birth date of the KYC subject
+    // Birth date of the KYCInformation subject
     private String dateOfBirth;
 
-    // Email address of the KYC subject
+    // Email address of the KYCInformation subject
     private String emailAddress;
 
-    // Employer name of the KYC subject
+    // Employer name of the KYCInformation subject
     private String employerName;
 
-    // Gender of the KYC subject
+    // Gender of the KYCInformation subject
     private String gender;
 
-    // Nationality of the KYC subject
+    // Nationality of the KYCInformation subject
     private String nationality;
 
-    // Occupation of the KYC subject
+    // Occupation of the KYCInformation subject
     private String occupation;
 
-    // Postal address of the KYC subject
-    private PostalAddress postalAddress;
+    // Postal address of the KYCInformation subject
+    private Address postalAddress;
 
-    // KYC Person
-    private KYCSubject subjectName;
+    // KYCInformation Person
+    private Name subjectName;
 
     // Properties containing the forms of identification that are associated with the subject
-    private List<Identification> idDocument;
+    private List<IdDocument> idDocument;
 
     /***
      *
@@ -176,15 +176,15 @@ public class KYC implements Serializable {
      *
      * @return
      */
-    public PostalAddress getPostalAddress() {
+    public Address getPostalAddress() {
         return postalAddress;
     }
 
     /***
      *
-     * @param postalAddress
+     * @param address
      */
-    public void setPostalAddress(PostalAddress postalAddress) {
+    public void setPostalAddress(Address postalAddress) {
         this.postalAddress = postalAddress;
     }
 
@@ -192,7 +192,7 @@ public class KYC implements Serializable {
      *
      * @return
      */
-    public KYCSubject getSubjectName() {
+    public Name getSubjectName() {
         return subjectName;
     }
 
@@ -200,7 +200,7 @@ public class KYC implements Serializable {
      *
      * @param subjectName
      */
-    public void setSubjectName(KYCSubject subjectName) {
+    public void setSubjectName(Name subjectName) {
         this.subjectName = subjectName;
     }
 
@@ -208,7 +208,7 @@ public class KYC implements Serializable {
      *
      * @return
      */
-    public List<Identification> getIdDocument() {
+    public List<IdDocument> getIdDocument() {
         return idDocument;
     }
 
@@ -216,7 +216,7 @@ public class KYC implements Serializable {
      *
      * @param idDocument
      */
-    public void setIdDocument(List<Identification> idDocument) {
+    public void setIdDocument(List<IdDocument> idDocument) {
         this.idDocument = idDocument;
     }
 }

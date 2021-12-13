@@ -3,27 +3,27 @@ package com.mobilemoney.common.model;
 import java.io.Serializable;
 
 /***
- * Class KYCSubject
+ * Class Name
  */
-public class KYCSubject implements Serializable {
+public class Name implements Serializable {
     private static final long serialVersionUID = -810970211056063834L;
 
-    // Title of the KYC subject
+    // Title of the KYCInformation subject
     private String title;
 
-    // First Name of the KYC subject
+    // First Name of the KYCInformation subject
     private String firstName;
 
-    // Middle Name of the KYC subject
+    // Middle Name of the KYCInformation subject
     private String middleName;
 
-    // Last Name of the KYC subject
+    // Last Name of the KYCInformation subject
     private String lastName;
 
-    // Full Name of the KYC subject
+    // Full Name of the KYCInformation subject
     private String fullName;
 
-    // Native Name of the KYC subject
+    // Native Name of the KYCInformation subject
     private String nativeName;
 
     /***

@@ -3,9 +3,9 @@ package com.mobilemoney.internationaltransfer.model;
 import java.io.Serializable;
 
 /***
- * Class identification
+ * Class IdDocument
  */
-public class Identification implements Serializable {
+public class IdDocument implements Serializable {
     private static final long serialVersionUID = 5539217252061435005L;
 
     // Type of identification
@@ -37,7 +37,7 @@ public class Identification implements Serializable {
      *
      * @param idType
      */
-    public Identification(final String idType) {
+    public IdDocument(final String idType) {
         this.idType = idType;
     }
 

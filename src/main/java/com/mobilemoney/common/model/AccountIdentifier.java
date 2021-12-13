@@ -3,10 +3,10 @@ package com.mobilemoney.common.model;
 import java.io.Serializable;
 
 /***
- * Class CreditParty
+ * Class AccountIdentifier
  */
-public class CreditParty implements Serializable {
-    private static final long serialVersionUID = -2851776281080790724L;
+public class AccountIdentifier implements Serializable {
+    private static final long serialVersionUID = -6178355438770692536L;
 
     // Provides the account identifier type
     private String key;
@@ -20,7 +20,7 @@ public class CreditParty implements Serializable {
      * @param key
      * @param value
      */
-    public CreditParty(final String key, final String value) {
+    public AccountIdentifier(final String key, final String value) {
         this.key = key;
         this.value = value;
     }

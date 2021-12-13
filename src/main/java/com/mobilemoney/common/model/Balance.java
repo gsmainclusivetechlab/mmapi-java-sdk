@@ -1,9 +1,9 @@
 package com.mobilemoney.common.model;
 
 /***
- * Class AccountBalance
+ * Class Balance
  */
-public final class AccountBalance {
+public final class Balance {
     // Harmonised representation of the account status
     private String accountStatus;
 

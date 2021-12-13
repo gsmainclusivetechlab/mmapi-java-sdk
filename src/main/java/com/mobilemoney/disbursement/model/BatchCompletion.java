@@ -1,14 +1,18 @@
 package com.mobilemoney.disbursement.model;
 
-import com.mobilemoney.common.model.CreditParty;
 import com.mobilemoney.common.model.CustomData;
-import com.mobilemoney.common.model.DebitParty;
+import com.mobilemoney.common.model.AccountIdentifier;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class DisbursementRejectedTransactionResponse implements Serializable {
-    private static final long serialVersionUID = -6128372005360390291L;
+/***
+ * 
+ * Class BatchCompletion
+ *
+ */
+public class BatchCompletion implements Serializable {
+    private static final long serialVersionUID = -8385778188635063959L;
 
     // Unique reference for the transaction
     private String transactionReference;
@@ -16,19 +20,19 @@ public class DisbursementRejectedTransactionResponse implements Serializable {
     // Reference provided by the requesting organisation
     private String requestingOrganisationTransactionReference;
 
-    // Reason for the transaction rejection
-    private String rejectionReason;
+    // Date and time indicating when the transaction was completed
+    private String completionDate;
 
-    // Date and time of the rejection
-    private String rejectionDate;
+    // URL to the resource
+    private String link;
 
-    // Collection of key/value pair
-    private List<CreditParty> creditParty;
+    // Collection of key/value pairs
+    private List<AccountIdentifier> creditParty;
 
-    // Collection of key/value pair
-    private List<DebitParty> debitParty;
+    // Collection of key/value pairs
+    private List<AccountIdentifier> debitParty;
 
-    // Collection of key/value pair
+    // Collection of key/value pairs
     private List<CustomData> customData;
 
     /***
@@ -67,39 +71,39 @@ public class DisbursementRejectedTransactionResponse implements Serializable {
      *
      * @return
      */
-    public String getRejectionReason() {
-        return rejectionReason;
+    public String getCompletionDate() {
+        return completionDate;
     }
 
     /***
      *
-     * @param rejectionReason
+     * @param completionDate
      */
-    public void setRejectionReason(String rejectionReason) {
-        this.rejectionReason = rejectionReason;
-    }
-
-    /***
-     *
-     * @return
-     */
-    public String getRejectionDate() {
-        return rejectionDate;
-    }
-
-    /***
-     *
-     * @param rejectionDate
-     */
-    public void setRejectionDate(String rejectionDate) {
-        this.rejectionDate = rejectionDate;
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
     }
 
     /***
      *
      * @return
      */
-    public List<CreditParty> getCreditParty() {
+    public String getLink() {
+        return link;
+    }
+
+    /***
+     *
+     * @param link
+     */
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    /***
+     *
+     * @return
+     */
+    public List<AccountIdentifier> getCreditParty() {
         return creditParty;
     }
 
@@ -107,7 +111,7 @@ public class DisbursementRejectedTransactionResponse implements Serializable {
      *
      * @param creditParty
      */
-    public void setCreditParty(List<CreditParty> creditParty) {
+    public void setCreditParty(List<AccountIdentifier> creditParty) {
         this.creditParty = creditParty;
     }
 
@@ -115,15 +119,15 @@ public class DisbursementRejectedTransactionResponse implements Serializable {
      *
      * @return
      */
-    public List<DebitParty> getDebitParty() {
+    public List<AccountIdentifier> getDebitParty() {
         return debitParty;
     }
 
     /***
      *
-     * @param debitParty
+     * @param accountIdentifier
      */
-    public void setDebitParty(List<DebitParty> debitParty) {
+    public void setDebitParty(List<AccountIdentifier> debitParty) {
         this.debitParty = debitParty;
     }
 

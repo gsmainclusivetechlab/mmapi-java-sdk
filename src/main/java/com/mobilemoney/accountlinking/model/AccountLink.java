@@ -2,7 +2,7 @@ package com.mobilemoney.accountlinking.model;
 
 import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.common.model.CustomData;
-import com.mobilemoney.common.model.DebitParty;
+import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.RequestingOrganisation;
 
 import java.io.Serializable;
@@ -15,8 +15,11 @@ import java.util.List;
 public class AccountLink implements Serializable {
     private static final long serialVersionUID = -1455607870159785699L;
 
+    // Indicates the Link reference. This enables a linked account to be uniquely identified.
+    private String linkReference;
+    
     // A collection of key/value pairs that enable the party to be identified. Keys include MSISDN and Wallet Identifier
-    private List<DebitParty> sourceAccountIdentifiers = new ArrayList<>();
+    private List<AccountIdentifier> sourceAccountIdentifiers;
 
     // Indicates the mode of operation for the Link
     private String mode;
@@ -29,6 +32,12 @@ public class AccountLink implements Serializable {
 
     // The date and time of the request as supplied by the client
     private String requestDate;
+    
+    // Date and time when the object was created by the API Provider.
+    private String creationDate;
+    
+    // ate and time when the object was modified by the API Provider.
+    private String modificationDate;
 
     // A collection of key/value pairs. These can be used to populate provider specific fields.
     private List<CustomData> customData;
@@ -37,7 +46,7 @@ public class AccountLink implements Serializable {
      *
      * @return
      */
-    public List<DebitParty> getSourceAccountIdentifiers() {
+    public List<AccountIdentifier> getSourceAccountIdentifiers() {
         return sourceAccountIdentifiers;
     }
 
@@ -45,7 +54,7 @@ public class AccountLink implements Serializable {
      *
      * @param sourceAccountIdentifiers
      */
-    public void setSourceAccountIdentifiers(List<DebitParty> sourceAccountIdentifiers) {
+    public void setSourceAccountIdentifiers(List<AccountIdentifier> sourceAccountIdentifiers) {
         this.sourceAccountIdentifiers = sourceAccountIdentifiers;
     }
 
@@ -114,6 +123,54 @@ public class AccountLink implements Serializable {
     }
 
     /***
+     * 
+     * @return
+     */
+    public String getLinkReference() {
+		return linkReference;
+	}
+
+    /***
+     * 
+     * @param linkReference
+     */
+	public void setLinkReference(String linkReference) {
+		this.linkReference = linkReference;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getCreationDate() {
+		return creationDate;
+	}
+
+	/***
+	 * 
+	 * @param creationDate
+	 */
+	public void setCreationDate(String creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getModificationDate() {
+		return modificationDate;
+	}
+
+	/***
+	 * 
+	 * @param modificationDate
+	 */
+	public void setModificationDate(String modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	/***
      *
      * @return
      */

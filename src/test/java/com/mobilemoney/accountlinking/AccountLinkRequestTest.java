@@ -1,30 +1,27 @@
 package com.mobilemoney.accountlinking;
 
 import com.mobilemoney.accountlinking.model.AccountLink;
-import com.mobilemoney.accountlinking.model.AccountLinkResponse;
 import com.mobilemoney.accountlinking.request.AccountLinkRequest;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
-import com.mobilemoney.common.model.AccountBalance;
+import com.mobilemoney.common.model.Balance;
 import com.mobilemoney.common.model.AsyncResponse;
-import com.mobilemoney.common.model.CreditParty;
 import com.mobilemoney.common.model.CustomData;
-import com.mobilemoney.common.model.DebitParty;
-import com.mobilemoney.common.model.IdentifierData;
+import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.Identifiers;
 import com.mobilemoney.common.model.InternationalTransferInformation;
-import com.mobilemoney.common.model.KYCSubject;
+import com.mobilemoney.common.model.Name;
 import com.mobilemoney.common.model.RequestingOrganisation;
+import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceStatusResponse;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
 import com.mobilemoney.config.PropertiesLoader;
-import com.mobilemoney.internationaltransfer.model.Identification;
-import com.mobilemoney.internationaltransfer.model.KYC;
-import com.mobilemoney.internationaltransfer.model.PostalAddress;
-import com.mobilemoney.merchantpayment.model.TransactionResponse;
-import com.mobilemoney.merchantpayment.request.PaymentRequest;
+import com.mobilemoney.internationaltransfer.model.IdDocument;
+import com.mobilemoney.internationaltransfer.model.KYCInformation;
+import com.mobilemoney.internationaltransfer.model.Address;
+import com.mobilemoney.merchantpayment.request.MerchantPaymentRequest;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,9 +46,9 @@ class AccountLinkRequestTest {
 
         accountLinkRequest.setAccountLink(getAccountsLinkSuccessObject());
         
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
 
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
         
@@ -70,9 +67,9 @@ class AccountLinkRequestTest {
 
         accountLinkRequest.setAccountLink(getAccountsLinkFailedObject());
         
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
         
         assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList)));
     }
@@ -93,7 +90,7 @@ class AccountLinkRequestTest {
         assertEquals(sdkResponse.getStatus(), "completed");
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
 
-        TransactionResponse transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
+        Transaction transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
 
         assertNotNull(transaction);
     }
@@ -114,7 +111,7 @@ class AccountLinkRequestTest {
         assertEquals(sdkResponse.getStatus(), "completed");
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
 
-        TransactionResponse transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
+        Transaction transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
 
         assertNotNull(transaction);
     }
@@ -134,7 +131,7 @@ class AccountLinkRequestTest {
         assertEquals(sdkResponse.getStatus(), "completed");
         assertEquals(sdkResponse.getNotificationMethod(), "polling");
         
-        TransactionResponse transactionResponse = mmClient.addRequest(accountLinkRequest).viewTransaction(sdkResponse.getObjectReference());
+        Transaction transactionResponse = mmClient.addRequest(accountLinkRequest).viewTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(transactionResponse);
     }
@@ -152,9 +149,9 @@ class AccountLinkRequestTest {
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
 
-        Transaction transaction = new Transaction();
-        transaction.setType("reversal");
-        accountLinkRequest.setTransaction(transaction);
+        Reversal reversal = new Reversal();
+        reversal.setType("reversal");
+        accountLinkRequest.setReversal(reversal);
         sdkResponse =  mmClient.addRequest(accountLinkRequest).createReversal(txnRef);
 
         assertNotNull(sdkResponse);
@@ -167,13 +164,13 @@ class AccountLinkRequestTest {
     @DisplayName("Obtain a Financial Service Provider Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
 
-        AccountBalance accountBalance = mmClient.addRequest(new AccountLinkRequest()).viewAccountBalance(new Identifiers(identifierList));
+        Balance balance = mmClient.addRequest(new AccountLinkRequest()).viewAccountBalance(new Identifiers(identifierList));
 
-        assertNotNull(accountBalance);
+        assertNotNull(balance);
     }
     
     @Test
@@ -181,13 +178,13 @@ class AccountLinkRequestTest {
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "2000"));
+        identifierList.add(new AccountIdentifier("accountid", "2000"));
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<TransactionResponse> transactions = mmClient.addRequest(new AccountLinkRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        List<Transaction> transactions = mmClient.addRequest(new AccountLinkRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
         
         assertNotNull(transactions);
     }
@@ -209,9 +206,9 @@ class AccountLinkRequestTest {
 
         accountLinkRequest.setAccountLink(getAccountsLinkSuccessObject());
         
-        List<IdentifierData> identifierList = new ArrayList<>();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new IdentifierData("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
 
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
 
@@ -220,7 +217,7 @@ class AccountLinkRequestTest {
         assertEquals(sdkResponse.getNotificationMethod(), "polling");
         
         String clientCorrelationId = accountLinkRequest.getClientCorrelationId();
-        AccountLinkResponse accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewResponse(clientCorrelationId, AccountLinkResponse.class);
+        AccountLink accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewResponse(clientCorrelationId, AccountLink.class);
 
         assertNotNull(accountLinkResponse);
     }
@@ -232,11 +229,11 @@ class AccountLinkRequestTest {
      * @return
      */
     private Transaction getTransactionObject(String amount, String currency) {
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-        debitPartyList.add(new DebitParty("accountid", "2999"));
-        creditPartyList.add(new CreditParty("accountid", "2999"));
+        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
+        creditPartyList.add(new AccountIdentifier("accountid", "2999"));
 
         Transaction transaction = new Transaction();
         transaction.setDebitParty(debitPartyList);
@@ -253,25 +250,25 @@ class AccountLinkRequestTest {
      */
     private Transaction createAccountLinkTransactionObject() {
         Transaction transaction = new Transaction();
-        KYC senderKyc = new KYC();
-        KYCSubject kycSubject = new KYCSubject();
+        KYCInformation senderKyc = new KYCInformation();
+        Name kycSubject = new Name();
         RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-        PostalAddress postalAddress = new PostalAddress("GB");
-        Identification identification = new Identification("nationalidcard");
+        Address address = new Address("GB");
+        IdDocument idDocument = new IdDocument("nationalidcard");
         InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
 
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
-        List<Identification> identificationList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-        identification.setIdNumber("1234567");
-        identification.setIssuer("UKPA");
-        identification.setIssuerPlace("GB");
-        identification.setIssuerCountry("GB");
-        identification.setIssueDate("2018-07-03T11:43:27.405Z");
-        identification.setExpiryDate("2021-07-03T11:43:27.405Z");
-        identification.setOtherIddescription("test");
-        identificationList.add(identification);
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
         kycSubject.setTitle("Mr");
         kycSubject.setFirstName("Luke");
@@ -289,14 +286,14 @@ class AccountLinkRequestTest {
         senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
         senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
         senderKyc.setIdDocument(identificationList);
-        senderKyc.setPostalAddress(postalAddress);
+        senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
         requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
         requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-        debitPartyList.add(new DebitParty("walletid", "1"));
-        creditPartyList.add(new CreditParty("msisdn", "+44012345678"));
+        debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
         transaction.setAmount("100.00");
         transaction.setCurrency("GBP");
@@ -315,25 +312,25 @@ class AccountLinkRequestTest {
      */
     private Transaction createAccountLinkTransactionFailedObject() {
         Transaction transaction = new Transaction();
-        KYC senderKyc = new KYC();
-        KYCSubject kycSubject = new KYCSubject();
+        KYCInformation senderKyc = new KYCInformation();
+        Name kycSubject = new Name();
         RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-        PostalAddress postalAddress = new PostalAddress("GB");
-        Identification identification = new Identification("nationalidcard");
+        Address address = new Address("GB");
+        IdDocument idDocument = new IdDocument("nationalidcard");
         InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
 
-        List<DebitParty> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
-        List<Identification> identificationList = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-        identification.setIdNumber("1234567");
-        identification.setIssuer("UKPA");
-        identification.setIssuerPlace("GB");
-        identification.setIssuerCountry("GB");
-        identification.setIssueDate("2018-07-03T11:43:27.405Z");
-        identification.setExpiryDate("2021-07-03T11:43:27.405Z");
-        identification.setOtherIddescription("test");
-        identificationList.add(identification);
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
         kycSubject.setTitle("Mr");
         kycSubject.setFirstName("Luke");
@@ -351,14 +348,14 @@ class AccountLinkRequestTest {
         senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
         senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
         senderKyc.setIdDocument(identificationList);
-        senderKyc.setPostalAddress(postalAddress);
+        senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
         requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
         requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-        debitPartyList.add(new DebitParty("walletid", "1"));
-        creditPartyList.add(new CreditParty("msisdn", "+44012345678"));
+        debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
         transaction.setAmount("0.00");
         transaction.setCurrency("GBP");
@@ -376,11 +373,11 @@ class AccountLinkRequestTest {
      * @return
      */
     private AccountLink getAccountsLinkSuccessObject() {
-        List<DebitParty> sourceAccountIdentifiers = new ArrayList<>();
+        List<AccountIdentifier> sourceAccountIdentifiers = new ArrayList<>();
         RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
         List<CustomData> customDataList = new ArrayList<>();
         
-        sourceAccountIdentifiers.add(new DebitParty("accountid", "2999"));
+        sourceAccountIdentifiers.add(new AccountIdentifier("accountid", "2999"));
 
         customDataList.add(new CustomData("keytest", "keyvalue"));
         

@@ -12,6 +12,12 @@ import java.util.List;
 public class Quotation implements Serializable {
     private static final long serialVersionUID = -7376752766319193673L;
 
+    // Reference for the quotation
+    private String quotationReference;
+    
+    // Creation state of the Quotation
+    private String quotationStatus;
+    
     // Transaction Type
     private String type;
 
@@ -23,6 +29,9 @@ public class Quotation implements Serializable {
 
     // Currency of the requested quotation amount
     private String requestCurrency;
+
+    // Delivery Method that is possible for the intended recipient
+    private String availableDeliveryMethod;
 
     // Delivery method chosen by the sending end user
     private String chosenDeliveryMethod;
@@ -36,18 +45,33 @@ public class Quotation implements Serializable {
     // Country of the sending service provider
     private String sendingServiceProviderCountry;
 
+    // Reason for blocking the quotation
+    private String recipientBlockingReason;
+
+    // Reason for blocking the quotation
+    private String senderBlockingReason;
+    
     // Date and time of the request as supplied by the client
     private String requestDate;
+    
+    // Date and time when the object was created
+    private String creationDate;
 
-    // Recipient KYC details
-    private KYC recipientKyc;
+    // Date and time when the object was modified
+    private String modificationDate;
 
-    // Sender KYC details
-    private KYC senderKyc;
+    // Recipient KYCInformation details
+    private KYCInformation recipientKyc;
+
+    // Sender KYCInformation details
+    private KYCInformation senderKyc;
 
     // Details the originating organisation of the request
     private RequestingOrganisation requestingOrganisation;
 
+    // Collection of quotes
+    private List<Quote> quotes;
+    
     // Collection of key/value pairs
     private List<CustomData> customData;
 
@@ -55,10 +79,10 @@ public class Quotation implements Serializable {
     private List<MetaData> metadata;
 
     // Collection of key/value pairs
-    private List<CreditParty> creditParty;
+    private List<AccountIdentifier> creditParty;
 
     // Collection of key/value pairs
-    private List<DebitParty> debitParty;
+    private List<AccountIdentifier> debitParty;
 
     /***
      * Constructor with arguments
@@ -66,9 +90,9 @@ public class Quotation implements Serializable {
      * @param requestAmount
      * @param requestCurrency
      * @param creditParty
-     * @param debitParty
+     * @param accountIdentifier
      */
-    public Quotation(final String requestAmount, final String requestCurrency, final List<CreditParty> creditParty, final List<DebitParty> debitParty) {
+    public Quotation(final String requestAmount, final String requestCurrency, final List<AccountIdentifier> creditParty, final List<AccountIdentifier> debitParty) {
         this.requestAmount = requestAmount;
         this.requestCurrency = requestCurrency;
         this.creditParty = creditParty;
@@ -204,10 +228,138 @@ public class Quotation implements Serializable {
     }
 
     /***
+     * 
+     * @return
+     */
+    public String getQuotationReference() {
+		return quotationReference;
+	}
+
+    /***
+     * 
+     * @param quotationReference
+     */
+	public void setQuotationReference(String quotationReference) {
+		this.quotationReference = quotationReference;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getQuotationStatus() {
+		return quotationStatus;
+	}
+
+	/***
+	 * 
+	 * @param quotationStatus
+	 */
+	public void setQuotationStatus(String quotationStatus) {
+		this.quotationStatus = quotationStatus;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getAvailableDeliveryMethod() {
+		return availableDeliveryMethod;
+	}
+
+	/***
+	 * 
+	 * @param availableDeliveryMethod
+	 */
+	public void setAvailableDeliveryMethod(String availableDeliveryMethod) {
+		this.availableDeliveryMethod = availableDeliveryMethod;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getRecipientBlockingReason() {
+		return recipientBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @param recipientBlockingReason
+	 */
+	public void setRecipientBlockingReason(String recipientBlockingReason) {
+		this.recipientBlockingReason = recipientBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getSenderBlockingReason() {
+		return senderBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @param senderBlockingReason
+	 */
+	public void setSenderBlockingReason(String senderBlockingReason) {
+		this.senderBlockingReason = senderBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getCreationDate() {
+		return creationDate;
+	}
+
+	/***
+	 * 
+	 * @param creationDate
+	 */
+	public void setCreationDate(String creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getModificationDate() {
+		return modificationDate;
+	}
+
+	/***
+	 * 
+	 * @param modificationDate
+	 */
+	public void setModificationDate(String modificationDate) {
+		this.modificationDate = modificationDate;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public List<Quote> getQuotes() {
+		return quotes;
+	}
+
+	/***
+	 * 
+	 * @param quotes
+	 */
+	public void setQuotes(List<Quote> quotes) {
+		this.quotes = quotes;
+	}
+
+	/***
      *
      * @return
      */
-    public List<CreditParty> getCreditParty() {
+    public List<AccountIdentifier> getCreditParty() {
         return creditParty;
     }
 
@@ -215,7 +367,7 @@ public class Quotation implements Serializable {
      *
      * @return
      */
-    public List<DebitParty> getDebitParty() {
+    public List<AccountIdentifier> getDebitParty() {
         return debitParty;
     }
 
@@ -223,7 +375,7 @@ public class Quotation implements Serializable {
      *
      * @return
      */
-    public KYC getRecipientKyc() {
+    public KYCInformation getRecipientKyc() {
         return recipientKyc;
     }
 
@@ -231,7 +383,7 @@ public class Quotation implements Serializable {
      *
      * @param recipientKyc
      */
-    public void setRecipientKyc(KYC recipientKyc) {
+    public void setRecipientKyc(KYCInformation recipientKyc) {
         this.recipientKyc = recipientKyc;
     }
 
@@ -239,7 +391,7 @@ public class Quotation implements Serializable {
      *
      * @return
      */
-    public KYC getSenderKyc() {
+    public KYCInformation getSenderKyc() {
         return senderKyc;
     }
 
@@ -247,7 +399,7 @@ public class Quotation implements Serializable {
      *
      * @param senderKyc
      */
-    public void setSenderKyc(KYC senderKyc) {
+    public void setSenderKyc(KYCInformation senderKyc) {
         this.senderKyc = senderKyc;
     }
 

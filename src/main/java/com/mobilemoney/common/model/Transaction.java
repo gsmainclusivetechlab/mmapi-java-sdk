@@ -1,7 +1,7 @@
 package com.mobilemoney.common.model;
 
 import com.mobilemoney.base.util.JSONFormatter;
-import com.mobilemoney.internationaltransfer.model.KYC;
+import com.mobilemoney.internationaltransfer.model.KYCInformation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,6 +45,21 @@ public class Transaction implements Serializable {
 
     // The date and time of the request as supplied by the client
     private String requestDate;
+    
+    // Unique reference for the transaction
+    private String transactionReference;
+
+    // Status of the transaction
+    private String transactionStatus;
+
+    // Transaction receipt number
+    private String transactionReceipt;
+
+    // Date and time when the object was created
+    private String creationDate;
+
+    // Date and time when the object was modified
+    private String modificationDate;
 
     // An object that details the originating organisation of the request
     private RequestingOrganisation requestingOrganisation;
@@ -52,17 +67,17 @@ public class Transaction implements Serializable {
     // Information specifically used for international transfers
     private InternationalTransferInformation internationalTransferInformation;
 
-    // Recipient KYC details
-    private KYC recipientKyc;
+    // Recipient KYCInformation details
+    private KYCInformation recipientKyc;
 
-    // Sender KYC details
-    private KYC senderKyc;
-
-    // A collection of key/value pairs that enable the party to be identified
-    private List<DebitParty> debitParty = new ArrayList<>();
+    // Sender KYCInformation details
+    private KYCInformation senderKyc;
 
     // A collection of key/value pairs that enable the party to be identified
-    private List<CreditParty> creditParty = new ArrayList<>();
+    private List<AccountIdentifier> debitParty = new ArrayList<>();
+
+    // A collection of key/value pairs that enable the party to be identified
+    private List<AccountIdentifier> creditParty = new ArrayList<>();
 
     // All fees that are applicable to the object
     private List<Fees> fees = new ArrayList<>();
@@ -242,6 +257,86 @@ public class Transaction implements Serializable {
     }
 
     /***
+    *
+    * @return
+    */
+   public String getTransactionReference() {
+       return transactionReference;
+   }
+
+   /***
+    *
+    * @param transactionReference
+    */
+   public void setTransactionReference(String transactionReference) {
+       this.transactionReference = transactionReference;
+   }
+
+   /***
+    *
+    * @return
+    */
+   public String getTransactionStatus() {
+       return transactionStatus;
+   }
+
+   /***
+    *
+    * @param transactionStatus
+    */
+   public void setTransactionStatus(String transactionStatus) {
+       this.transactionStatus = transactionStatus;
+   }
+
+   /***
+    *
+    * @return
+    */
+   public String getTransactionReceipt() {
+       return transactionReceipt;
+   }
+
+   /***
+    *
+    * @param transactionReceipt
+    */
+   public void setTransactionReceipt(String transactionReceipt) {
+       this.transactionReceipt = transactionReceipt;
+   }
+
+   /***
+    *
+    * @return
+    */
+   public String getCreationDate() {
+       return creationDate;
+   }
+
+   /***
+    *
+    * @param creationDate
+    */
+   public void setCreationDate(String creationDate) {
+       this.creationDate = creationDate;
+   }
+
+   /***
+    *
+    * @return
+    */
+   public String getModificationDate() {
+       return modificationDate;
+   }
+
+   /***
+    *
+    * @param modificationDate
+    */
+   public void setModificationDate(String modificationDate) {
+       this.modificationDate = modificationDate;
+   }
+    
+    /***
      *
      * @param requestDate
      */
@@ -269,7 +364,7 @@ public class Transaction implements Serializable {
      *
      * @return
      */
-    public KYC getRecipientKyc() {
+    public KYCInformation getRecipientKyc() {
         return recipientKyc;
     }
 
@@ -277,7 +372,7 @@ public class Transaction implements Serializable {
      *
      * @param recipientKyc
      */
-    public void setRecipientKyc(KYC recipientKyc) {
+    public void setRecipientKyc(KYCInformation recipientKyc) {
         this.recipientKyc = recipientKyc;
     }
 
@@ -285,7 +380,7 @@ public class Transaction implements Serializable {
      *
      * @return
      */
-    public KYC getSenderKyc() {
+    public KYCInformation getSenderKyc() {
         return senderKyc;
     }
 
@@ -293,7 +388,7 @@ public class Transaction implements Serializable {
      *
      * @param senderKyc
      */
-    public void setSenderKyc(KYC senderKyc) {
+    public void setSenderKyc(KYCInformation senderKyc) {
         this.senderKyc = senderKyc;
     }
 
@@ -317,15 +412,15 @@ public class Transaction implements Serializable {
      *
      * @return
      */
-    public List<DebitParty> getDebitParty() {
+    public List<AccountIdentifier> getDebitParty() {
         return debitParty;
     }
 
     /***
      *
-     * @param debitParty
+     * @param accountIdentifier
      */
-    public void setDebitParty(List<DebitParty> debitParty) {
+    public void setDebitParty(List<AccountIdentifier> debitParty) {
         this.debitParty = debitParty;
     }
 
@@ -333,7 +428,7 @@ public class Transaction implements Serializable {
      *
      * @return
      */
-    public List<CreditParty> getCreditParty() {
+    public List<AccountIdentifier> getCreditParty() {
         return creditParty;
     }
 
@@ -341,7 +436,7 @@ public class Transaction implements Serializable {
      *
      * @param creditParty
      */
-    public void setCreditParty(List<CreditParty> creditParty) {
+    public void setCreditParty(List<AccountIdentifier> creditParty) {
         this.creditParty = creditParty;
     }
 

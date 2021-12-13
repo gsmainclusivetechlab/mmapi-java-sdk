@@ -3,9 +3,9 @@ package com.mobilemoney.internationaltransfer.model;
 import java.io.Serializable;
 
 /***
- * Class PostalAddress
+ * Class Address
  */
-public class PostalAddress implements Serializable {
+public class Address implements Serializable {
     private static final long serialVersionUID = 4720501534498888977L;
 
     // First line of the address
@@ -34,7 +34,7 @@ public class PostalAddress implements Serializable {
      *
      * @param country
      */
-    public PostalAddress(final String country) {
+    public Address(final String country) {
         this.country = country;
     }
 

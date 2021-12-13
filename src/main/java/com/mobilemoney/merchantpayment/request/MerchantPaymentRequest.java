@@ -1,11 +1,11 @@
 package com.mobilemoney.merchantpayment.request;
 
-import com.mobilemoney.common.model.AuthorisationCodeRequest;
-import com.mobilemoney.common.model.AuthorisationCodeResponse;
+import com.mobilemoney.common.model.AuthorisationCode;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Identifiers;
+import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.request.AuthorizationCodeRequest;
 import com.mobilemoney.common.request.CreateTransactionRequest;
@@ -14,9 +14,12 @@ import com.mobilemoney.common.request.ViewTransactionRequest;
 import java.util.UUID;
 
 /***
- * Class PaymentRequest
+ * Class MerchantPaymentRequest
  */
-public class PaymentRequest extends ViewTransactionRequest {
+public class MerchantPaymentRequest extends ViewTransactionRequest {
+	// Transaction Reference
+	private Transaction transaction;
+	
     // AuthorizationCodeRequest Reference
     private AuthorizationCodeRequest authorizationCodeRequest;
 
@@ -27,7 +30,7 @@ public class PaymentRequest extends ViewTransactionRequest {
      * Default constructor
      *
      */
-    public PaymentRequest() {
+    public MerchantPaymentRequest() {
         this.authorizationCodeRequest = new AuthorizationCodeRequest();
         this.createTransactionRequest = new CreateTransactionRequest();
     }
@@ -72,7 +75,7 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @return
      * @throws MobileMoneyException
      */
-    public AuthorisationCodeResponse viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
+    public AuthorisationCode viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
         return this.authorizationCodeRequest.viewAuthorisationCode(identifiers, authorisationCode);
     }
 
@@ -82,7 +85,7 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @param callBackURL
      * @return
      */
-    public PaymentRequest addCallBack(final String callBackURL) {
+    public MerchantPaymentRequest addCallBack(final String callBackURL) {
         this.callBackURL = callBackURL;
         return this;
     }
@@ -93,7 +96,7 @@ public class PaymentRequest extends ViewTransactionRequest {
      * @param notificationType
      * @return
      */
-    public PaymentRequest setNotificationType(final NotificationType notificationType) {
+    public MerchantPaymentRequest setNotificationType(final NotificationType notificationType) {
         this.notificationType = notificationType;
         return this;
     }
@@ -107,11 +110,19 @@ public class PaymentRequest extends ViewTransactionRequest {
     }
 
     /***
-     *
-     * @param authorisationCodeRequest
+     * 
+     * @param reversal
      */
-    public void setAuthorisationCodeRequest(AuthorisationCodeRequest authorisationCodeRequest) {
-        this.authorizationCodeRequest.setAuthorisationCodeRequest(authorisationCodeRequest);
+    public void setReversal(Reversal reversal) {
+    	this.reversal = reversal;
+    }
+    
+    /***
+     *
+     * @param authorisationCode
+     */
+    public void setAuthorisationCodeRequest(AuthorisationCode authorisationCode) {
+        this.authorizationCodeRequest.setAuthorisationCodeRequest(authorisationCode);
     }
 
     /***

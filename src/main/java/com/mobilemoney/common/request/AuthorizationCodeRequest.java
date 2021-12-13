@@ -2,9 +2,8 @@ package com.mobilemoney.common.request;
 
 import com.mobilemoney.base.model.HttpErrorResponse;
 import com.mobilemoney.base.util.StringUtils;
-import com.mobilemoney.common.model.AccountNameResponse;
-import com.mobilemoney.common.model.AuthorisationCodeRequest;
-import com.mobilemoney.common.model.AuthorisationCodeResponse;
+import com.mobilemoney.common.model.AccountHolderName;
+import com.mobilemoney.common.model.AuthorisationCode;
 import com.mobilemoney.base.constants.API;
 import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
@@ -20,7 +19,7 @@ import com.mobilemoney.common.model.Identifiers;
  */
 public class AuthorizationCodeRequest extends ResourceUtils {
     // Instance
-    public AuthorisationCodeRequest authorisationCodeRequest;
+    public AuthorisationCode authorisationCode;
 
     // Call back URL
     private String callBackURL;
@@ -41,14 +40,14 @@ public class AuthorizationCodeRequest extends ResourceUtils {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
 
-        if (authorisationCodeRequest == null) {
+        if (authorisationCode == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.AUTH_CODE_OBJECT_INIT_ERROR).build());
         }
 
         String resourcePath = getResourcePath(API.ACCOUNT_AUTHORISATION_CODE, identifiers);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, clientCorrelationId);
 
-        return createRequest(HttpMethod.POST, resourcePath, this.authorisationCodeRequest.toJSON(), notificationType, callBackURL, AsyncResponse.class);
+        return createRequest(HttpMethod.POST, resourcePath, this.authorisationCode.toJSON(), notificationType, callBackURL, AsyncResponse.class);
     }
 
     /***
@@ -58,7 +57,7 @@ public class AuthorizationCodeRequest extends ResourceUtils {
      * @return
      * @throws MobileMoneyException
      */
-    public AuthorisationCodeResponse viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
+    public AuthorisationCode viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
@@ -69,7 +68,7 @@ public class AuthorizationCodeRequest extends ResourceUtils {
 
         String resourcePath = getResourcePath(API.VIEW_ACCOUNT_AUTHORISATION_CODE, identifiers).replace(Constants.AUTHORISATION_CODE, authorisationCode);
 
-        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, AuthorisationCodeResponse.class);
+        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, AuthorisationCode.class);
     }
 
     /***
@@ -79,19 +78,19 @@ public class AuthorizationCodeRequest extends ResourceUtils {
      * @return
      * @throws MobileMoneyException
      */
-    public AccountNameResponse viewAccountName(Identifiers identifiers) throws MobileMoneyException {
+    public AccountHolderName viewAccountName(Identifiers identifiers) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
         
-        return createRequest(HttpMethod.GET, getResourcePath(API.VIEW_ACCOUNT_NAME, identifiers), AccountNameResponse.class);
+        return createRequest(HttpMethod.GET, getResourcePath(API.VIEW_ACCOUNT_NAME, identifiers), AccountHolderName.class);
     }
 
     /***
      *
-     * @param authorisationCodeRequest
+     * @param authorisationCode
      */
-    public void setAuthorisationCodeRequest(AuthorisationCodeRequest authorisationCodeRequest) {
-        this.authorisationCodeRequest = authorisationCodeRequest;
+    public void setAuthorisationCodeRequest(AuthorisationCode authorisationCode) {
+        this.authorisationCode = authorisationCode;
     }
 }
