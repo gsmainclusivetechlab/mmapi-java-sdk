@@ -21,7 +21,7 @@ public class PropertiesLoader {
      * Constructor for loading properties file
      */
     public PropertiesLoader() {
-        try (InputStream input = new FileInputStream("config.properties")) {
+        try (InputStream input = new FileInputStream("src/test/resources/config.properties")) {
         	this.properties = new Properties();
         	this.properties.load(input);
         } catch (IOException io) {

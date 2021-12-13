@@ -3,11 +3,14 @@ package com.mobilemoney.merchantpayment;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.mobilemoney.common.model.Balance;
+import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.common.model.AuthorisationCode;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
 import com.mobilemoney.merchantpayment.request.MerchantPaymentRequest;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,15 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MerchantPaymentTest {
-    private static final String CONSUMER_KEY = "59vthmq3f6i15v6jmcjskfkmh";
-    private static final String CONSUMER_SECRET = "ef8tl4gihlpfd7r8jpc1t1nda33q5kcnn32cj375lq6mg2nv7rb";
-    private static final String API_KEY = "oVN89kXyTx1cKT3ZohH7h6foEmQmjqQm3OK2U8Ue";
-    private static final String CALLBACK_URL = "https://0b11de7c-a436-4932-a947-aec37cb63408.mock.pstmn.io/mobilemoneymock/cb/transaction/type/merchantpay";
+	private static PropertiesLoader loader;
 
+    @BeforeAll
+    public static void init(){
+        loader = new PropertiesLoader();
+    }
+    
     @Test
     @DisplayName("Create Merchant Transaction Test Success")
     void createMerchantTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
@@ -36,7 +41,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Create Merchant Transaction Test Failure")
     void createMerchantTransactionTestFailure() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionFailedObject());
@@ -47,7 +52,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Obtain an Authorisation Code Success Test")
     void createAuthorisationCodeTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
         AuthorisationCode authorisationCode = new AuthorisationCode();
         List<AccountIdentifier> identifierList = new ArrayList<>();
@@ -61,7 +66,7 @@ public class MerchantPaymentTest {
         merchantPaymentRequest.setAuthorisationCodeRequest(authorisationCode);
 
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createAuthorisationCode(new Identifiers(identifierList));
         
         assertNotNull(sdkResponse);
@@ -70,7 +75,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Payment with authorisation code success")
     void createMerchantTransactionWithAuthorisationCodeSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
         AuthorisationCode authorisationCode = new AuthorisationCode();
         TransactionFilter filter = new TransactionFilter();
@@ -102,7 +107,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Get Status of a Specific Transaction")
     void viewRequestStateTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
@@ -116,7 +121,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Get Details of a Specific Transaction")
     void viewTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
@@ -133,11 +138,11 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Transaction Refund")
     void createRefundTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(CALLBACK_URL).createRefundTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createRefundTransaction();
         
         assertNotNull(sdkResponse);
     }
@@ -145,7 +150,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Transaction Reversal")
     void createReversalTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
@@ -157,7 +162,7 @@ public class MerchantPaymentTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         merchantPaymentRequest.setReversal(reversal);
-        sdkResponse =  mmClient.addRequest(merchantPaymentRequest).addCallBack(CALLBACK_URL).createReversal(txnRef);
+        sdkResponse =  mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(txnRef);
         
         assertNotNull(sdkResponse);
     }
@@ -165,7 +170,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Retrieve Merchant Payments")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -181,7 +186,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new MerchantPaymentRequest()).viewServiceAvailability();
 
         assertNotNull(serviceStatusResponse);
@@ -190,7 +195,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Retrieve Missing API Response")
     void viewResponseTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
@@ -205,7 +210,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -218,7 +223,7 @@ public class MerchantPaymentTest {
     @Test
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithMultipleIdentifiersTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));

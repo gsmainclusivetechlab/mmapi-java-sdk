@@ -4,27 +4,33 @@ import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.*;
+import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.recurringpayment.model.DebitMandate;
 import com.mobilemoney.recurringpayment.request.RecurringPaymentRequest;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RecurringPaymentTest {
-    private static final String CONSUMER_KEY = "59vthmq3f6i15v6jmcjskfkmh";
-    private static final String CONSUMER_SECRET = "ef8tl4gihlpfd7r8jpc1t1nda33q5kcnn32cj375lq6mg2nv7rb";
-    private static final String API_KEY = "oVN89kXyTx1cKT3ZohH7h6foEmQmjqQm3OK2U8Ue";
-    private static final String CALLBACK_URL = "https://0b11de7c-a436-4932-a947-aec37cb63408.mock.pstmn.io/mobilemoneymock/cb/transaction/type/merchantpay";
+	private static PropertiesLoader loader;
 
+    @BeforeAll
+    public static void init(){
+        loader = new PropertiesLoader();
+    }
+    
     @Test
     @DisplayName("Setup Recurring Payment Test Success")
     void createAccountDebitMandateTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -39,7 +45,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Setup Recurring Payment Test Failure")
     void createAccountDebitMandateTestFailure() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -52,7 +58,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Setup Recurring Payment Using Polling Test Success")
     void createAccountDebitMandateUsingPollingTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -62,7 +68,7 @@ public class RecurringPaymentTest {
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
                 .setNotificationType(NotificationType.POLLING)
                 .createAccountDebitMandate(new Identifiers(identifierList));
-
+        
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         DebitMandate debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
                 .viewAccountDebitMandate(new Identifiers(identifierList), sdkResponse.getObjectReference());
@@ -73,13 +79,13 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Take Recurring Payment Test Success")
     void createMerchantTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
         recurringPaymentRequest.setTransaction(getTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createMerchantTransaction();
 
         assertNotNull(sdkResponse);
@@ -88,18 +94,18 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Take Recurring Payment Test Failure")
     void createMerchantTransactionTestFailure() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
         recurringPaymentRequest.setTransaction(getTransactionFailedObject());
 
-        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(recurringPaymentRequest).addCallBack(CALLBACK_URL).createMerchantTransaction());
+        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(recurringPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createMerchantTransaction());
     }
 
     @Test
     @DisplayName("Take Recurring Payment Using Polling Test Success")
     void createMerchantTransactionUsingPollingTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
         recurringPaymentRequest.setTransaction(getTransactionObject());
@@ -117,7 +123,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Recurring Payment Refund Test Success")
     void createRefundTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
@@ -144,7 +150,7 @@ public class RecurringPaymentTest {
         recurringPaymentRequest = new RecurringPaymentRequest();
         recurringPaymentRequest.setTransaction(transaction);
         sdkResponse = mmClient.addRequest(recurringPaymentRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createRefundTransaction();
 
         assertNotNull(sdkResponse);
@@ -153,13 +159,13 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Recurring Payment Reversal Test Success")
     void createReversalTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
         recurringPaymentRequest.setTransaction(getTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createMerchantTransaction();
 
         sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
@@ -169,7 +175,7 @@ public class RecurringPaymentTest {
         reversal.setType("reversal");
         recurringPaymentRequest.setReversal(reversal);
         sdkResponse =  mmClient.addRequest(recurringPaymentRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createReversal(txnRef);
 
         assertNotNull(sdkResponse);
@@ -178,7 +184,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Get Service Provider Balance Test Success")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -191,7 +197,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Retrieve Payments Test Success")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -207,7 +213,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Check Service Availability Test Success")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new RecurringPaymentRequest()).viewServiceAvailability();
 
         assertNotNull(serviceStatusResponse);
@@ -216,7 +222,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Retrieve Missing API Response")
     void viewResponseTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY).addCallBackUrl(CALLBACK_URL);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 

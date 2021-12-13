@@ -3,11 +3,14 @@ package com.mobilemoney.p2ptransfer;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
+import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
 import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.Quotation;
 import com.mobilemoney.p2ptransfer.request.P2PTransferRequest;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,21 +20,23 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class P2PTransferTest {
-    private static final String CONSUMER_KEY = "59vthmq3f6i15v6jmcjskfkmh";
-    private static final String CONSUMER_SECRET = "ef8tl4gihlpfd7r8jpc1t1nda33q5kcnn32cj375lq6mg2nv7rb";
-    private static final String API_KEY = "oVN89kXyTx1cKT3ZohH7h6foEmQmjqQm3OK2U8Ue";
-    private static final String CALLBACK_URL = "https://0b11de7c-a436-4932-a947-aec37cb63408.mock.pstmn.io/mobilemoneymock/cb/transaction/type/merchantpay";
+	private static PropertiesLoader loader;
 
+    @BeforeAll
+    public static void init(){
+        loader = new PropertiesLoader();
+    }
+    
     @Test
     @DisplayName("Request a P2P Transfer Quotation Success")
     void p2pTransferQuotationRequestTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 
         p2PTransferRequest.setQuotation(createQuotationObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createQuotation();
         
         assertNotNull(sdkResponse);
@@ -40,13 +45,13 @@ public class P2PTransferTest {
     @Test
     @DisplayName("Initiate P2P Transfer Success")
     void initiateP2PTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 
         p2PTransferRequest.setTransaction(createP2PTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createTransferTransaction();
 
         assertNotNull(sdkResponse);
@@ -55,13 +60,13 @@ public class P2PTransferTest {
     @Test
     @DisplayName("P2P Transfer Reversal Success")
     void p2pTransferReversal() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 
         p2PTransferRequest.setTransaction(createP2PTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
@@ -69,7 +74,7 @@ public class P2PTransferTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         p2PTransferRequest.setReversal(reversal);
-        sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
+        sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
     }
@@ -77,7 +82,7 @@ public class P2PTransferTest {
     @Test
     @DisplayName("Retrieve Merchant Payments")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -93,7 +98,7 @@ public class P2PTransferTest {
     @Test
     @DisplayName("View account name success")
     void viewAccountNameTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -104,7 +109,7 @@ public class P2PTransferTest {
     @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new P2PTransferRequest()).viewServiceAvailability();
 
         assertNotNull(serviceStatusResponse);
@@ -113,7 +118,7 @@ public class P2PTransferTest {
     @Test
     @DisplayName("Get Account Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -126,7 +131,7 @@ public class P2PTransferTest {
     @Test
     @DisplayName("Get Account Balance")
     void viewAccountBalanceWithMultipleIdentifiersTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         //identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));

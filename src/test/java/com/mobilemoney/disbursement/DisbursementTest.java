@@ -4,10 +4,13 @@ import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.*;
+import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.disbursement.model.BatchCompletion;
 import com.mobilemoney.disbursement.model.BatchRejection;
 import com.mobilemoney.disbursement.model.BatchTransaction;
 import com.mobilemoney.disbursement.request.DisbursementRequest;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,19 +21,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DisbursementTest {
-    private static final String CONSUMER_KEY = "59vthmq3f6i15v6jmcjskfkmh";
-    private static final String CONSUMER_SECRET = "ef8tl4gihlpfd7r8jpc1t1nda33q5kcnn32cj375lq6mg2nv7rb";
-    private static final String API_KEY = "oVN89kXyTx1cKT3ZohH7h6foEmQmjqQm3OK2U8Ue";
-    private static final String CALLBACK_URL = "https://0b11de7c-a436-4932-a947-aec37cb63408.mock.pstmn.io/mobilemoneymock/cb/transaction/type/merchantpay";
+	private static PropertiesLoader loader;
 
+    @BeforeAll
+    public static void init(){
+        loader = new PropertiesLoader();
+    }
+	
     @Test
     @DisplayName("Individual Disbursement Test Success")
     void createDisbursementTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
         disbursementRequest.setTransaction(getTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
         
         assertNotNull(sdkResponse);
     }
@@ -38,18 +43,18 @@ public class DisbursementTest {
     @Test
     @DisplayName("Individual Disbursement Test Failure")
     void createDisbursementTransactionTestFailure() {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
         disbursementRequest.setTransaction(getTransactionFailedObject());
 
-        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction());
+        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction());
     }
 
     @Test
     @DisplayName("Bulk Disbursement Test Success")
     void createBatchTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
         List<Transaction> transactions = new ArrayList<>();
@@ -60,7 +65,7 @@ public class DisbursementTest {
         batchTransaction.setTransactions(transactions);
         disbursementRequest.setBatchTransaction(batchTransaction);
 
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createBatchTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
 
         assertNotNull(sdkResponse);
     }
@@ -68,7 +73,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Bulk Disbursement Test Failure")
     void createBatchTransactionTestFailure() {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
         List<Transaction> transactions = new ArrayList<>();
@@ -79,13 +84,13 @@ public class DisbursementTest {
         batchTransaction.setTransactions(transactions);
         disbursementRequest.setBatchTransaction(batchTransaction);
 
-        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createBatchTransaction());
+        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction());
     }
 
     @Test
     @DisplayName("View Current Status of a Batch Transaction")
     void viewBatchTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
         List<Transaction> transactions = new ArrayList<>();
@@ -96,7 +101,7 @@ public class DisbursementTest {
         batchTransaction.setTransactions(transactions);
         disbursementRequest.setBatchTransaction(batchTransaction);
 
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createBatchTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
 
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         BatchTransaction batchResponse = mmClient.addRequest(disbursementRequest).viewBatchTransaction(sdkResponse.getObjectReference());
@@ -107,7 +112,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Update Batch Transaction Status")
     void updateBatchTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
         List<Transaction> transactions = new ArrayList<>();
@@ -119,7 +124,7 @@ public class DisbursementTest {
         batchTransaction.setTransactions(transactions);
         disbursementRequest.setBatchTransaction(batchTransaction);
 
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createBatchTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
 
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
@@ -127,7 +132,7 @@ public class DisbursementTest {
 
         disbursementRequest = new DisbursementRequest();
         disbursementRequest.setPatchData(patchDataList);
-        sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).updateBatchTransaction(sdkResponse.getObjectReference());
+        sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).updateBatchTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
     }
@@ -135,7 +140,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Get Completed Transactions of a Batch")
     void viewBatchCompletionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
         List<Transaction> transactions = new ArrayList<>();
@@ -146,7 +151,7 @@ public class DisbursementTest {
         batchTransaction.setTransactions(transactions);
         disbursementRequest.setBatchTransaction(batchTransaction);
 
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createBatchTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
 
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         List<BatchCompletion> completedTransactions = mmClient.addRequest(new DisbursementRequest()).viewBatchCompletions(sdkResponse.getObjectReference());
@@ -157,7 +162,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Get Rejected Transactions of a Batch")
     void viewBatchRejectionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
         List<Transaction> transactions = new ArrayList<>();
@@ -168,7 +173,7 @@ public class DisbursementTest {
         batchTransaction.setTransactions(transactions);
         disbursementRequest.setBatchTransaction(batchTransaction);
 
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createBatchTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
 
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         List<BatchRejection> rejectedTransactions = mmClient.addRequest(new DisbursementRequest()).viewBatchRejections(sdkResponse.getObjectReference());
@@ -179,7 +184,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Individual Disbursement Using Polling Test Success")
     void individualDisbursementUsingPollingTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
         disbursementRequest.setTransaction(getTransactionObject());
@@ -194,11 +199,11 @@ public class DisbursementTest {
     @Test
     @DisplayName("Disbursement Reversal Test Success")
     void reversalTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
         disbursementRequest.setTransaction(getTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
 
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         
@@ -213,11 +218,11 @@ public class DisbursementTest {
     @Test
     @DisplayName("Retrieve Missing API Response")
     void retrieveMissingResponse() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
         disbursementRequest.setTransaction(getTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(CALLBACK_URL).createDisbursementTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
 
         String clientCorrelationId = disbursementRequest.getClientCorrelationId();
         BatchTransaction transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, BatchTransaction.class);
@@ -228,7 +233,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Retrieve Merchant Payments")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -244,7 +249,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new DisbursementRequest()).viewServiceAvailability();
 
         assertNotNull(serviceStatusResponse);
@@ -253,7 +258,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Get Account Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -266,7 +271,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Get Account Balance")
     void viewAccountBalanceWithMultipleIdentifiersTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));

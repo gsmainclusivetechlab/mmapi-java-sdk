@@ -3,8 +3,11 @@ package com.mobilemoney.internationaltransfer;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.model.*;
+import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.*;
 import com.mobilemoney.internationaltransfer.request.InternationalTransferRequest;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,21 +18,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InternationalTransferTest {
-    private static final String CONSUMER_KEY = "59vthmq3f6i15v6jmcjskfkmh";
-    private static final String CONSUMER_SECRET = "ef8tl4gihlpfd7r8jpc1t1nda33q5kcnn32cj375lq6mg2nv7rb";
-    private static final String API_KEY = "oVN89kXyTx1cKT3ZohH7h6foEmQmjqQm3OK2U8Ue";
-    private static final String CALLBACK_URL = "https://0b11de7c-a436-4932-a947-aec37cb63408.mock.pstmn.io/mobilemoneymock/cb/transaction/type/merchantpay";
+	private static PropertiesLoader loader;
 
+    @BeforeAll
+    public static void init(){
+        loader = new PropertiesLoader();
+    }
+    
     @Test
     @DisplayName("Request a International Transfer Quotation Success")
     void internationalTransferQuotationRequestTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         internationalTransferRequest.setQuotation(createQuotationObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createQuotation();
         
         assertNotNull(sdkResponse);
@@ -38,13 +43,13 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Initiate International Transfer Success")
     void initiateInternationalTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         internationalTransferRequest.setTransaction(createInternationalTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createInternationalTransaction();
 
         assertNotNull(sdkResponse);
@@ -53,7 +58,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Initiate International Transfer Failure")
     void initiateInternationalTransactionTestFailure() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         Transaction internationalTransaction = createInternationalTransactionObject();
@@ -70,19 +75,19 @@ public class InternationalTransferTest {
 
         internationalTransferRequest.setTransaction(internationalTransaction);
 
-        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(internationalTransferRequest).addCallBack(CALLBACK_URL).createInternationalTransaction());
+        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createInternationalTransaction());
     }
 
     @Test
     @DisplayName("International Transfer Reversal Success")
     void internationalTransferReversal() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         internationalTransferRequest.setTransaction(createInternationalTransactionObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
-                .addCallBack(CALLBACK_URL)
+                .addCallBack(loader.get("CALLBACK_URL"))
                 .createInternationalTransaction();
 
         sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
@@ -90,7 +95,7 @@ public class InternationalTransferTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         internationalTransferRequest.setReversal(reversal);
-        sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(CALLBACK_URL).createReversal(sdkResponse.getObjectReference());
+        sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
     }
@@ -98,7 +103,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Retrieve Missing API Response")
     void viewResponseTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         internationalTransferRequest.setTransaction(createInternationalTransactionObject());
@@ -114,7 +119,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -127,7 +132,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithMultipleIdentifiersTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
@@ -140,7 +145,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(CONSUMER_KEY, CONSUMER_SECRET, API_KEY);
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new InternationalTransferRequest()).viewServiceAvailability();
 
         assertNotNull(serviceStatusResponse);
