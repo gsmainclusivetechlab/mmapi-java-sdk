@@ -222,6 +222,28 @@ class AccountLinkRequestTest {
         assertNotNull(accountLinkResponse);
     }
     
+    @Test
+    @DisplayName("Get Details of a Specific Account Link")
+    void viewAccountLinkTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+
+        accountLinkRequest.setAccountLink(getAccountsLinkSuccessObject());
+        
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+
+        sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String linkRef = sdkResponse.getObjectReference();
+
+        AccountLink accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
+
+        assertNotNull(accountLinkResponse);
+    }
+    
     /***
      *
      * @param amount
