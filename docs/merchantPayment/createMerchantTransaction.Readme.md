@@ -28,7 +28,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
 MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
 merchantPaymentRequest.setTransaction(transactionObject);
-AsyncResponse sdkResponse = mmClient.addRequest(paymentRequest).createMerchantTransaction();
+AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
 ```
 
 ### Callback Response Example
@@ -49,7 +49,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(paymentRequest).createMerchantTr
 {
   "serverCorrelationId": "18c55e1a-9619-46c2-a442-b40344832d02",
   "status": "pending",
-  "notificationMethod": "callback",
+  "notificationMethod": "polling",
   "objectReference": "17820",
   "pollLimit": 100
 }

@@ -74,18 +74,17 @@ Reversal reversal = new Reversal();
 reversal.setType("reversal");
 p2PTransferRequest.setReversal(reversal);
 
-AsyncResponse sdkResponse =  mmClient.addRequest(new P2PTransferRequest()).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
+AsyncResponse sdkResponse =  mmClient.addRequest(p2PTransferRequest).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
 ``` 
 
 ### Response Example
 
 ```java
 {
-  "currentBalance": "1000000000.00",
-  "availableBalance": "0.00",
-  "reservedBalance": "0.00",
-  "unclearedBalance": "0.00",
-  "currency": "GBP",
-  "accountStatus": "available"
+  "serverCorrelationId": "0cef7251-bc7b-4437-8090-31c725484bbd",
+  "status": "pending",
+  "notificationMethod": "callback",
+  "objectReference": "17934",
+  "pollLimit": 100
 }
 ```

@@ -69,7 +69,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(
 
 String clientCorrelationId = p2PTransferRequest.getClientCorrelationId();
 
-Transaction transaction = mmClient.addRequest(p2pTransferRequestObject).viewResponse("<client correlation id>", Transaction.class);
+Transaction transaction = mmClient.addRequest(p2pTransferRequestObject).viewResponse(clientCorrelationId, Transaction.class);
 ``` 
 
 ### Response Example

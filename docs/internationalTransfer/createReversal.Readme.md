@@ -53,10 +53,8 @@ senderKyc.setSubjectName(kycSubject);
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-//debitPartyList.add(new AccountIdentifier("walletid", "1"));
-//creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
-debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-creditPartyList.add(new AccountIdentifier("accountid", "2999"));
+debitPartyList.add(new AccountIdentifier("walletid", "1"));
+creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
 transaction.setAmount("100.00");
 transaction.setCurrency("GBP");
@@ -76,18 +74,17 @@ Reversal reversal = new Reversal();
 reversal.setType("reversal");
 internationalTransferRequest.setReversal(reversal);
 
-AsyncResponse sdkResponse =  mmClient.addRequest(new InternationalTransferRequest()).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
+AsyncResponse sdkResponse =  mmClient.addRequest(internationalTransferRequest).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
 ``` 
 
 ### Response Example
 
 ```java
 {
-  "currentBalance": "1000000000.00",
-  "availableBalance": "0.00",
-  "reservedBalance": "0.00",
-  "unclearedBalance": "0.00",
-  "currency": "GBP",
-  "accountStatus": "available"
+  "serverCorrelationId": "0cef7251-bc7b-4437-8090-31c725484bbd",
+  "status": "pending",
+  "notificationMethod": "polling",
+  "objectReference": "17836",
+  "pollLimit": 100
 }
 ```

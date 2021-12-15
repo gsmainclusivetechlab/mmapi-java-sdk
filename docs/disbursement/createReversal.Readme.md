@@ -39,7 +39,7 @@ sdkResponse =  mmClient.addRequest(disbursementRequest).addCallBack("<Place your
 {
   "serverCorrelationId": "0cef7251-bc7b-4437-8090-31c725484bbd",
   "status": "pending",
-  "notificationMethod": "polling",
+  "notificationMethod": "callback",
   "objectReference": "17825",
   "pollLimit": 100
 }

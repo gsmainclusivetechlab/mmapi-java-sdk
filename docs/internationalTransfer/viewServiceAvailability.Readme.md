@@ -7,7 +7,7 @@
 ### Usage/Examples
 
 ```java
-ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new InternationalTransferRequest()).viewServiceAvailability();
+ServiceAvailability serviceAvailability = mmClient.addRequest(new InternationalTransferRequest()).viewServiceAvailability();
 ``` 
 
 ### Response Example

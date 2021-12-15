@@ -28,7 +28,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallB
 {
   "serverCorrelationId": "c1e712f2-f03d-4fd8-b319-e742608cd0df",
   "status": "pending",
-  "notificationMethod": "polling",
+  "notificationMethod": "callback",
   "objectReference": "2280",
   "pollLimit": 100
 }

@@ -52,10 +52,8 @@ senderKyc.setSubjectName(kycSubject);
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-//debitPartyList.add(new AccountIdentifier("walletid", "1"));
-//creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));        
-debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-creditPartyList.add(new AccountIdentifier("accountid", "2999"));
+debitPartyList.add(new AccountIdentifier("walletid", "1"));
+creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
 transaction.setAmount("100.00");
 transaction.setCurrency("GBP");

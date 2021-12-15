@@ -31,7 +31,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack
 
 sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
-List<BatchRejection> rejectedTransactions = mmClient.addRequest(new DisbursementRequest()).viewBatchRejections("<object reference>");
+List<BatchRejection> rejectedTransactions = mmClient.addRequest(disbursementRequest).viewBatchRejections(sdkResponse.getObjectReference());
 ``` 
 
 ### Response Example

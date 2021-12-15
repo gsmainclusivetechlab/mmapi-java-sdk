@@ -13,7 +13,7 @@ List<PatchData> patchDataList = new ArrayList<>();
 patchDataList.add(new PatchData("replace", "/batchStatus", "approved"));
 
 disbursementRequest.setPatchData(patchDataList);
-AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack("<Place your callback URL>").updateBatchTransaction("objectreference");
+AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack("<Place your callback URL>").updateBatchTransaction("batch reference");
 ``` 
 
 ### Response Example
