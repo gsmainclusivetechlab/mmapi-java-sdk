@@ -1,4 +1,4 @@
-package com.mobilemoney.disbursement;
+package com.mobilemoney.integration.disbursement;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
@@ -15,16 +15,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DisbursementTest {
 	private static PropertiesLoader loader;
 
     @BeforeAll
-    public static void init(){
+    public static void setUp(){
         loader = new PropertiesLoader();
     }
 	
@@ -38,6 +41,9 @@ public class DisbursementTest {
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -68,6 +74,9 @@ public class DisbursementTest {
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -107,6 +116,10 @@ public class DisbursementTest {
         BatchTransaction batchResponse = mmClient.addRequest(disbursementRequest).viewBatchTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(batchResponse);
+        assertNotNull(batchResponse.getBatchId());
+        assertNotNull(batchResponse.getApprovalDate());
+        assertNotNull(batchResponse.getCompletionDate());
+        assertTrue(Arrays.asList("created", "approved", "completed").contains(batchResponse.getBatchStatus()));
     }
 
     @Test
@@ -135,6 +148,9 @@ public class DisbursementTest {
         sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).updateBatchTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -194,6 +210,15 @@ public class DisbursementTest {
         Transaction transactionResponse = mmClient.addRequest(disbursementRequest).viewTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(transactionResponse);
+        assertNotNull(transactionResponse.getTransactionReference());
+        assertNotNull(transactionResponse.getTransactionStatus());
+        assertNotNull(transactionResponse.getAmount());
+        assertNotNull(transactionResponse.getCurrency());
+        assertNotNull(transactionResponse.getCreditParty());
+        assertNotNull(transactionResponse.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactionResponse.getType()));
+        assertTrue(transactionResponse.getCreditParty().size() > 0);
+        assertTrue(transactionResponse.getDebitParty().size() > 0);
     }
 
     @Test
@@ -213,6 +238,9 @@ public class DisbursementTest {
         sdkResponse = mmClient.addRequest(disbursementRequest).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -228,6 +256,10 @@ public class DisbursementTest {
         BatchTransaction transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, BatchTransaction.class);
 
         assertNotNull(transaction);
+        assertNotNull(transaction.getBatchId());
+        assertNotNull(transaction.getApprovalDate());
+        assertNotNull(transaction.getCompletionDate());
+        assertTrue(Arrays.asList("created", "approved", "completed").contains(transaction.getBatchStatus()));
     }
 
     @Test
@@ -244,15 +276,26 @@ public class DisbursementTest {
         List<Transaction> transactions = mmClient.addRequest(new DisbursementRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
+        assertTrue(transactions.size() > 0);
+        assertNotNull(transactions.get(0).getTransactionReference());
+        assertNotNull(transactions.get(0).getTransactionStatus());
+        assertNotNull(transactions.get(0).getAmount());
+        assertNotNull(transactions.get(0).getCurrency());
+        assertNotNull(transactions.get(0).getCreditParty());
+        assertNotNull(transactions.get(0).getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+        assertTrue(transactions.get(0).getCreditParty().size() > 0);
+        assertTrue(transactions.get(0).getDebitParty().size() > 0);
     }
 
     @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new DisbursementRequest()).viewServiceAvailability();
+        ServiceAvailability serviceAvailability = mmClient.addRequest(new DisbursementRequest()).viewServiceAvailability();
 
-        assertNotNull(serviceStatusResponse);
+        assertNotNull(serviceAvailability);
+        assertNotNull(serviceAvailability.getServiceStatus());
     }
 
     @Test

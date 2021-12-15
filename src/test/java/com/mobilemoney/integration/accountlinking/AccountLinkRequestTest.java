@@ -1,4 +1,4 @@
-package com.mobilemoney.accountlinking;
+package com.mobilemoney.integration.accountlinking;
 
 import com.mobilemoney.accountlinking.model.AccountLink;
 import com.mobilemoney.accountlinking.request.AccountLinkRequest;
@@ -14,7 +14,7 @@ import com.mobilemoney.common.model.InternationalTransferInformation;
 import com.mobilemoney.common.model.Name;
 import com.mobilemoney.common.model.RequestingOrganisation;
 import com.mobilemoney.common.model.Reversal;
-import com.mobilemoney.common.model.ServiceStatusResponse;
+import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
 import com.mobilemoney.config.PropertiesLoader;
@@ -193,9 +193,9 @@ class AccountLinkRequestTest {
     @DisplayName("Check for Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new AccountLinkRequest()).viewServiceAvailability();
+        ServiceAvailability serviceAvailability = mmClient.addRequest(new AccountLinkRequest()).viewServiceAvailability();
 
-        assertNotNull(serviceStatusResponse);
+        assertNotNull(serviceAvailability);
     }
     
     @Test

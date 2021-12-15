@@ -1,4 +1,4 @@
-package com.mobilemoney.merchantpayment;
+package com.mobilemoney.integration.merchantpayment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,38 +15,42 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MerchantPaymentTest {
 	private static PropertiesLoader loader;
 
     @BeforeAll
-    public static void init(){
+    public static void setUp(){
         loader = new PropertiesLoader();
     }
     
     @Test
     @DisplayName("Create Merchant Transaction Test Success")
     void createMerchantTransactionTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
 
-        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createMerchantTransaction();
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
     @DisplayName("Create Merchant Transaction Test Failure")
     void createMerchantTransactionTestFailure() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionFailedObject());
 
-        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction());
+        assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createMerchantTransaction());
     }
 
     @Test
@@ -70,12 +74,15 @@ public class MerchantPaymentTest {
                 .createAuthorisationCode(new Identifiers(identifierList));
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
     @DisplayName("Payment with authorisation code success")
     void createMerchantTransactionWithAuthorisationCodeSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
         AuthorisationCode authorisationCode = new AuthorisationCode();
         TransactionFilter filter = new TransactionFilter();
@@ -88,7 +95,7 @@ public class MerchantPaymentTest {
         authorisationCode.setCurrency("USD");
 
         merchantPaymentRequest.setAuthorisationCodeRequest(authorisationCode);
-        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createAuthorisationCode(new Identifiers(identifierList));
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createAuthorisationCode(new Identifiers(identifierList));
         
         sdkResponse = mmClient.addRequest(merchantPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         AuthorisationCode authorisationCodeResponse = mmClient.addRequest(merchantPaymentRequest).viewAuthorisationCode(new Identifiers(identifierList), sdkResponse.getObjectReference());
@@ -99,9 +106,12 @@ public class MerchantPaymentTest {
         merchantPaymentRequest = new MerchantPaymentRequest();
         merchantPaymentRequest.setTransaction(transaction);
 
-        sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
+        sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createMerchantTransaction();
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -116,6 +126,8 @@ public class MerchantPaymentTest {
         sdkResponse = mmClient.addRequest(merchantPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -133,6 +145,15 @@ public class MerchantPaymentTest {
         Transaction transaction = mmClient.addRequest(merchantPaymentRequest).viewTransaction(txnRef);
 
         assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
     }
 
     @Test
@@ -145,6 +166,9 @@ public class MerchantPaymentTest {
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createRefundTransaction();
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -165,6 +189,9 @@ public class MerchantPaymentTest {
         sdkResponse =  mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(txnRef);
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -181,15 +208,26 @@ public class MerchantPaymentTest {
         List<Transaction> transactions = mmClient.addRequest(new MerchantPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
+        assertTrue(transactions.size() > 0);
+        assertNotNull(transactions.get(0).getTransactionReference());
+        assertNotNull(transactions.get(0).getTransactionStatus());
+        assertNotNull(transactions.get(0).getAmount());
+        assertNotNull(transactions.get(0).getCurrency());
+        assertNotNull(transactions.get(0).getCreditParty());
+        assertNotNull(transactions.get(0).getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+        assertTrue(transactions.get(0).getCreditParty().size() > 0);
+        assertTrue(transactions.get(0).getDebitParty().size() > 0);
     }
 
     @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new MerchantPaymentRequest()).viewServiceAvailability();
+        ServiceAvailability serviceAvailability = mmClient.addRequest(new MerchantPaymentRequest()).viewServiceAvailability();
 
-        assertNotNull(serviceStatusResponse);
+        assertNotNull(serviceAvailability);
+        assertNotNull(serviceAvailability.getServiceStatus());
     }
 
     @Test
@@ -205,6 +243,15 @@ public class MerchantPaymentTest {
         Transaction transaction = mmClient.addRequest(merchantPaymentRequest).viewResponse(clientCorrelationId, Transaction.class);
 
         assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
     }
 
     @Test

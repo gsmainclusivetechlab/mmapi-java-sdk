@@ -1,4 +1,4 @@
-package com.mobilemoney.p2ptransfer;
+package com.mobilemoney.integration.p2ptransfer;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
@@ -15,15 +15,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class P2PTransferTest {
 	private static PropertiesLoader loader;
 
     @BeforeAll
-    public static void init(){
+    public static void setUp(){
         loader = new PropertiesLoader();
     }
     
@@ -40,6 +43,9 @@ public class P2PTransferTest {
                 .createQuotation();
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -55,8 +61,38 @@ public class P2PTransferTest {
                 .createTransferTransaction();
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
+    @Test
+    @DisplayName("Retrieve Missing API Response for P2P Transaction")
+    void viewResponseTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+        p2PTransferRequest.setTransaction(createP2PTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createTransferTransaction();
+
+        String clientCorrelationId = p2PTransferRequest.getClientCorrelationId();
+        Transaction transaction = mmClient.addRequest(p2PTransferRequest).viewResponse(clientCorrelationId, Transaction.class);
+
+        assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
+    }
+    
     @Test
     @DisplayName("P2P Transfer Reversal Success")
     void p2pTransferReversal() throws MobileMoneyException {
@@ -77,6 +113,9 @@ public class P2PTransferTest {
         sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -93,6 +132,16 @@ public class P2PTransferTest {
         List<Transaction> transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
+        assertTrue(transactions.size() > 0);
+        assertNotNull(transactions.get(0).getTransactionReference());
+        assertNotNull(transactions.get(0).getTransactionStatus());
+        assertNotNull(transactions.get(0).getAmount());
+        assertNotNull(transactions.get(0).getCurrency());
+        assertNotNull(transactions.get(0).getCreditParty());
+        assertNotNull(transactions.get(0).getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+        assertTrue(transactions.get(0).getCreditParty().size() > 0);
+        assertTrue(transactions.get(0).getDebitParty().size() > 0);
     }
 
     @Test
@@ -103,6 +152,7 @@ public class P2PTransferTest {
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
         AccountHolderName accountHolderName = mmClient.addRequest(new P2PTransferRequest()).viewAccountName(new Identifiers(identifierList));
+        
         assertNotNull(accountHolderName);
     }
 
@@ -110,9 +160,10 @@ public class P2PTransferTest {
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new P2PTransferRequest()).viewServiceAvailability();
+        ServiceAvailability serviceAvailability = mmClient.addRequest(new P2PTransferRequest()).viewServiceAvailability();
 
-        assertNotNull(serviceStatusResponse);
+        assertNotNull(serviceAvailability);
+        assertNotNull(serviceAvailability.getServiceStatus());
     }
 
     @Test
@@ -134,8 +185,8 @@ public class P2PTransferTest {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        //identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        //identifierList.add(new AccountIdentifier("walletid", "1"));
 
         Balance balance = mmClient.addRequest(new P2PTransferRequest()).viewAccountBalance(new Identifiers(identifierList));
 

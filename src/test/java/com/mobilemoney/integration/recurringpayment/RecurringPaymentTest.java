@@ -1,4 +1,4 @@
-package com.mobilemoney.recurringpayment;
+package com.mobilemoney.integration.recurringpayment;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
@@ -74,6 +74,7 @@ public class RecurringPaymentTest {
                 .viewAccountDebitMandate(new Identifiers(identifierList), sdkResponse.getObjectReference());
 
         assertNotNull(debitMandateResponse);
+        assertEquals(sdkResponse.getNotificationMethod(), "polling");
     }
 
     @Test
@@ -214,9 +215,9 @@ public class RecurringPaymentTest {
     @DisplayName("Check Service Availability Test Success")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new RecurringPaymentRequest()).viewServiceAvailability();
+        ServiceAvailability serviceAvailability = mmClient.addRequest(new RecurringPaymentRequest()).viewServiceAvailability();
 
-        assertNotNull(serviceStatusResponse);
+        assertNotNull(serviceAvailability);
     }
 
     @Test

@@ -4,69 +4,118 @@ package com.mobilemoney.common.model;
  * Class Balance
  */
 public final class Balance {
-    // Harmonised representation of the account status
-    private String accountStatus;
+	// Harmonised representation of the account status
+	private String accountStatus;
 
-    // Current outstanding balance
-    private String currentBalance;
+	// Current outstanding balance
+	private String currentBalance;
 
-    // Balance that is able to be debited for an account
-    private String availableBalance;
+	// Balance that is able to be debited for an account
+	private String availableBalance;
 
-    // Portion of the balance that is reserved
-    private String reservedBalance;
+	// Portion of the balance that is reserved
+	private String reservedBalance;
 
-    // Sum of uncleared funds in an account
-    private String unclearedBalance;
+	// Sum of uncleared funds in an account
+	private String unclearedBalance;
 
-    // Currency for all returned balances
-    private String currency;
+	// Currency for all returned balances
+	private String currency;
 
-    /***
-     *
-     * @return
-     */
-    public String getAccountStatus() {
-        return accountStatus;
-    }
+	/***
+	 * 
+	 * @return
+	 */
+	public String getAccountStatus() {
+		return accountStatus;
+	}
 
-    /***
-     *
-     * @return
-     */
-    public String getCurrentBalance() {
-        return currentBalance;
-    }
+	/***
+	 * 
+	 * @param accountStatus
+	 */
+	public void setAccountStatus(String accountStatus) {
+		this.accountStatus = accountStatus;
+	}
 
-    /***
-     *
-     * @return
-     */
-    public String getAvailableBalance() {
-        return availableBalance;
-    }
+	/***
+	 * 
+	 * @return
+	 */
+	public String getCurrentBalance() {
+		return currentBalance;
+	}
 
-    /***
-     *
-     * @return
-     */
-    public String getReservedBalance() {
-        return reservedBalance;
-    }
+	/***
+	 * 
+	 * @param currentBalance
+	 */
+	public void setCurrentBalance(String currentBalance) {
+		this.currentBalance = currentBalance;
+	}
 
-    /***
-     *
-     * @return
-     */
-    public String getUnclearedBalance() {
-        return unclearedBalance;
-    }
+	/***
+	 * 
+	 * @return
+	 */
+	public String getAvailableBalance() {
+		return availableBalance;
+	}
 
-    /***
-     *
-     * @return
-     */
-    public String getCurrency() {
-        return currency;
-    }
+	/***
+	 * 
+	 * @param availableBalance
+	 */
+	public void setAvailableBalance(String availableBalance) {
+		this.availableBalance = availableBalance;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getReservedBalance() {
+		return reservedBalance;
+	}
+
+	/***
+	 * 
+	 * @param reservedBalance
+	 */
+	public void setReservedBalance(String reservedBalance) {
+		this.reservedBalance = reservedBalance;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getUnclearedBalance() {
+		return unclearedBalance;
+	}
+
+	/***
+	 * 
+	 * @param unclearedBalance
+	 */
+	public void setUnclearedBalance(String unclearedBalance) {
+		this.unclearedBalance = unclearedBalance;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getCurrency() {
+		return currency;
+	}
+
+	/***
+	 * 
+	 * @param currency
+	 */
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
 }

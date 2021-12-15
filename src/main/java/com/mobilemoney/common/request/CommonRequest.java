@@ -12,7 +12,7 @@ import com.mobilemoney.base.util.ResourceUtils;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
-import com.mobilemoney.common.model.ServiceStatusResponse;
+import com.mobilemoney.common.model.ServiceAvailability;
 
 /***
  * Class CommonRequest
@@ -66,8 +66,8 @@ public class CommonRequest extends ResourceUtils {
      * @return
      * @throws MobileMoneyException
      */
-    public ServiceStatusResponse viewServiceAvailability() throws MobileMoneyException {
-        return createRequest(HttpMethod.GET, API.HEARTBEAT_REQUEST, ServiceStatusResponse.class);
+    public ServiceAvailability viewServiceAvailability() throws MobileMoneyException {
+        return createRequest(HttpMethod.GET, API.HEARTBEAT_REQUEST, ServiceAvailability.class);
     }
 
     /***

@@ -1,7 +1,5 @@
 package com.mobilemoney.common.model;
 
-import com.mobilemoney.common.model.Name;
-
 import java.io.Serializable;
 
 /***
@@ -17,18 +15,35 @@ public class AccountHolderName implements Serializable {
     private String lei;
 
     /***
-     *
+     * 
      * @return
      */
-    public Name getName() {
-        return name;
-    }
+	public Name getName() {
+		return name;
+	}
 
-    /***
-     *
-     * @return
-     */
-    public String getLei() {
-        return lei;
-    }
+	/***
+	 * 
+	 * @param name
+	 */
+	public void setName(Name name) {
+		this.name = name;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getLei() {
+		return lei;
+	}
+
+	/***
+	 * 
+	 * @param lei
+	 */
+	public void setLei(String lei) {
+		this.lei = lei;
+	}
+
 }

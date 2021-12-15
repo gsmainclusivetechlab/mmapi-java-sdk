@@ -1,4 +1,4 @@
-package com.mobilemoney.internationaltransfer;
+package com.mobilemoney.integration.internationaltransfer;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
@@ -12,16 +12,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InternationalTransferTest {
 	private static PropertiesLoader loader;
 
     @BeforeAll
-    public static void init(){
+    public static void setUp(){
         loader = new PropertiesLoader();
     }
     
@@ -38,6 +41,9 @@ public class InternationalTransferTest {
                 .createQuotation();
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -53,6 +59,9 @@ public class InternationalTransferTest {
                 .createInternationalTransaction();
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -63,16 +72,6 @@ public class InternationalTransferTest {
 
         Transaction internationalTransaction = createInternationalTransactionObject();
         internationalTransaction.setAmount("00.00");
-
-        /*List<AccountIdentifier> debitPartyList = new ArrayList<>();
-        List<CreditParty> creditPartyList = new ArrayList<>();
-
-        debitPartyList.add(new AccountIdentifier("walletid", "1"));
-        creditPartyList.add(new CreditParty("walletid", "1"));
-
-        internationalTransaction.setCreditParty(creditPartyList);
-        internationalTransaction.setDebitParty(debitPartyList);*/
-
         internationalTransferRequest.setTransaction(internationalTransaction);
 
         assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createInternationalTransaction());
@@ -98,24 +97,91 @@ public class InternationalTransferTest {
         sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
-    @DisplayName("Retrieve Missing API Response")
+    @DisplayName("Retrieve Missing API Response for International Transaction")
     void viewResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         internationalTransferRequest.setTransaction(createInternationalTransactionObject());
 
-        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).createInternationalTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createInternationalTransaction();
 
         String clientCorrelationId = internationalTransferRequest.getClientCorrelationId();
         Transaction transaction = mmClient.addRequest(internationalTransferRequest).viewResponse(clientCorrelationId, Transaction.class);
 
         assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
     }
 
+    @Test
+    @DisplayName("View Quatation Test Success")
+    void viewQuotationTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+
+        internationalTransferRequest.setQuotation(createQuotationObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createQuotation();
+        
+        sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        String qtnRef = sdkResponse.getObjectReference();
+        if (qtnRef == null) qtnRef = "REF-1637057900018";
+     
+        Quotation quotation = mmClient.addRequest(internationalTransferRequest).viewQuotation(qtnRef);
+        
+        assertNotNull(quotation);
+        assertNotNull(quotation.getQuotationReference());
+        assertNotNull(quotation.getRequestAmount());
+        assertNotNull(quotation.getRequestCurrency());
+        assertNotNull(quotation.getCreditParty());
+        assertNotNull(quotation.getDebitParty());
+        assertTrue(quotation.getCreditParty().size() > 0);
+        assertTrue(quotation.getDebitParty().size() > 0);
+    }
+    
+    @Test
+    @DisplayName("Retrieve Transactions Test Success")
+    void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        TransactionFilter filter = new TransactionFilter();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("walletid", "1"));
+        filter.setLimit(10);
+        filter.setOffset(0);
+
+        List<Transaction> transactions = mmClient.addRequest(new InternationalTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+
+        assertNotNull(transactions);
+        assertTrue(transactions.size() > 0);
+        assertNotNull(transactions.get(0).getTransactionReference());
+        assertNotNull(transactions.get(0).getTransactionStatus());
+        assertNotNull(transactions.get(0).getAmount());
+        assertNotNull(transactions.get(0).getCurrency());
+        assertNotNull(transactions.get(0).getCreditParty());
+        assertNotNull(transactions.get(0).getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+        assertTrue(transactions.get(0).getCreditParty().size() > 0);
+        assertTrue(transactions.get(0).getDebitParty().size() > 0);
+    }
+    
     @Test
     @DisplayName("Get Merchant Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
@@ -146,9 +212,10 @@ public class InternationalTransferTest {
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
-        ServiceStatusResponse serviceStatusResponse = mmClient.addRequest(new InternationalTransferRequest()).viewServiceAvailability();
+        ServiceAvailability serviceAvailability = mmClient.addRequest(new InternationalTransferRequest()).viewServiceAvailability();
 
-        assertNotNull(serviceStatusResponse);
+        assertNotNull(serviceAvailability);
+        assertNotNull(serviceAvailability.getServiceStatus());
     }
 
     /***
