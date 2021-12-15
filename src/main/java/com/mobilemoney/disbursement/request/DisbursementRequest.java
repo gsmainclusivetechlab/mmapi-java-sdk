@@ -11,6 +11,7 @@ import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
+import com.mobilemoney.common.model.Filter;
 import com.mobilemoney.common.model.PatchData;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
@@ -94,20 +95,37 @@ public class DisbursementRequest extends ViewTransactionRequest {
     }
 
     /***
-     * Returns completed transactions for a specific batch
-     *
+     * Returns completed transactions for a specific batch without filter
+     * 
      * @param batchId
      * @return
      * @throws MobileMoneyException
      */
     public List<BatchCompletion> viewBatchCompletions(final String batchId) throws MobileMoneyException {
+    	return this.viewBatchCompletions(batchId, null);
+    }
+    
+    /***
+     * Returns completed transactions for a specific batch with filter
+     *
+     * @param batchId
+     * @param filter
+     * @return
+     * @throws MobileMoneyException
+     */
+    public List<BatchCompletion> viewBatchCompletions(final String batchId, final Filter filter) throws MobileMoneyException {
         if (StringUtils.isNullOrEmpty(batchId)) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
         }
 
         List<BatchCompletion> completedTransactions = null;
-        String resourcePath = API.VIEW_BATCH_TRANSACTION_COMPLETED.replace(Constants.BATCH_ID, batchId);
-        HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath);
+        StringBuilder resourcePath = new StringBuilder(API.VIEW_BATCH_TRANSACTION_COMPLETED.replace(Constants.BATCH_ID, batchId));
+        
+        if (filter != null) {
+        	applyFilter(resourcePath, filter);
+        }
+        
+        HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
 
         if (requestResponse.getPayLoad() instanceof String) {
             completedTransactions = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(), BatchCompletion.class);
@@ -116,20 +134,36 @@ public class DisbursementRequest extends ViewTransactionRequest {
     }
 
     /***
-     * Returns rejected transactions for a specific batch
-     *
+     * Returns rejected transactions for a specific batch without filter
+     * 
      * @param batchId
      * @return
      * @throws MobileMoneyException
      */
     public List<BatchRejection> viewBatchRejections(final String batchId) throws MobileMoneyException {
+    	return this.viewBatchRejections(batchId, null);
+    }
+    
+    /***
+     * Returns rejected transactions for a specific batch with filter
+     *
+     * @param batchId
+     * @return
+     * @throws MobileMoneyException
+     */
+    public List<BatchRejection> viewBatchRejections(final String batchId, final Filter filter) throws MobileMoneyException {
         if (StringUtils.isNullOrEmpty(batchId)) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
         }
 
         List<BatchRejection> completedTransactions = null;
-        String resourcePath = API.VIEW_BATCH_TRANSACTION_REJECTED.replace(Constants.BATCH_ID, batchId);
-        HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath);
+        StringBuilder resourcePath = new StringBuilder(API.VIEW_BATCH_TRANSACTION_REJECTED.replace(Constants.BATCH_ID, batchId));
+        
+        if (filter != null) {
+        	applyFilter(resourcePath, filter);
+        }
+        
+        HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
 
         if (requestResponse.getPayLoad() instanceof String) {
             completedTransactions = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(), BatchRejection.class);
@@ -224,5 +258,20 @@ public class DisbursementRequest extends ViewTransactionRequest {
      */
     public void setPatchData(List<PatchData> patchData) {
         this.patchData = patchData;
+    }
+
+    /***
+     * 
+     * @param resourcePath
+     * @param filter
+     * @return
+     */
+    private StringBuilder applyFilter(StringBuilder resourcePath, Filter filter) {
+    	if (filter.getLimit() >= 0) resourcePath.append("limit=").append(filter.getLimit()).append("&");
+        if (filter.getOffset() >= 0) resourcePath.append("offset=").append(filter.getOffset()).append("&");
+        if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
+        if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+        
+        return resourcePath;
     }
 }
