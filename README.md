@@ -7,6 +7,16 @@ Please refer to the following documentation for installation instructions and us
 -   [API Documentation](https://developer.mobilemoneyapi.io/1.2)
 -   [Java SDK Documentation](docs/)
 
+## Index
+
+This document contains the following sections:
+
+-  [Requirements](#requirements)
+-  [Getting Started](#getting-started)
+-  [Setting Up](#setting-up)
+-  [Use Cases](#use-cases)
+-  [Testing](#testing)
+
 ## Requirements
 
 -   Java JDK-1.8 or higher
@@ -491,7 +501,7 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
 </tbody>
 </table>
 
-## Testing the SDK
+## Testing
 
 Tests for the SDK are in the src/test/java package. These tests are mainly for SDK development.
 
