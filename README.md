@@ -13,6 +13,8 @@ This document contains the following sections:
 
 -  [Requirements](#requirements)
 -  [Getting Started](#getting-started)
+     -  [Installation](#installation)
+     -  [Development and Testing](#development-and-testing)
 -  [Setting Up](#setting-up)
 -  [Use Cases](#use-cases)
 -  [Testing](#testing)
