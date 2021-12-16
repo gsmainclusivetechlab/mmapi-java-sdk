@@ -83,5 +83,5 @@ AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(
 ### NOTE
 
 In asynchronous flows, a callback mechanism or polling mechanism is utilised to allow the client to determine the request's final state.
-Use the <a href="docs/p2pTransfer/viewRequestState.Readme.md">viewRequestState()</a> function for the polling mechanism to receive the status of a request, and the <a href="docs/p2pTransfer/viewTransaction.Readme.md">viewTransaction()</a>
+Use the <a href="viewRequestState.Readme.md">viewRequestState()</a> function for the polling mechanism to receive the status of a request, and the <a href="viewTransaction.Readme.md">viewTransaction()</a>
 function to acquire the final representation of the Transaction object.

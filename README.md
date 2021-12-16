@@ -325,11 +325,13 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
   </tr>
   <tr>
   <tr>
+    <td>Get a specific request state</td>
     <td><a href="docs/internationalTransfer/viewRequestState.Readme.md">Poll to Determine the Request State</a></td>
     <td>viewRequestState</td>
     <td>String serverCorrelationId</td>
   </tr>
   <tr>
+    <td>Get details of a transaction</td>
     <td><a href="docs/internationalTransfer/viewTransaction.Readme.md">Retrieve a Transaction</a></td>
     <td>viewTransaction</td>
     <td>String transactionReference</td>
@@ -423,16 +425,19 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>NA</td>
   </tr>
   <tr>
+    <td>Get a specific request state</td>
     <td><a href="docs/p2pTransfer/viewRequestState.Readme.md">Poll to Determine the Request State</a></td>
     <td>viewRequestState</td>
     <td>String serverCorrelationId</td>
   </tr>
   <tr>
+    <td>Get details of a transaction</td>
     <td><a href="docs/p2pTransfer/viewTransaction.Readme.md">Retrieve a Transaction</a></td>
     <td>viewTransaction</td>
     <td>String transactionReference</td>
   </tr>
   <tr>
+    <td>Get details of a specific quotation</td>
     <td>Optional <a href="/docs/p2pTransfer/viewQuotation.Readme.md">View A Quotation</a></td>
     <td>viewQuotation</td>
     <td>String quotationReference</td>
