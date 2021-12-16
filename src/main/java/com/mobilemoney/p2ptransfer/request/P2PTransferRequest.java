@@ -1,10 +1,11 @@
 package com.mobilemoney.p2ptransfer.request;
 
-import com.mobilemoney.common.model.AccountNameResponse;
+import com.mobilemoney.common.model.AccountHolderName;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Identifiers;
+import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.request.AuthorizationCodeRequest;
 import com.mobilemoney.common.request.CreateTransactionRequest;
@@ -39,7 +40,7 @@ public class P2PTransferRequest extends TransferRequest {
      * @return
      * @throws MobileMoneyException
      */
-    public AccountNameResponse viewAccountName(Identifiers identifiers) throws MobileMoneyException {
+    public AccountHolderName viewAccountName(Identifiers identifiers) throws MobileMoneyException {
         return this.authorizationCodeRequest.viewAccountName(identifiers);
     }
 
@@ -61,6 +62,14 @@ public class P2PTransferRequest extends TransferRequest {
         this.transaction = transaction;
     }
 
+    /***
+     * 
+     * @param reversal
+     */
+    public void setReversal(Reversal reversal) {
+    	this.reversal = reversal;
+    }
+    
     /***
      *
      * @param callBackURL

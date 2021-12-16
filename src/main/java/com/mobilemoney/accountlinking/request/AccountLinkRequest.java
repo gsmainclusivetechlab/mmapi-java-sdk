@@ -8,7 +8,6 @@ package com.mobilemoney.accountlinking.request;
 import java.util.stream.Collectors;
 
 import com.mobilemoney.accountlinking.model.AccountLink;
-import com.mobilemoney.accountlinking.model.AccountLinkResponse;
 import com.mobilemoney.base.constants.API;
 import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
@@ -19,6 +18,7 @@ import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Identifiers;
+import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.request.CreateTransactionRequest;
 import com.mobilemoney.common.request.ViewTransactionRequest;
@@ -86,7 +86,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
      * @return
      * @throws MobileMoneyException
      */
-    public AccountLinkResponse viewAccountLink(Identifiers identifiers, String linkReference) throws MobileMoneyException {
+    public AccountLink viewAccountLink(Identifiers identifiers, String linkReference) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
@@ -94,7 +94,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
         }
     	String resourcePath = API.VIEW_ACCOUNT_LINK.replace(Constants.ACCOUNT_ID, identifiers.getIdentifiers().stream().map(identifier -> identifier.getKey().concat("@").concat(identifier.getValue())).collect(Collectors.joining("$"))).replace(Constants.LINK_REFERENCE, linkReference);
-        return createRequest(HttpMethod.GET, resourcePath, AccountLinkResponse.class);
+        return createRequest(HttpMethod.GET, resourcePath, AccountLink.class);
     }
     
     /***
@@ -128,4 +128,11 @@ public class AccountLinkRequest extends ViewTransactionRequest{
         return this;
     }
     
+    /***
+     * 
+     * @param reversal
+     */
+    public void setReversal(Reversal reversal) {
+    	this.reversal = reversal;
+    }
 }

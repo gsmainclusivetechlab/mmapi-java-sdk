@@ -9,15 +9,15 @@ import com.mobilemoney.base.model.HttpErrorResponse;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
+import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.request.TransferRequest;
 import com.mobilemoney.merchantpayment.constants.TransactionType;
-import com.mobilemoney.internationaltransfer.model.InternationalTransferResponse;
 
 import java.util.UUID;
 
 /***
- * Class TransferRequest
+ * Class InternationalTransferRequest
  */
 public class InternationalTransferRequest extends TransferRequest {
     // Transaction instance
@@ -47,13 +47,13 @@ public class InternationalTransferRequest extends TransferRequest {
      * @return
      * @throws MobileMoneyException
      */
-    public InternationalTransferResponse viewInternationalTransaction(final String transactionReference) throws MobileMoneyException {
+    public Transaction viewInternationalTransaction(final String transactionReference) throws MobileMoneyException {
         if (StringUtils.isNullOrEmpty(transactionReference)) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
         }
 
         String resourcePath = API.RETRIEVE_TRANSACTION.replace(Constants.TRANSACTION_REFERENCE, transactionReference);
-        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, InternationalTransferResponse.class);
+        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, Transaction.class);
     }
 
     /***
@@ -64,6 +64,14 @@ public class InternationalTransferRequest extends TransferRequest {
         this.transaction = transaction;
     }
 
+    /***
+     * 
+     * @param reversal
+     */
+    public void setReversal(Reversal reversal) {
+    	this.reversal = reversal;
+    }
+    
     /***
      *
      * @return

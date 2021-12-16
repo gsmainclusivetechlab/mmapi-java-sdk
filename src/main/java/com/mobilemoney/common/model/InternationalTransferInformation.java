@@ -32,6 +32,12 @@ public class InternationalTransferInformation implements Serializable {
     // Country of the sending service provider
     private String sendingServiceProviderCountry;
 
+    // Reason for blocking the transaction
+    private String recipientBlockingReason;
+    
+    // Reason for blocking the transaction
+    private String senderBlockingReason;
+    
     /***
      * Constructor with arguments
      *
@@ -160,4 +166,37 @@ public class InternationalTransferInformation implements Serializable {
     public void setSendingServiceProviderCountry(String sendingServiceProviderCountry) {
         this.sendingServiceProviderCountry = sendingServiceProviderCountry;
     }
+
+    /***
+     * 
+     * @return
+     */
+	public String getRecipientBlockingReason() {
+		return recipientBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @param recipientBlockingReason
+	 */
+	public void setRecipientBlockingReason(String recipientBlockingReason) {
+		this.recipientBlockingReason = recipientBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @return
+	 */
+	public String getSenderBlockingReason() {
+		return senderBlockingReason;
+	}
+
+	/***
+	 * 
+	 * @param senderBlockingReason
+	 */
+	public void setSenderBlockingReason(String senderBlockingReason) {
+		this.senderBlockingReason = senderBlockingReason;
+	}
+    
 }
