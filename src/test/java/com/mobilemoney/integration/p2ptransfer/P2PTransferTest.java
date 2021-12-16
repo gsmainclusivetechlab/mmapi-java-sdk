@@ -190,16 +190,17 @@ public class P2PTransferTest {
         List<Transaction> transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
-        assertTrue(transactions.size() > 0);
-        assertNotNull(transactions.get(0).getTransactionReference());
-        assertNotNull(transactions.get(0).getTransactionStatus());
-        assertNotNull(transactions.get(0).getAmount());
-        assertNotNull(transactions.get(0).getCurrency());
-        assertNotNull(transactions.get(0).getCreditParty());
-        assertNotNull(transactions.get(0).getDebitParty());
-        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
-        assertTrue(transactions.get(0).getCreditParty().size() > 0);
-        assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        if (transactions.size() > 0) {
+        	assertNotNull(transactions.get(0).getTransactionReference());
+            assertNotNull(transactions.get(0).getTransactionStatus());
+            assertNotNull(transactions.get(0).getAmount());
+            assertNotNull(transactions.get(0).getCurrency());
+            assertNotNull(transactions.get(0).getCreditParty());
+            assertNotNull(transactions.get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+            assertTrue(transactions.get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        }
     }
 
     @Test

@@ -62,6 +62,14 @@ public class AuthorisationCode implements Serializable {
 	private List<MetaData> metadata;
 
 	/***
+	 * Default constructor
+	 * 
+	 */
+	public AuthorisationCode() {
+		this.codeLifetime = 1;
+	}
+
+	/***
 	 *
 	 * @return
 	 */
