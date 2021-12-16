@@ -113,7 +113,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td rowspan="3">Payee-Initiated Merchant Payment using a Pre-authorised Payment Code</td>
     <td><a href="docs/merchantPayment/createAuthorisationCode.Readme.md">Obtain an Authorisation Code</a></td>
     <td>createAuthorisationCode</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td><a href="docs/merchantPayment/createMerchantTransaction.Readme.md">Perform a Merchant Payment</a></td>
@@ -123,7 +123,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
   <tr>
     <td><a href="docs/merchantPayment/viewAuthorisationCode.Readme.md">View An Authorisation Code</a></td>
     <td>viewAuthorisationCode</td>
-    <td>new Identifiers(identifierList), String authorisationCode</td>
+    <td>Identifiers identifiers, String authorisationCode</td>
   </tr>
   <tr>
     <td>Merchant Payment Refund</td>
@@ -141,13 +141,13 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Obtain a Merchant Balance</td>
     <td><a href="docs/merchantPayment/viewAccountBalance.Readme.md">Get an Account Balance</a></td>
     <td>viewAccountBalance</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td>Retrieve Payments for a Merchant</td>
     <td><a href="docs/merchantPayment/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
-    <td>new Identifiers(identifierList), TransactionFilter filter</td>
+    <td>Identifiers identifiers, TransactionFilter filter</td>
   </tr>
   <tr>
     <td>Check for Service Availability</td>
@@ -159,7 +159,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Retrieve a Missing API Response</td>
     <td><a href="docs/merchantPayment/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
     <td>viewResponse</td>
-    <td>String clientCorrelationId, ClassReference</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>
@@ -255,13 +255,13 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Obtain a Disbursement Organisation Balance</td>
     <td><a href="docs/disbursement/viewAccountBalance.Readme.md">Get an Account Balance</a></td>
     <td>viewAccountBalance</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td>Retrieve Transactions for a Disbursement Organisation</td>
     <td><a href="docs/disbursement/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
-    <td>new Identifiers(identifierList), TransactionFilter filter</td>
+    <td>Identifiers identifiers, TransactionFilter filter</td>
   </tr>
   <tr>
     <td>Check for Service Availability</td>
@@ -273,7 +273,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Retrieve a Missing API Response</td>
     <td><a href="docs/disbursement/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
     <td>viewResponse</td>
-    <td>String clientCorrelationId, ClassReference</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>
@@ -325,6 +325,16 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
   </tr>
   <tr>
   <tr>
+    <td><a href="docs/internationalTransfer/viewRequestState.Readme.md">Poll to Determine the Request State</a></td>
+    <td>viewRequestState</td>
+    <td>String serverCorrelationId</td>
+  </tr>
+  <tr>
+    <td><a href="docs/internationalTransfer/viewTransaction.Readme.md">Retrieve a Transaction</a></td>
+    <td>viewTransaction</td>
+    <td>String transactionReference</td>
+  </tr>
+  <tr>
     <td>International Transfer Reversal</td>
     <td><a href="/docs/internationalTransfer/createReversal.Readme.md">Perform a Transaction Reversal</a></td>
     <td>createReversal</td>
@@ -334,13 +344,13 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Obtain an FSP Balance</td>
     <td><a href="/docs/internationalTransfer/viewAccountBalance.Readme.md">Get an Account Balance</a></td>
     <td>viewAccountBalance</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td>Retrieve Transactions for an FSP</td>
     <td><a href="/docs/internationalTransfer/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
-    <td>new Identifiers(identifierList), TransactionFilter filter</td>
+    <td>Identifiers identifiers, TransactionFilter filter</td>
   </tr>
   <tr>
     <td>Check for Service Availability</td>
@@ -352,7 +362,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Retrieve a Missing API Response</td>
     <td><a href="/docs/internationalTransfer/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
     <td>viewResponse</td>
-    <td>String correlationId, ClassReference</td>
+    <td>String correlationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>
@@ -373,7 +383,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td rowspan="3">P2P Transfer via Switch</td>
     <td><a href="/docs/p2pTransfer/viewAccountName.Readme.md">Retrieve the Name of the Recipient</a></td>
     <td>viewAccountName</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td><a href="/docs/p2pTransfer/createQuotation.Readme.md">Request a P2P Quotation</a></td>
@@ -381,7 +391,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>NA</td>
   </tr>
   <tr>
-    <td>Optional <a href="/docs/p2pTransfer/createTransferTransaction.Readme.md">Perform a P2P Transfer</a></td>
+    <td><a href="/docs/p2pTransfer/createTransferTransaction.Readme.md">Perform a P2P Transfer</a></td>
     <td>createTransferTransaction</td>
     <td>NA</td>
   </tr>
@@ -389,7 +399,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td rowspan="2">Bilateral P2P Transfer</td>
     <td><a href="/docs/p2pTransfer/viewAccountName.Readme.md">Retrieve the Name of the Recipient</a></td>
     <td>viewAccountName</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td><a href="/docs/p2pTransfer/createTransferTransaction.Readme.md">Perform a P2P Transfer</a></td>
@@ -400,7 +410,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td rowspan="3">'On-us' P2P Transfer Initiated by a Third Party Provider</td>
     <td><a href="/docs/p2pTransfer/viewAccountName.Readme.md">Retrieve the Name of the Recipient</a></td>
     <td>viewAccountName</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
   <tr>
     <td><a href="/docs/p2pTransfer/createQuotation.Readme.md">Request a P2P Quotation</a></td>
@@ -411,6 +421,21 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td><a href="/docs/p2pTransfer/createTransferTransaction.Readme.md">Perform a P2P Transfer</a></td>
     <td>createTransferTransaction</td>
     <td>NA</td>
+  </tr>
+  <tr>
+    <td><a href="docs/p2pTransfer/viewRequestState.Readme.md">Poll to Determine the Request State</a></td>
+    <td>viewRequestState</td>
+    <td>String serverCorrelationId</td>
+  </tr>
+  <tr>
+    <td><a href="docs/p2pTransfer/viewTransaction.Readme.md">Retrieve a Transaction</a></td>
+    <td>viewTransaction</td>
+    <td>String transactionReference</td>
+  </tr>
+  <tr>
+    <td>Optional <a href="/docs/p2pTransfer/viewQuotation.Readme.md">View A Quotation</a></td>
+    <td>viewQuotation</td>
+    <td>String quotationReference</td>
   </tr>
   <tr>
     <td>P2P Transfer Reversal</td>
@@ -422,13 +447,13 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Obtain an FSP Balance</td>
     <td><a href="/docs/p2pTransfer/viewAccountBalance.Readme.md">Get an Account Balance</a></td>
     <td>viewAccountBalance</td>
-    <td>new Identifiers(identifierList)</td>
+    <td>Identifiers identifiers</td>
   </tr>
    <tr>
     <td>Retrieve Transactions for an FSP</td>
     <td><a href="/docs/p2pTransfer/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
-    <td>new Identifiers(identifierList), TransactionFilter filter</td>
+    <td>Identifiers identifiers, TransactionFilter filter</td>
   </tr>
   <tr>
     <td>Check for Service Availability</td>
@@ -440,7 +465,7 @@ MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consu
     <td>Retrieve a Missing API Response</td>
     <td><a href="/docs/p2pTransfer/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
     <td>viewResponse</td>
-    <td>String clientCorrelationId, ClassReference</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>

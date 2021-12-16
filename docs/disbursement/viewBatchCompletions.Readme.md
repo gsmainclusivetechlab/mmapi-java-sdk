@@ -37,5 +37,30 @@ List<BatchCompletion> completedTransactions = mmClient.addRequest(disbursementRe
 ### Response Example
 
 ```java
-[]
+[
+  {
+    "transactionReference": "string",
+    "requestingOrganisationTransactionReference": "string",
+    "creditParty": [
+      {
+        "key": "msisdn",
+        "value": "+33555123456"
+      }
+    ],
+    "debitParty": [
+      {
+        "key": "msisdn",
+        "value": "+33555123456"
+      }
+    ],
+    "completionDate": "2021-12-16T06:28:41.741Z",
+    "link": "string",
+    "customData": [
+      {
+        "key": "string",
+        "value": "string"
+      }
+    ]
+  }
+]
 ```

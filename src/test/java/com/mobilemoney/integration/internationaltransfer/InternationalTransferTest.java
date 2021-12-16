@@ -128,6 +128,33 @@ public class InternationalTransferTest {
     }
 
     @Test
+    @DisplayName("View Transaction Test Success")
+    void viewTransactionTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        
+        internationalTransferRequest.setTransaction(createInternationalTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createInternationalTransaction();
+    
+        sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+        
+        Transaction transaction = mmClient.addRequest(internationalTransferRequest).viewTransaction(txnRef);
+        
+        assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
+    }
+    
+    @Test
     @DisplayName("View Quatation Test Success")
     void viewQuotationTestSuccess() throws MobileMoneyException {
     	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));

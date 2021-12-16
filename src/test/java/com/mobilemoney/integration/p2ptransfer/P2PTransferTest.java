@@ -67,6 +67,64 @@ public class P2PTransferTest {
     }
 
     @Test
+    @DisplayName("View Transaction Test Success")
+    void viewTransactionTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+        p2PTransferRequest.setTransaction(createP2PTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createTransferTransaction();
+
+        sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+        
+        Transaction transaction = mmClient.addRequest(p2PTransferRequest).viewTransaction(txnRef);
+        
+        assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
+    }
+    
+    @Test
+    @DisplayName("View Quatation Test Success")
+    void viewQuotationTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+        p2PTransferRequest.setQuotation(createQuotationObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createQuotation();
+        
+        sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        String qtnRef = sdkResponse.getObjectReference();
+        if (qtnRef == null) qtnRef = "REF-1637057900018";
+     
+        Quotation quotation = mmClient.addRequest(p2PTransferRequest).viewQuotation(qtnRef);
+        
+        assertNotNull(quotation);
+        assertNotNull(quotation.getQuotationReference());
+        assertNotNull(quotation.getRequestAmount());
+        assertNotNull(quotation.getRequestCurrency());
+        assertNotNull(quotation.getCreditParty());
+        assertNotNull(quotation.getDebitParty());
+        assertTrue(quotation.getCreditParty().size() > 0);
+        assertTrue(quotation.getDebitParty().size() > 0);
+    }
+    
+    @Test
     @DisplayName("Retrieve Missing API Response for P2P Transaction")
     void viewResponseTestSuccess() throws MobileMoneyException {
     	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));

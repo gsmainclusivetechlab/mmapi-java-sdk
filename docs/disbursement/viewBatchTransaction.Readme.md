@@ -39,10 +39,14 @@ BatchTransaction batchResponse = mmClient.addRequest(disbursementRequest).viewBa
 
 ```java
 {
-  "serverCorrelationId": "e0be2223-e055-4a47-a52b-3e1bb16fa09a",
-  "status": "pending",
-  "notificationMethod": "callback",
-  "objectReference": "1620",
-  "pollLimit": 100
+  "batchId": "REF-1639627145381",
+  "batchStatus": "created",
+  "processingFlag": false,
+  "completedCount": 0,
+  "rejectionCount": 0,
+  "parsingSuccessCount": 0,
+  "creationDate": "2021-12-16T03:59:05",
+  "modificationDate": "2021-12-16T03:59:05",
+  "requestDate": "2021-12-16T03:59:05"
 }
 ```

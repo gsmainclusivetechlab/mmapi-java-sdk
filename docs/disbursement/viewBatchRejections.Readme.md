@@ -37,5 +37,30 @@ List<BatchRejection> rejectedTransactions = mmClient.addRequest(disbursementRequ
 ### Response Example
 
 ```java
-[]
+[
+  {
+    "transactionReference": "string",
+    "requestingOrganisationTransactionReference": "string",
+    "creditParty": [
+      {
+        "key": "msisdn",
+        "value": "+33555123456"
+      }
+    ],
+    "debitParty": [
+      {
+        "key": "msisdn",
+        "value": "+33555123456"
+      }
+    ],
+    "rejectionReason": "string",
+    "rejectionDate": "2021-12-16T06:27:48.459Z",
+    "customData": [
+      {
+        "key": "string",
+        "value": "string"
+      }
+    ]
+  }
+]
 ```
