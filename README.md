@@ -12,55 +12,71 @@ Please refer to the following documentation for installation instructions and us
 -   Java JDK-1.8 or higher
 -   Apache Maven 3 or higher
 
-## Installation
+## Getting Started
 
-## To build this application
+### Installation
+
+1. Build the jar file using  'mvn install' command
+2. Copy 'mmapi-java-sdk' jar file to your project's classpath
 
 In order to build the SDK from the source code you need to use Apache Maven and Java 1.8+
 
-- Run 'mvn clean package' to build jar file
+- Run 'mvn install' to build jar file
 
-## Include Java SDK in your Java application
+### Development and Testing
 
-1. Build the jar file using  'mvn clean package' command
-2. Import 'mmapi-java-sdk' jar file to your project's classpath
-
-## Configure the SDK
-
-To write an app using the mobile money SDK:
-
-- Register for sandbox account and get your consumer key, consumer secret and API key
-- You always need to create MMClient instance before making any API calls
+1. Tests for the SDK are in the src/test/java package.
+2. Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+3. From the test package, run JUnit test for each test classes
 
 ## Setting Up
-Create an instance of the MMClient with consumer key, consumer secret and API key.
+
+### Initialization of Java SDK
+
+All Java code snippets are listed [here](/docs). Assumes that you have initialized the Java SDK before using them in your Development Environment. 
+This section details the initialization of the Java SDK.
+
+To initialize the Java SDK, create an instance of the `MMClient` with `consumerKey`, `counsumerSecret` and `apiKey`
+
 ```java
-MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsumerSecret>", "<Place your apiKey>");
 ```
+
+You always need to create `MMClient` instance before making any SDK method calls.
+
 By default, this would be in **SANDBOX** mode with **SecurityLevel.DEVELOPMENT**
 
-You can configure MMClient with either **Environment.SANDBOX** mode or **Environment.PRODUCTION** mode.
+1. `consumerKey` the API consumer key (can be obtained from developer portal)
+2. `counsumerSecret` the API consumer secret (can be obtained from developer portal)
+3. `apiKey` the API Key (can be obtained from developer portal)
 
-Available security levels are:
+Optional parameters available for `MMClient` class are:
 
-- **NONE**
-- **DEVELOPMENT**
-- **STANDARD**
-- **ENHANCED**
+1. `Environment` value can be one of the following
+    - `Environment.SANDBOX` for Sandbox
+    - `Environment.PRODUCTION` for Production
+2. `SecurityLevel` value can be one of the following
+    - `SecurityLevel.DEVELOPMENT` for Basic authentication requests
+    - `SecurityLevel.STANDARD` for OAuth2 authentication requests
 
-You can override the default configuration by using either of the following ways:
+`MMClient` class has one optional function:
+
+- `addCallBackUrl()` - URL for your application where you want MobileMoney API to push data as a `PUT` request. If you wish to specify different callback urls for different use cases, you can pass the callback url with each request seperately.
+
+You can override the default configuration of `MMClient` by using either of the following ways:
 
 ```java
-MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>", "<mode>");
+MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsumerSecret>", "<Place your apiKey>", "<mode>");
 ```
 Or
 ```java
-MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>", "<mode>", "<security level>");
+MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsumerSecret>", "<Place your apiKey>", "<mode>", "<security level>");
 ```
 For example:
 ```java
-MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>", Environment.SANDBOX, SecurityLevel.DEVELOPMENT);
+MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsumerSecret>", "<Place your apiKey>", Environment.SANDBOX, SecurityLevel.DEVELOPMENT);
 ```
+
 
 ## Use Cases
 
