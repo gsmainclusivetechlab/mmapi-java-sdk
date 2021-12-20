@@ -32,200 +32,227 @@ import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
 
 public class AccountLinkRequestTest {
-	private static final String SERVER_CORRELATION_ID = UUID.randomUUID().toString();
 
-	@Test
-	@DisplayName("Get Account Balance")
-	void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-		Balance expectedBalance = getBalanceObject();
-		AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-		List<AccountIdentifier> identifierList = new ArrayList<>();
+    private static final String SERVER_CORRELATION_ID = UUID.randomUUID().toString();
 
-		identifierList.add(new AccountIdentifier("accountid", "15523"));
-		Identifiers identifiers = new Identifiers(identifierList);
+    @Test
+    @DisplayName("Get Account Balance")
+    void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
+        Balance expectedBalance = getBalanceObject();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-		AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
 
-		Mockito.doReturn(expectedBalance).when(accountLinkRequestSpy).viewAccountBalance(identifiers);
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
 
-		Balance actualBalance = accountLinkRequestSpy.viewAccountBalance(identifiers);
+        Mockito.doReturn(expectedBalance).when(accountLinkRequestSpy).viewAccountBalance(identifiers);
 
-		assertNotNull(expectedBalance);
-		assertNotNull(actualBalance);
-		assertEquals(expectedBalance.getAccountStatus(), actualBalance.getAccountStatus());
-		assertEquals(expectedBalance.getAvailableBalance(), actualBalance.getAvailableBalance());
-	}
-	
-	@Test
+        Balance actualBalance = accountLinkRequestSpy.viewAccountBalance(identifiers);
+
+        assertNotNull(expectedBalance);
+        assertNotNull(actualBalance);
+        assertEquals(expectedBalance.getAccountStatus(), actualBalance.getAccountStatus());
+        assertEquals(expectedBalance.getAvailableBalance(), actualBalance.getAvailableBalance());
+    }
+
+    @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-		ServiceAvailability expectedResponse = getServiceAvailabilityObject();
-		AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-		AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
-		
-		Mockito.doReturn(expectedResponse).when(accountLinkRequestSpy).viewServiceAvailability();
-    	
-    	ServiceAvailability actualResponse = accountLinkRequestSpy.viewServiceAvailability();
-    	
-    	assertNotNull(expectedResponse);
-    	assertNotNull(actualResponse);
-    	assertEquals(expectedResponse.getServiceStatus(), actualResponse.getServiceStatus());
-	}
+        ServiceAvailability expectedResponse = getServiceAvailabilityObject();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
 
-	@Test
-	@DisplayName("Retrieve Missing API Response for Account Link")
-	void viewResponseTestSuccess() throws MobileMoneyException {
-		Transaction expectedTransaction = createAccountLinkTransactionObject();
-		AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-		AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+        Mockito.doReturn(expectedResponse).when(accountLinkRequestSpy).viewServiceAvailability();
 
-		Mockito.doReturn(expectedTransaction).when(accountLinkRequestSpy).viewResponse("clientCorrelationId",
-				Transaction.class);
+        ServiceAvailability actualResponse = accountLinkRequestSpy.viewServiceAvailability();
 
-		Transaction actualTransaction = accountLinkRequestSpy.viewResponse("clientCorrelationId",
-				Transaction.class);
+        assertNotNull(expectedResponse);
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getServiceStatus(), actualResponse.getServiceStatus());
+    }
 
-		assertNotNull(expectedTransaction);
-		assertNotNull(actualTransaction);
-		assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
-	}
-	
-	@Test
+    @Test
+    @DisplayName("Retrieve Missing API Response for Account Link")
+    void viewResponseTestSuccess() throws MobileMoneyException {
+        Transaction expectedTransaction = createAccountLinkTransactionObject();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+
+        Mockito.doReturn(expectedTransaction).when(accountLinkRequestSpy).viewResponse("clientCorrelationId",
+                Transaction.class);
+
+        Transaction actualTransaction = accountLinkRequestSpy.viewResponse("clientCorrelationId",
+                Transaction.class);
+
+        assertNotNull(expectedTransaction);
+        assertNotNull(actualTransaction);
+        assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
+    }
+
+    @Test
     @DisplayName("Create Account Link Success")
     void createAccountLinkTestSuccess() throws MobileMoneyException {
-		AccountLink accountLink = getAccountsLinkObject();
-		String jsonString = accountLink.toJSON();
-		AccountLink accountLink1 = JSONFormatter.fromJSON(jsonString, AccountLink.class);
-		
-		assertNotNull(jsonString);
-		assertNotNull(accountLink1);
-		assertEquals(accountLink.getLinkReference(), accountLink1.getLinkReference());
-	}
+        AccountLink accountLink = getAccountsLinkObject();
+        String jsonString = accountLink.toJSON();
+        AccountLink accountLink1 = JSONFormatter.fromJSON(jsonString, AccountLink.class);
 
-	@Test
-	@DisplayName("Initiate AccountLink Transfer Success")
-	void initiateAccountLinkTransactionTestSuccess() throws MobileMoneyException {
-		AsyncResponse expectedSdkResponse = getAsyncResponse();//how to decide
-		AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-		accountLinkRequest.setTransaction(createAccountLinkTransactionObject());
+        assertNotNull(jsonString);
+        assertNotNull(accountLink1);
+        assertEquals(accountLink.getLinkReference(), accountLink1.getLinkReference());
+    }
 
-		AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
-
-		Mockito.doReturn(expectedSdkResponse).when(accountLinkRequestSpy).createTransferTransaction();
-
-		AsyncResponse actualSdkResponse = accountLinkRequestSpy.createTransferTransaction();
-
-		assertNotNull(expectedSdkResponse);
-		assertNotNull(actualSdkResponse);
-		assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
-		assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
-	}
-    
     @Test
-    @DisplayName("Get Status of a Specific Transaction")
-    void viewRequestStateTestSuccess() throws MobileMoneyException {
-    	AsyncResponse expectedSdkResponse = getAsyncResponse();
-    	AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-    	accountLinkRequest.setTransaction(createAccountLinkTransactionObject());
-        
-    	AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
-        
-        Mockito.doReturn(expectedSdkResponse).when(accountLinkRequestSpy).viewRequestState(SERVER_CORRELATION_ID);
-        
-        AsyncResponse actualSdkResponse = accountLinkRequestSpy.viewRequestState(SERVER_CORRELATION_ID);
-        
+    @DisplayName("Initiate AccountLink Transfer Success")
+    void initiateAccountLinkTransactionTestSuccess() throws MobileMoneyException {
+        AsyncResponse expectedSdkResponse = getAsyncResponse();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        accountLinkRequest.setTransaction(createAccountLinkTransactionObject());
+
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+
+        Mockito.doReturn(expectedSdkResponse).when(accountLinkRequestSpy).createTransferTransaction();
+
+        AsyncResponse actualSdkResponse = accountLinkRequestSpy.createTransferTransaction();
+
         assertNotNull(expectedSdkResponse);
         assertNotNull(actualSdkResponse);
         assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
         assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
     }
-    
+
+    @Test
+    @DisplayName("Get Status of a Specific Transaction")
+    void viewRequestStateTestSuccess() throws MobileMoneyException {
+        AsyncResponse expectedSdkResponse = getAsyncResponse();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        accountLinkRequest.setTransaction(createAccountLinkTransactionObject());
+
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+
+        Mockito.doReturn(expectedSdkResponse).when(accountLinkRequestSpy).viewRequestState(SERVER_CORRELATION_ID);
+
+        AsyncResponse actualSdkResponse = accountLinkRequestSpy.viewRequestState(SERVER_CORRELATION_ID);
+
+        assertNotNull(expectedSdkResponse);
+        assertNotNull(actualSdkResponse);
+        assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
+        assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+    }
+
     @Test
     @DisplayName("Get Details of a Specific Transaction")
     void viewTransactionTestSuccess() throws MobileMoneyException {
-    	Transaction expectedTransaction = createAccountLinkTransactionObject();
-    	AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-    	AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
-        
+        Transaction expectedTransaction = createAccountLinkTransactionObject();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+
         Mockito.doReturn(expectedTransaction).when(accountLinkRequestSpy).viewTransaction("reference");
-        
+
         Transaction actualTransaction = accountLinkRequestSpy.viewTransaction("reference");
-        
+
         assertNotNull(expectedTransaction);
         assertNotNull(actualTransaction);
         assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
         assertEquals(expectedTransaction.getCurrency(), actualTransaction.getCurrency());
     }
-	
-	@Test
-	@DisplayName("AccountLinkRequest Transfer Reversal Success")
-	void accountLinkRequestTransferReversal() throws MobileMoneyException {
-		AsyncResponse expectedSdkResponse = getAsyncResponse();
-		AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-		Reversal reversal = new Reversal();
 
-		reversal.setType("reversal");
-		accountLinkRequest.setReversal(reversal);
+    @Test
+    @DisplayName("AccountLinkRequest Transfer Reversal Success")
+    void accountLinkRequestTransferReversal() throws MobileMoneyException {
+        AsyncResponse expectedSdkResponse = getAsyncResponse();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        Reversal reversal = new Reversal();
 
-		AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+        reversal.setType("reversal");
+        accountLinkRequest.setReversal(reversal);
 
-		Mockito.doReturn(expectedSdkResponse).when(accountLinkRequestSpy)
-				.createReversal("transactionReference");
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
 
-		AsyncResponse actualSdkResponse = accountLinkRequestSpy.createReversal("transactionReference");
+        Mockito.doReturn(expectedSdkResponse).when(accountLinkRequestSpy)
+                .createReversal("transactionReference");
 
-		assertNotNull(expectedSdkResponse);
-		assertNotNull(actualSdkResponse);
-		assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
-		assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
-	}
+        AsyncResponse actualSdkResponse = accountLinkRequestSpy.createReversal("transactionReference");
 
-	@Test
-	@DisplayName("Retrieve Transactions Test Success")
-	void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-		List<Transaction> expectedList = getTransactionList();
-		AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-		List<AccountIdentifier> identifierList = new ArrayList<>();
+        assertNotNull(expectedSdkResponse);
+        assertNotNull(actualSdkResponse);
+        assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
+        assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+    }
 
-		identifierList.add(new AccountIdentifier("accountid", "15523"));
-		Identifiers identifiers = new Identifiers(identifierList);
+    @Test
+    @DisplayName("Retrieve Transactions Test Success")
+    void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
+        List<Transaction> expectedList = getTransactionList();
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-		AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
 
-		Mockito.doReturn(expectedList).when(accountLinkRequestSpy).viewAccountTransactions(identifiers);
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
 
-		List<Transaction> actualList = accountLinkRequestSpy.viewAccountTransactions(identifiers);
+        Mockito.doReturn(expectedList).when(accountLinkRequestSpy).viewAccountTransactions(identifiers);
 
-		assertNotNull(expectedList);
-		assertNotNull(actualList);
-		assertEquals(expectedList.size(), actualList.size());
-		assertTrue(expectedList.size() == 2);
-		assertTrue(actualList.size() == 2);
-		assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
-	}
+        List<Transaction> actualList = accountLinkRequestSpy.viewAccountTransactions(identifiers);
 
-	/***
-	 * 
-	 * @return
-	 */
-	private Balance getBalanceObject() {
-		Balance balance = new Balance();
-		balance.setAccountStatus("available");
-		balance.setAvailableBalance("100.00");
-		return balance;
-	}
+        assertNotNull(expectedList);
+        assertNotNull(actualList);
+        assertEquals(expectedList.size(), actualList.size());
+        assertTrue(expectedList.size() == 2);
+        assertTrue(actualList.size() == 2);
+        assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+    }
 
-	/***
-	 * 
-	 * @return
-	 */
-	private ServiceAvailability getServiceAvailabilityObject() {
-		ServiceAvailability serviceAvailability = new ServiceAvailability();
-		serviceAvailability.setServiceStatus("available");
-		return serviceAvailability;
-	}
-    
-    /***
+    @Test
+    @DisplayName("Get Details of a Specific Account Link")
+    void viewAccountLinkTestSuccess() throws MobileMoneyException {
+        AccountLink expectedResponse = getAccountsLinkObject();
+
+        AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
+
+        AccountLinkRequest accountLinkRequestSpy = Mockito.spy(accountLinkRequest);
+
+        Mockito.doReturn(expectedResponse).when(accountLinkRequestSpy).viewAccountLink(identifiers, "reference");
+
+        AccountLink accountLinkResponse = accountLinkRequestSpy.viewAccountLink(identifiers, "reference");
+
+        assertNotNull(expectedResponse);
+        assertNotNull(accountLinkResponse);
+        assertTrue(expectedResponse.getStatus().equals("both"));
+        assertTrue(accountLinkResponse.getStatus().equals("both"));
+    }
+
+    /**
+     * *
+     *
+     * @return
+     */
+    private Balance getBalanceObject() {
+        Balance balance = new Balance();
+        balance.setAccountStatus("available");
+        balance.setAvailableBalance("100.00");
+        return balance;
+    }
+
+    /**
+     * *
+     *
+     * @return
+     */
+    private ServiceAvailability getServiceAvailabilityObject() {
+        ServiceAvailability serviceAvailability = new ServiceAvailability();
+        serviceAvailability.setServiceStatus("available");
+        return serviceAvailability;
+    }
+
+    /**
+     * *
      *
      * @return
      */
@@ -286,8 +313,9 @@ public class AccountLinkRequestTest {
 
         return transaction;
     }
-    
-    /***
+
+    /**
+     * *
      *
      * @return
      */
@@ -295,14 +323,14 @@ public class AccountLinkRequestTest {
         List<AccountIdentifier> sourceAccountIdentifiers = new ArrayList<>();
         RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
         List<CustomData> customDataList = new ArrayList<>();
-        
+
         sourceAccountIdentifiers.add(new AccountIdentifier("accountid", "2999"));
 
         customDataList.add(new CustomData("keytest", "keyvalue"));
-        
+
         requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
         requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
-        
+
         AccountLink accountLink = new AccountLink();
         accountLink.setSourceAccountIdentifiers(sourceAccountIdentifiers);
         accountLink.setMode("active");
@@ -310,51 +338,53 @@ public class AccountLinkRequestTest {
         accountLink.setRequestingOrganisation(requestingOrganisation);
         accountLink.setRequestDate("2018-07-03T11:43:27.405Z");
         accountLink.setCustomData(customDataList);
-        
+
         return accountLink;
     }
 
-	/***
-	 * 
-	 * @return
-	 */
-	private AsyncResponse getAsyncResponse() {
-		AsyncResponse asyncResponse = new AsyncResponse();
+    /**
+     * *
+     *
+     * @return
+     */
+    private AsyncResponse getAsyncResponse() {
+        AsyncResponse asyncResponse = new AsyncResponse();
 
-		asyncResponse.setServerCorrelationId(SERVER_CORRELATION_ID);
-		asyncResponse.setStatus("pending");
+        asyncResponse.setServerCorrelationId(SERVER_CORRELATION_ID);
+        asyncResponse.setStatus("pending");
 
-		return asyncResponse;
-	}
+        return asyncResponse;
+    }
 
-	/***
-	 * 
-	 * @return
-	 */
-	private List<Transaction> getTransactionList() {
-		List<Transaction> transactions = new ArrayList<>();
-		List<AccountIdentifier> debitPartyList = new ArrayList<>();
-		List<AccountIdentifier> creditPartyList = new ArrayList<>();
+    /**
+     * *
+     *
+     * @return
+     */
+    private List<Transaction> getTransactionList() {
+        List<Transaction> transactions = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-		debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
-		creditPartyList.add(new AccountIdentifier("walletid", "1"));
+        debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        creditPartyList.add(new AccountIdentifier("walletid", "1"));
 
-		Transaction transaction1 = new Transaction();
-		transaction1.setDebitParty(debitPartyList);
-		transaction1.setCreditParty(creditPartyList);
-		transaction1.setAmount("16.00");
-		transaction1.setCurrency("USD");
+        Transaction transaction1 = new Transaction();
+        transaction1.setDebitParty(debitPartyList);
+        transaction1.setCreditParty(creditPartyList);
+        transaction1.setAmount("16.00");
+        transaction1.setCurrency("USD");
 
-		Transaction transaction2 = new Transaction();
-		transaction2.setDebitParty(debitPartyList);
-		transaction2.setCreditParty(creditPartyList);
-		transaction2.setAmount("17.00");
-		transaction2.setCurrency("USD");
+        Transaction transaction2 = new Transaction();
+        transaction2.setDebitParty(debitPartyList);
+        transaction2.setCreditParty(creditPartyList);
+        transaction2.setAmount("17.00");
+        transaction2.setCurrency("USD");
 
-		transactions.add(transaction1);
-		transactions.add(transaction2);
+        transactions.add(transaction1);
+        transactions.add(transaction2);
 
-		return transactions;
-	}
+        return transactions;
+    }
 
 }
