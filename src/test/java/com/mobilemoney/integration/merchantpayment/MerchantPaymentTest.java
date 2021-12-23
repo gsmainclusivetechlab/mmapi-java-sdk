@@ -127,6 +127,7 @@ public class MerchantPaymentTest {
 
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "polling");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 

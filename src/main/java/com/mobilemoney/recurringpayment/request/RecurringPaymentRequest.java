@@ -47,7 +47,7 @@ public class RecurringPaymentRequest extends ViewTransactionRequest {
      */
     public AsyncResponse createMerchantTransaction() throws MobileMoneyException {
         clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL, clientCorrelationId);
+        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL, this.notificationType, clientCorrelationId);
     }
 
     /***
@@ -103,7 +103,8 @@ public class RecurringPaymentRequest extends ViewTransactionRequest {
      */
     public AsyncResponse createRefundTransaction() throws MobileMoneyException {
         clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL, clientCorrelationId);
+        
+        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL, this.notificationType, clientCorrelationId);
     }
 
     /***
@@ -114,7 +115,7 @@ public class RecurringPaymentRequest extends ViewTransactionRequest {
      */
     public RecurringPaymentRequest addCallBack(final String callBackURL) {
         this.callBackURL = callBackURL;
-        return this;
+        return setNotificationType(NotificationType.CALLBACK);
     }
 
     /***

@@ -1,0 +1,52 @@
+# Create A Reversal
+
+`Here, createReversal(String transactionReference) creates a POST request to 
+/transactions/{transactionReference}/reversals`
+
+> `Provided with a valid object representation, this endpoint allows for a new reversal to be created.`
+
+### Usage/Examples
+
+```java
+Transaction transaction = new Transaction();
+List<AccountIdentifier> debitPartyList = new ArrayList<>();
+List<AccountIdentifier> creditPartyList = new ArrayList<>();
+
+debitPartyList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
+creditPartyList.add(new AccountIdentifier("accountid", "<Place your account id of credit party here>"));
+
+transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
+
+AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+accountLinkRequest.setTransaction(transaction);
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createTransferTransaction();
+
+sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+String txnRef = sdkResponse.getObjectReference();
+
+Reversal reversal = new Reversal();
+reversal.setType("reversal");
+accountLinkRequest.setReversal(reversal);
+sdkResponse =  mmClient.addRequest(accountLinkRequest).addCallBack("<Place your callback URL>").createReversal(txnRef);
+```
+
+### Response Example
+
+```java
+{
+  "serverCorrelationId": "0cef7251-bc7b-4437-8090-31c725484bbd",
+  "status": "pending",
+  "notificationMethod": "callback",
+  "objectReference": "17825",
+  "pollLimit": 100
+}
+```
+
+### NOTE
+
+In asynchronous flows, a callback mechanism or polling mechanism is utilised to allow the client to determine the request's final state.
+Use the <a href="viewRequestState.Readme.md">viewRequestState()</a> function for the polling mechanism to receive the status of a request, and the <a href="viewTransaction.Readme.md">viewTransaction()</a>
+function to acquire the final representation of the Transaction object.

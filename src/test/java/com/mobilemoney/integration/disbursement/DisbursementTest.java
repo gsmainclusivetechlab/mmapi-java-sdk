@@ -235,7 +235,7 @@ public class DisbursementTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         disbursementRequest.setReversal(reversal);
-        sdkResponse = mmClient.addRequest(disbursementRequest).createReversal(sdkResponse.getObjectReference());
+        sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());

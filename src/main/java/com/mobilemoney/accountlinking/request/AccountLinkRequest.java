@@ -104,7 +104,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
      */
     public AsyncResponse createTransferTransaction() throws MobileMoneyException {
     	this.clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createTransferTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
+        return this.createTransactionRequest.createTransferTransaction(this.transaction, this.callBackURL, this.notificationType, this.clientCorrelationId);
     }
     
     /***
@@ -114,7 +114,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
     */
    public AccountLinkRequest addCallBack(final String callBackURL) {
        this.callBackURL = callBackURL;
-       return this;
+       return setNotificationType(NotificationType.CALLBACK);
    }
    
    /***

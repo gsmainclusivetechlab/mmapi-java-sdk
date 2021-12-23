@@ -87,7 +87,7 @@ public class InternationalTransferRequest extends TransferRequest {
      */
     public InternationalTransferRequest addCallBack(final String callBackURL) {
         this.callBackURL = callBackURL;
-        return this;
+        return setNotificationType(NotificationType.CALLBACK);
     }
 
     /***

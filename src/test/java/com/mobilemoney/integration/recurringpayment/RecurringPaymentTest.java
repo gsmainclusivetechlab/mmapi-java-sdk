@@ -13,11 +13,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RecurringPaymentTest {
 	private static PropertiesLoader loader;
@@ -30,16 +32,19 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("Setup Recurring Payment Test Success")
     void createAccountDebitMandateTestSuccess() throws MobileMoneyException {
-        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("walletid", "1"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
-        AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
+        AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createAccountDebitMandate(new Identifiers(identifierList));
         
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -74,7 +79,9 @@ public class RecurringPaymentTest {
                 .viewAccountDebitMandate(new Identifiers(identifierList), sdkResponse.getObjectReference());
 
         assertNotNull(debitMandateResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getNotificationMethod(), "polling");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -90,6 +97,10 @@ public class RecurringPaymentTest {
                 .createMerchantTransaction();
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -119,6 +130,15 @@ public class RecurringPaymentTest {
         Transaction transactionResponse = mmClient.addRequest(recurringPaymentRequest).viewTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(transactionResponse);
+        assertNotNull(transactionResponse.getTransactionReference());
+        assertNotNull(transactionResponse.getTransactionStatus());
+        assertNotNull(transactionResponse.getAmount());
+        assertNotNull(transactionResponse.getCurrency());
+        assertNotNull(transactionResponse.getCreditParty());
+        assertNotNull(transactionResponse.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactionResponse.getType()));
+        assertTrue(transactionResponse.getCreditParty().size() > 0);
+        assertTrue(transactionResponse.getDebitParty().size() > 0);
     }
 
     @Test
@@ -155,6 +175,9 @@ public class RecurringPaymentTest {
                 .createRefundTransaction();
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -180,6 +203,9 @@ public class RecurringPaymentTest {
                 .createReversal(txnRef);
 
         assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -209,6 +235,17 @@ public class RecurringPaymentTest {
         List<Transaction> transactions = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
+        if (transactions.size() > 0) {
+        	assertNotNull(transactions.get(0).getTransactionReference());
+            assertNotNull(transactions.get(0).getTransactionStatus());
+            assertNotNull(transactions.get(0).getAmount());
+            assertNotNull(transactions.get(0).getCurrency());
+            assertNotNull(transactions.get(0).getCreditParty());
+            assertNotNull(transactions.get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+            assertTrue(transactions.get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        }
     }
 
     @Test
@@ -218,6 +255,7 @@ public class RecurringPaymentTest {
         ServiceAvailability serviceAvailability = mmClient.addRequest(new RecurringPaymentRequest()).viewServiceAvailability();
 
         assertNotNull(serviceAvailability);
+        assertNotNull(serviceAvailability.getServiceStatus());
     }
 
     @Test
@@ -236,6 +274,7 @@ public class RecurringPaymentTest {
                 .viewResponse(clientCorrelationId, DebitMandate.class);
 
         assertNotNull(debitMandateResponse);
+        assertNotNull(debitMandateResponse.getMandateReference());
     }
 
     /***

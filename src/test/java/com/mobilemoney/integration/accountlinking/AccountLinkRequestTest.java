@@ -21,8 +21,8 @@ import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
 import com.mobilemoney.internationaltransfer.model.Address;
-import com.mobilemoney.merchantpayment.request.MerchantPaymentRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
@@ -54,7 +54,7 @@ class AccountLinkRequestTest {
         
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
-        assertEquals(sdkResponse.getStatus(), "pending");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         
     }
@@ -82,17 +82,22 @@ class AccountLinkRequestTest {
 
         accountLinkRequest.setTransaction(createAccountLinkTransactionObject());
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(loader.get("CALLBACK_URL")).createTransferTransaction();
-
+        
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
         
-        assertNotNull(sdkResponse.getServerCorrelationId());
-        assertEquals(sdkResponse.getStatus(), "completed");
-        assertEquals(sdkResponse.getNotificationMethod(), "callback");
-
         Transaction transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
 
         assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
     }
     
     @Test
@@ -103,17 +108,22 @@ class AccountLinkRequestTest {
 
         accountLinkRequest.setTransaction(createAccountLinkTransactionFailedObject());
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(loader.get("CALLBACK_URL")).createTransferTransaction();
-
+        
         sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
         
-        assertNotNull(sdkResponse.getServerCorrelationId());
-        assertEquals(sdkResponse.getStatus(), "completed");
-        assertEquals(sdkResponse.getNotificationMethod(), "callback");
-
         Transaction transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
 
         assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
     }
     
     @Test
@@ -125,15 +135,14 @@ class AccountLinkRequestTest {
         accountLinkRequest.setTransaction(getTransactionObject("200.00", "RWF"));
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).setNotificationType(NotificationType.POLLING).createTransferTransaction();
 
-        sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        
+        assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
-        assertEquals(sdkResponse.getStatus(), "completed");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
         assertEquals(sdkResponse.getNotificationMethod(), "polling");
         
-        Transaction transactionResponse = mmClient.addRequest(accountLinkRequest).viewTransaction(sdkResponse.getObjectReference());
-
-        assertNotNull(transactionResponse);
+        sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        Transaction transaction = mmClient.addRequest(accountLinkRequest).viewTransaction(sdkResponse.getObjectReference());
     }
     
     @Test
@@ -152,12 +161,12 @@ class AccountLinkRequestTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         accountLinkRequest.setReversal(reversal);
-        sdkResponse =  mmClient.addRequest(accountLinkRequest).createReversal(txnRef);
+        sdkResponse =  mmClient.addRequest(accountLinkRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(txnRef);
 
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
-        assertEquals(sdkResponse.getStatus(), "pending");
-        assertEquals(sdkResponse.getNotificationMethod(), "polling");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
     }
     
     @Test
@@ -187,6 +196,17 @@ class AccountLinkRequestTest {
         List<Transaction> transactions = mmClient.addRequest(new AccountLinkRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
         
         assertNotNull(transactions);
+        if (transactions.size() > 0) {
+        	assertNotNull(transactions.get(0).getTransactionReference());
+            assertNotNull(transactions.get(0).getTransactionStatus());
+            assertNotNull(transactions.get(0).getAmount());
+            assertNotNull(transactions.get(0).getCurrency());
+            assertNotNull(transactions.get(0).getCreditParty());
+            assertNotNull(transactions.get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+            assertTrue(transactions.get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        }
     }
     
     @Test
@@ -196,6 +216,7 @@ class AccountLinkRequestTest {
         ServiceAvailability serviceAvailability = mmClient.addRequest(new AccountLinkRequest()).viewServiceAvailability();
 
         assertNotNull(serviceAvailability);
+        assertNotNull(serviceAvailability.getServiceStatus());
     }
     
     @Test
@@ -210,15 +231,15 @@ class AccountLinkRequestTest {
 
         identifierList.add(new AccountIdentifier("accountid", "15523"));
 
-        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack(loader.get("CALLBACK_URL")).createAccountLink(new Identifiers(identifierList));
 
-        assertNotNull(sdkResponse.getServerCorrelationId());
-        assertEquals(sdkResponse.getStatus(), "pending");
-        assertEquals(sdkResponse.getNotificationMethod(), "polling");
-        
         String clientCorrelationId = accountLinkRequest.getClientCorrelationId();
         AccountLink accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewResponse(clientCorrelationId, AccountLink.class);
 
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertNotNull(accountLinkResponse);
     }
     
@@ -242,6 +263,14 @@ class AccountLinkRequestTest {
         AccountLink accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
 
         assertNotNull(accountLinkResponse);
+        assertNotNull(accountLinkResponse.getLinkReference());
+        assertNotNull(accountLinkResponse.getMode());
+        assertNotNull(accountLinkResponse.getStatus());
+        assertNotNull(accountLinkResponse.getSourceAccountIdentifiers());        
+        if (accountLinkResponse.getSourceAccountIdentifiers().size() > 0) {
+        	assertNotNull(accountLinkResponse.getSourceAccountIdentifiers().get(0).getKey());
+        	assertNotNull(accountLinkResponse.getSourceAccountIdentifiers().get(0).getValue());
+        }
     }
     
     /***

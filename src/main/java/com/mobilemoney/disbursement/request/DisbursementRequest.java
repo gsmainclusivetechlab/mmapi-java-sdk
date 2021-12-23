@@ -198,7 +198,7 @@ public class DisbursementRequest extends ViewTransactionRequest {
      */
     public DisbursementRequest addCallBack(final String callBackURL) {
         this.callBackURL = callBackURL;
-        return this;
+        return setNotificationType(NotificationType.CALLBACK);
     }
 
     /***
