@@ -25,7 +25,7 @@ public class CommonRequest extends ResourceUtils {
     public String callBackURL;
 
     // Callback/polling
-    public NotificationType notificationType = NotificationType.POLLING;
+    public NotificationType notificationType = NotificationType.CALLBACK;
 
     /***
      *

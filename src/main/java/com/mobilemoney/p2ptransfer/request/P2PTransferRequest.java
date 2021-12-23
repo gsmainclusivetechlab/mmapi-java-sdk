@@ -51,7 +51,7 @@ public class P2PTransferRequest extends TransferRequest {
      */
     public AsyncResponse createTransferTransaction() throws MobileMoneyException {
         this.clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createTransferTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
+        return this.createTransactionRequest.createTransferTransaction(this.transaction, this.callBackURL, this.notificationType, this.clientCorrelationId);
     }
 
     /***
@@ -77,7 +77,7 @@ public class P2PTransferRequest extends TransferRequest {
      */
     public P2PTransferRequest addCallBack(final String callBackURL) {
         this.callBackURL = callBackURL;
-        return this;
+        return setNotificationType(NotificationType.CALLBACK);
     }
 
     /***

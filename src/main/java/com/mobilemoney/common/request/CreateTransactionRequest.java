@@ -17,18 +17,19 @@ import com.mobilemoney.merchantpayment.constants.TransactionType;
  */
 public class CreateTransactionRequest extends ResourceUtils {
     // Callback/polling
-    private NotificationType notificationType = NotificationType.POLLING;
+    private NotificationType notificationType = NotificationType.CALLBACK;
 
     /***
      * Merchant initiates the payment and will be credited when the payer approves the request
      *
      * @param transaction
      * @param callBackURL
+     * @param notificationType
      * @param clientCorrelationId
      * @return
      * @throws MobileMoneyException
      */
-    public AsyncResponse createMerchantTransaction(final Transaction transaction, final String callBackURL, final String clientCorrelationId) throws MobileMoneyException {
+    public AsyncResponse createMerchantTransaction(final Transaction transaction, final String callBackURL, final NotificationType notificationType, final String clientCorrelationId) throws MobileMoneyException {
         if (transaction == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
         }
@@ -42,15 +43,16 @@ public class CreateTransactionRequest extends ResourceUtils {
      *
      * @param transaction
      * @param callBackURL
+     * @param notificationType
      * @param clientCorrelationId
      * @return
      * @throws MobileMoneyException
      */
-    public AsyncResponse createTransferTransaction(final Transaction transaction, final String callBackURL, final String clientCorrelationId) throws MobileMoneyException {
+    public AsyncResponse createTransferTransaction(final Transaction transaction, final String callBackURL, final NotificationType notificationType, final String clientCorrelationId) throws MobileMoneyException {
         if (transaction == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
         }
-
+        
         String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.TRANSFER);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, clientCorrelationId);
         return createRequest(HttpMethod.POST, resourcePath, transaction.toJSON(), notificationType, callBackURL, AsyncResponse.class);
@@ -61,15 +63,16 @@ public class CreateTransactionRequest extends ResourceUtils {
      *
      * @param transaction
      * @param callBackURL
+     * @param notificationType
      * @param clientCorrelationId
      * @return
      * @throws MobileMoneyException
      */
-    public AsyncResponse createRefundTransaction(final Transaction transaction, final String callBackURL, final String clientCorrelationId) throws MobileMoneyException {
+    public AsyncResponse createRefundTransaction(final Transaction transaction, final String callBackURL, final NotificationType notificationType, final String clientCorrelationId) throws MobileMoneyException {
         if (transaction == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
         }
-
+        
         String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.ADJUSTMENT);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, clientCorrelationId);
         return createRequest(HttpMethod.POST, resourcePath, transaction.toJSON(), notificationType, callBackURL, AsyncResponse.class);

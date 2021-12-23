@@ -43,7 +43,7 @@ public class MerchantPaymentRequest extends ViewTransactionRequest {
      */
     public AsyncResponse createMerchantTransaction() throws MobileMoneyException {
         this.clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
+        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL, this.notificationType, this.clientCorrelationId);
     }
 
     /***
@@ -54,7 +54,7 @@ public class MerchantPaymentRequest extends ViewTransactionRequest {
      */
     public AsyncResponse createRefundTransaction() throws MobileMoneyException {
         this.clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL, this.clientCorrelationId);
+        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL, this.notificationType, this.clientCorrelationId);
     }
 
     /***
@@ -87,7 +87,7 @@ public class MerchantPaymentRequest extends ViewTransactionRequest {
      */
     public MerchantPaymentRequest addCallBack(final String callBackURL) {
         this.callBackURL = callBackURL;
-        return this;
+        return setNotificationType(NotificationType.CALLBACK);
     }
 
     /***
