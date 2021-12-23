@@ -1,5 +1,4 @@
-# 
-View A Link
+# View A Link
 
 `Here, viewAccountLink(Identifiers identifiers, String linkReference) creates a GET request to /accounts/{accountId}/links/{linkReference}`
 
