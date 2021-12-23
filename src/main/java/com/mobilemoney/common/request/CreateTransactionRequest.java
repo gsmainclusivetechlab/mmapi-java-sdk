@@ -17,7 +17,7 @@ import com.mobilemoney.merchantpayment.constants.TransactionType;
  */
 public class CreateTransactionRequest extends ResourceUtils {
     // Callback/polling
-    private NotificationType notificationType = NotificationType.CALLBACK;
+    private NotificationType notificationType = NotificationType.POLLING;
 
     /***
      * Merchant initiates the payment and will be credited when the payer approves the request
