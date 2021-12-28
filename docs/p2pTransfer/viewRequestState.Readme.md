@@ -50,11 +50,11 @@ senderKyc.setSubjectName(kycSubject);
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-debitPartyList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
-creditPartyList.add(new AccountIdentifier("accountid", "<Place your account id of credit party here>"));
+debitPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+creditPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-transaction.setAmount("16.00");
-transaction.setCurrency("USD");
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
 transaction.setInternationalTransferInformation(transferInformation);
 transaction.setSenderKyc(senderKyc);
 transaction.setRequestingOrganisation(requestingOrganisation);
@@ -63,6 +63,8 @@ transaction.setDebitParty(debitPartyList);
 
 P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 p2PTransferRequest.setTransaction(transaction);
+
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
 AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
 
 sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());

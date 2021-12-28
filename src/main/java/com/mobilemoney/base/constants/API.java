@@ -81,5 +81,14 @@ public final class API {
     
     // REST Endpoint: View Account Link
     public static final String VIEW_ACCOUNT_LINK = "/accounts/{accountId}/links/{linkReference}";
+    
+    // REST Endpoint: Create Bill Payments
+    public static final String CREATE_BILL_PAYMENT = "/accounts/{identifierType}/{identifier}/bills/{billReference}/payments";
+    
+    // REST Endpoint: View Account Bills
+    public static final String VIEW_ACCOUNT_BILLS = "/accounts/{identifierType}/{identifier}/bills";
+    
+    // REST Endpoint: View Bill Payments
+    public static final String VIEW_BILL_PAYMENTS = "/accounts/{identifierType}/{identifier}/bills/{billReference}/payments";
 
 }
