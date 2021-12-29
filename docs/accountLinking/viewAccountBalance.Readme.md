@@ -11,7 +11,7 @@ List<AccountIdentifier> identifierList = new ArrayList<>();
 
 identifierList.add(new AccountIdentifier("<identifier type>", "<identifier type value>"));
 
-Balance balance = mmClient.addRequest(new AccountLinkRequest()).viewAccountBalance(new Identifiers(identifierList));
+Balance balance = mmClient.addRequest(new AccountLinkingRequest()).viewAccountBalance(new Identifiers(identifierList));
 ```
 
 ### Response Example

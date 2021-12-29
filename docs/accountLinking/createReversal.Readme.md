@@ -20,17 +20,17 @@ transaction.setCreditParty(creditPartyList);
 transaction.setAmount("<amount>");
 transaction.setCurrency("<currency>");
 
-AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
-accountLinkRequest.setTransaction(transaction);
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createTransferTransaction();
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+accountLinkingRequest.setTransaction(transaction);
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createTransferTransaction();
 
-sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 String txnRef = sdkResponse.getObjectReference();
 
 Reversal reversal = new Reversal();
 reversal.setType("reversal");
-accountLinkRequest.setReversal(reversal);
-sdkResponse =  mmClient.addRequest(accountLinkRequest).addCallBack("<Place your callback URL>").createReversal(txnRef);
+accountLinkingRequest.setReversal(reversal);
+sdkResponse =  mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createReversal(txnRef);
 ```
 
 ### Response Example

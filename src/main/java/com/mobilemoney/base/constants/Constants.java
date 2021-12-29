@@ -88,6 +88,15 @@ public final class Constants {
     // Account Id
     public static final String ACCOUNT_ID = "{accountId}";
     
+    // Identity Type
+    public static final String IDENTITY_TYPE = "{identityType}";
+
+    // Identity Type Individual
+    public static final String INDIVIDUAL = "individual";
+
+    // Batch Id
+    public static final String IDENTITY_ID = "{identityId}";
+    
     // Default SDK configuration file name
     public static final String DEFAULT_CONFIGURATION_FILE = "sdk_config.properties";
 
@@ -180,4 +189,10 @@ public final class Constants {
     
     // Auth Code Object Is Null
     public static final String ACCOUNT_LINK_OBJECT_INIT_ERROR = "Account link object is not initialized";
+
+    // Account Object Is Null
+    public static final String ACCOUNT_OBJECT_INIT_ERROR = "Account object is not initialized";
+    
+    // Patch Data Object Is Null
+    public static final String PATCH_DATA_OBJECT_INIT_ERROR = "Patch Data object is not initialized";
 }

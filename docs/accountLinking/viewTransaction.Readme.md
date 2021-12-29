@@ -7,7 +7,7 @@
 ### Usage/Examples
 
 ```java
-AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
 Transaction transaction = new Transaction();
 KYCInformation senderKyc = new KYCInformation();
@@ -63,14 +63,14 @@ transaction.setRequestingOrganisation(requestingOrganisation);
 transaction.setCreditParty(creditPartyList);
 transaction.setDebitParty(debitPartyList);
 
-accountLinkRequest.setTransaction(transaction);
+accountLinkingRequest.setTransaction(transaction);
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
 
-sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
 String txnRef = sdkResponse.getObjectReference();
-Transaction transactionResponse = mmClient.addRequest(accountLinkRequest).viewTransaction(txnRef);
+Transaction transactionResponse = mmClient.addRequest(accountLinkingRequest).viewTransaction(txnRef);
 ```
 
 ### Response Example

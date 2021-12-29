@@ -18,23 +18,23 @@ customDataList.add(new CustomData("keytest", "keyvalue"));
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 
-AccountLink accountLink = new AccountLink();
-accountLink.setSourceAccountIdentifiers(sourceAccountIdentifiers);
-accountLink.setMode("active");
-accountLink.setStatus("both");
-accountLink.setRequestingOrganisation(requestingOrganisation);
-accountLink.setRequestDate("2018-07-03T11:43:27.405Z");
-accountLink.setCustomData(customDataList);
+Link link = new Link();
+link.setSourceAccountIdentifiers(sourceAccountIdentifiers);
+link.setMode("active");
+link.setStatus("both");
+link.setRequestingOrganisation(requestingOrganisation);
+link.setRequestDate("2018-07-03T11:43:27.405Z");
+link.setCustomData(customDataList);
 
-AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
-accountLinkRequest.setAccountLink(accountLink);
+accountLinkingRequest.setLink(link);
 
 List<AccountIdentifier> identifierList = new ArrayList<>();
 
 identifierList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
 ```
 
 ### Response Example

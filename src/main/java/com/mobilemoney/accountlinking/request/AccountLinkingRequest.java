@@ -7,7 +7,7 @@ package com.mobilemoney.accountlinking.request;
 
 import java.util.stream.Collectors;
 
-import com.mobilemoney.accountlinking.model.AccountLink;
+import com.mobilemoney.accountlinking.model.Link;
 import com.mobilemoney.base.constants.API;
 import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
@@ -25,14 +25,14 @@ import com.mobilemoney.common.request.ViewTransactionRequest;
 import java.util.UUID;
 
 /**
- * Class AccountLinkRequest
+ * Class AccountLinkingRequest
  */
-public class AccountLinkRequest extends ViewTransactionRequest{
+public class AccountLinkingRequest extends ViewTransactionRequest{
     // Transaction Reference
     private Transaction transaction;
     
     // AccountLink Reference
-    private AccountLink accountLink;
+    private Link link;
     
     // CreateTransactionRequest Reference
     private CreateTransactionRequest createTransactionRequest;
@@ -40,16 +40,16 @@ public class AccountLinkRequest extends ViewTransactionRequest{
     /***
      * Default constructor
      */
-    public AccountLinkRequest() {
+    public AccountLinkingRequest() {
         createTransactionRequest = new CreateTransactionRequest();
     }
     
     /***
      *
-     * @param accountLink
+     * @param link
      */
-    public void setAccountLink(AccountLink accountLink) {
-        this.accountLink = accountLink;
+    public void setLink(Link link) {
+        this.link = link;
     }
     
     /***
@@ -71,12 +71,12 @@ public class AccountLinkRequest extends ViewTransactionRequest{
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
-        if (accountLink == null) {
+        if (link == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.ACCOUNT_LINK_OBJECT_INIT_ERROR).build());
         }
         String resourcePath = getResourcePath(API.CREATE_ACCOUNT_LINKS, identifiers);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, accountLink.toJSON(), notificationType, callBackURL, AsyncResponse.class);
+        return createRequest(HttpMethod.POST, resourcePath, link.toJSON(), notificationType, callBackURL, AsyncResponse.class);
     }
     
     /***
@@ -86,7 +86,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
      * @return
      * @throws MobileMoneyException
      */
-    public AccountLink viewAccountLink(Identifiers identifiers, String linkReference) throws MobileMoneyException {
+    public Link viewAccountLink(Identifiers identifiers, String linkReference) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
@@ -94,7 +94,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
         }
     	String resourcePath = API.VIEW_ACCOUNT_LINK.replace(Constants.ACCOUNT_ID, identifiers.getIdentifiers().stream().map(identifier -> identifier.getKey().concat("@").concat(identifier.getValue())).collect(Collectors.joining("$"))).replace(Constants.LINK_REFERENCE, linkReference);
-        return createRequest(HttpMethod.GET, resourcePath, AccountLink.class);
+        return createRequest(HttpMethod.GET, resourcePath, Link.class);
     }
     
     /***
@@ -112,7 +112,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
     * @param callBackURL
     * @return
     */
-   public AccountLinkRequest addCallBack(final String callBackURL) {
+   public AccountLinkingRequest addCallBack(final String callBackURL) {
        this.callBackURL = callBackURL;
        return setNotificationType(NotificationType.CALLBACK);
    }
@@ -123,7 +123,7 @@ public class AccountLinkRequest extends ViewTransactionRequest{
      * @param notificationType
      * @return
      */
-    public AccountLinkRequest setNotificationType(final NotificationType notificationType) {
+    public AccountLinkingRequest setNotificationType(final NotificationType notificationType) {
         this.notificationType = notificationType;
         return this;
     }

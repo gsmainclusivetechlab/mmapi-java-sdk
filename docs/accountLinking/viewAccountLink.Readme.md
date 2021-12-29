@@ -7,7 +7,7 @@
 ### Usage/Examples
 
 ```java
-AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
 List<AccountIdentifier> sourceAccountIdentifiers = new ArrayList<>();
 RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
@@ -20,25 +20,25 @@ customDataList.add(new CustomData("keytest", "keyvalue"));
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 
-AccountLink accountLink = new AccountLink();
-accountLink.setSourceAccountIdentifiers(sourceAccountIdentifiers);
-accountLink.setMode("active");
-accountLink.setStatus("both");
-accountLink.setRequestingOrganisation(requestingOrganisation);
-accountLink.setRequestDate("2018-07-03T11:43:27.405Z");
-accountLink.setCustomData(customDataList);
+Link link = new Link();
+link.setSourceAccountIdentifiers(sourceAccountIdentifiers);
+link.setMode(Mode.BOTH.getMode());
+link.setStatus(Status.ACTIVE.getStatus());
+link.setRequestingOrganisation(requestingOrganisation);
+link.setRequestDate("2018-07-03T11:43:27.405Z");
+link.setCustomData(customDataList);
 
-accountLinkRequest.setAccountLink(accountLink);
+accountLinkingRequest.setLink(link);
 
 List<AccountIdentifier> identifierList = new ArrayList<>();
 identifierList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
 
-sdkResponse = mmClient.addRequest(accountLinkRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
 String linkRef = sdkResponse.getObjectReference();
-AccountLink accountLinkResponse = mmClient.addRequest(accountLinkRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
+Link linkResponse = mmClient.addRequest(accountLinkingRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
 ```
 
 ### Response Example

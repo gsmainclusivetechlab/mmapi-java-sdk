@@ -7,7 +7,7 @@
 ### Usage/Examples
 
 ```java
-ServiceAvailability serviceAvailability = mmClient.addRequest(new AccountLinkRequest()).viewServiceAvailability();
+ServiceAvailability serviceAvailability = mmClient.addRequest(new AccountLinkingRequest()).viewServiceAvailability();
 ``` 
 
 ### Response Example
