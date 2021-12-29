@@ -82,6 +82,9 @@ public final class Constants {
     // Link Reference
     public static final String LINK_REFERENCE = "{linkReference}";
     
+    // Bill Reference
+    public static final String BILL_REFERENCE = "{billReference}";
+    
     // Account Id
     public static final String ACCOUNT_ID = "{accountId}";
     
@@ -150,6 +153,9 @@ public final class Constants {
 
     // Transaction Object Is Null
     public static final String TRANSACTION_OBJECT_INIT_ERROR = "Transaction object is not initialized";
+    
+    // Bill Pay Object Is Null
+    public static final String BILL_PAY_OBJECT_INIT_ERROR = "Bill pay object is not initialized";
 
     // General Error
     public static final String GENRAL_ERROR = "The request could not be completed";

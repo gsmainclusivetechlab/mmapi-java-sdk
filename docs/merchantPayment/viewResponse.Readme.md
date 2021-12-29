@@ -7,11 +7,12 @@
 ### Usage/Examples
 
 ```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
 List<AccountIdentifier> debitPartyList = new ArrayList<>();
 List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-debitPartyList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
-creditPartyList.add(new AccountIdentifier("accountid", "<Place your account id of credit party here>"));
+debitPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+creditPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
 Transaction transaction = new Transaction();
 transaction.setDebitParty(debitPartyList);

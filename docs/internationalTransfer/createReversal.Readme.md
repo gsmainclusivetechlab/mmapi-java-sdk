@@ -53,11 +53,11 @@ senderKyc.setSubjectName(kycSubject);
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-debitPartyList.add(new AccountIdentifier("walletid", "1"));
-creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+debitPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+creditPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-transaction.setAmount("100.00");
-transaction.setCurrency("GBP");
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
 transaction.setInternationalTransferInformation(transferInformation);
 transaction.setSenderKyc(senderKyc);
 transaction.setRequestingOrganisation(requestingOrganisation);
@@ -66,6 +66,7 @@ transaction.setDebitParty(debitPartyList);
 
 internationalTransferRequest.setTransaction(transaction);
 
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
 AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack("<Place your callback URL>").createInternationalTransaction();
 
 sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());

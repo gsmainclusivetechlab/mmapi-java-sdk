@@ -48,11 +48,11 @@ senderKyc.setIdDocument(identificationList);
 senderKyc.setPostalAddress(address);
 senderKyc.setSubjectName(kycSubject);
 
-debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-creditPartyList.add(new AccountIdentifier("accountid", "2000"));
-customDataList.add(new CustomData("keytest", "keyvalue"));
+debitPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+creditPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+customDataList.add(new CustomData("<data key>", "<data value>"));
 
-Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);
+Quotation quotation = new Quotation("<amount>", "<currency>", creditPartyList, debitPartyList);
 quotation.setSubType("abc");
 quotation.setChosenDeliveryMethod("agent");
 quotation.setSendingServiceProviderCountry("AD");
@@ -64,6 +64,7 @@ quotation.setCustomData(customDataList);
 
 internationalTransferRequest.setQuotation(quotation);
 
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
 AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack("<Place your callback URL>").createQuotation();
 
 sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());

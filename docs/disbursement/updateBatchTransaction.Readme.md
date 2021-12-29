@@ -7,6 +7,7 @@
 ### Usage/Examples
 
 ```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
 DisbursementRequest disbursementRequest = new DisbursementRequest();
 List<PatchData> patchDataList = new ArrayList<>();
 
