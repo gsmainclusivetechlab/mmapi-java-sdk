@@ -236,13 +236,13 @@ class AccountLinkingTest {
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack(loader.get("CALLBACK_URL")).createAccountLink(new Identifiers(identifierList));
 
         String clientCorrelationId = accountLinkingRequest.getClientCorrelationId();
-        Link accountLinkResponse = mmClient.addRequest(accountLinkingRequest).viewResponse(clientCorrelationId, Link.class);
+        Link linkResponse = mmClient.addRequest(accountLinkingRequest).viewResponse(clientCorrelationId, Link.class);
 
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
-        assertNotNull(accountLinkResponse);
+        assertNotNull(linkResponse);
     }
     
     @Test
@@ -262,16 +262,16 @@ class AccountLinkingTest {
         sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String linkRef = sdkResponse.getObjectReference();
 
-        Link accountLinkResponse = mmClient.addRequest(accountLinkingRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
+        Link linkResponse = mmClient.addRequest(accountLinkingRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
 
-        assertNotNull(accountLinkResponse);
-        assertNotNull(accountLinkResponse.getLinkReference());
-        assertNotNull(accountLinkResponse.getMode());
-        assertNotNull(accountLinkResponse.getStatus());
-        assertNotNull(accountLinkResponse.getSourceAccountIdentifiers());        
-        if (accountLinkResponse.getSourceAccountIdentifiers().size() > 0) {
-        	assertNotNull(accountLinkResponse.getSourceAccountIdentifiers().get(0).getKey());
-        	assertNotNull(accountLinkResponse.getSourceAccountIdentifiers().get(0).getValue());
+        assertNotNull(linkResponse);
+        assertNotNull(linkResponse.getLinkReference());
+        assertNotNull(linkResponse.getMode());
+        assertNotNull(linkResponse.getStatus());
+        assertNotNull(linkResponse.getSourceAccountIdentifiers());        
+        if (linkResponse.getSourceAccountIdentifiers().size() > 0) {
+        	assertNotNull(linkResponse.getSourceAccountIdentifiers().get(0).getKey());
+        	assertNotNull(linkResponse.getSourceAccountIdentifiers().get(0).getValue());
         }
     }
     

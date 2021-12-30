@@ -19,6 +19,15 @@ public class Identity implements Serializable {
 
     private static final long serialVersionUID = 7018025644682054103L;
 
+    //A unique id for the identity as assigned by the API Provider.
+    private String identityId;
+
+    //Indicates the type of the identity. Currently, only ‘individual’ is supported.
+    private String identityType;
+
+    //A unique id for the identity as assigned by the API Provider.
+    private String identityStatus;
+
     //KYC information
     private KYCInformation identityKyc;
 
@@ -36,6 +45,60 @@ public class Identity implements Serializable {
 
     //A collection of key/value pairs. These can be used to populate provider specific fields.
     private List<CustomData> customData = new ArrayList<>();
+
+    /**
+     * *
+     *
+     * @return
+     */
+    public String getIdentityId() {
+        return identityId;
+    }
+
+    /**
+     * *
+     *
+     * @param identityId
+     */
+    public void setIdentityId(String identityId) {
+        this.identityId = identityId;
+    }
+
+    /**
+     * *
+     *
+     * @return
+     */
+    public String getIdentityType() {
+        return identityType;
+    }
+
+    /**
+     * *
+     *
+     * @param identityType
+     */
+    public void setIdentityType(String identityType) {
+        this.identityType = identityType;
+    }
+
+    /**
+     * *
+     *
+     * @return
+     */
+    public String getIdentityStatus() {
+        return identityStatus;
+    }
+
+    /**
+     * *
+     *
+     * @param identityStatus
+     */
+    public void setIdentityStatus(String identityStatus) {
+        this.identityStatus = identityStatus;
+    }
 
     /**
      * *

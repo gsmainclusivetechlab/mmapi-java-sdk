@@ -80,6 +80,9 @@ public class AgentServiceRequest extends ViewTransactionRequest {
      */
     public AsyncResponse createAuthorisationCode(Identifiers identifiers) throws MobileMoneyException {
         this.clientCorrelationId = UUID.randomUUID().toString();
+        if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
         return this.authorizationCodeRequest.createAuthorisationCode(identifiers, this.callBackURL, this.clientCorrelationId);
     }
 
@@ -92,6 +95,9 @@ public class AgentServiceRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AuthorisationCode viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
+    	if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
         return this.authorizationCodeRequest.viewAuthorisationCode(identifiers, authorisationCode);
     }
 
@@ -103,6 +109,9 @@ public class AgentServiceRequest extends ViewTransactionRequest {
      * @throws MobileMoneyException
      */
     public AccountHolderName viewAccountName(Identifiers identifiers) throws MobileMoneyException {
+    	if (identifiers == null) {
+            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+        }
         return this.authorizationCodeRequest.viewAccountName(identifiers);
     }
 

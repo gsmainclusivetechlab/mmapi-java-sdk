@@ -348,6 +348,39 @@ public class MerchantPaymentTest {
     	assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
     	assertEquals(expectedTransaction.getCurrency(), actualTransaction.getCurrency());
     }
+	
+	@Test
+	@DisplayName("View Authorisation Code Test Success")
+	void viewAuthorisationCodeTestSuccess() throws MobileMoneyException {
+		AuthorisationCode expectedAuthorisationCode = getAuthorisationCodeObject();
+		MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+    	MerchantPaymentRequest merchantPaymentRequestSpy = Mockito.spy(merchantPaymentRequest);
+		
+		List<AccountIdentifier> identifierList = new ArrayList<>();
+		identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
+        
+		Mockito.doReturn(expectedAuthorisationCode).when(merchantPaymentRequestSpy).viewAuthorisationCode(identifiers, SERVER_CORRELATION_ID);
+		
+		AuthorisationCode actualAuthorisationCode = merchantPaymentRequestSpy.viewAuthorisationCode(identifiers, SERVER_CORRELATION_ID);
+		
+		assertNotNull(expectedAuthorisationCode);
+		assertNotNull(actualAuthorisationCode);
+		assertEquals(expectedAuthorisationCode.getAuthorisationCode(), actualAuthorisationCode.getAuthorisationCode());
+		assertEquals(expectedAuthorisationCode.getCodeState(), actualAuthorisationCode.getCodeState());
+	}
+	
+	/***
+	 * 
+	 * @return
+	 */
+	private AuthorisationCode getAuthorisationCodeObject() {
+		AuthorisationCode authorisationCode = new AuthorisationCode();
+		authorisationCode.setAuthorisationCode("AUTH-CODE");
+		authorisationCode.setCodeState("active");
+
+		return authorisationCode;
+	}
     
     /***
      * 

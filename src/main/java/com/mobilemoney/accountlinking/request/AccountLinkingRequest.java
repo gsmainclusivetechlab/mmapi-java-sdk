@@ -31,7 +31,7 @@ public class AccountLinkingRequest extends ViewTransactionRequest{
     // Transaction Reference
     private Transaction transaction;
     
-    // AccountLink Reference
+    // Link Reference
     private Link link;
     
     // CreateTransactionRequest Reference
