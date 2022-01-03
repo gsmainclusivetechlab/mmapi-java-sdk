@@ -7,6 +7,8 @@
 ### Usage/Examples
 
 ```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+
 AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
 Transaction transaction = new Transaction();

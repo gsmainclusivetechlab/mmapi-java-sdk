@@ -1,46 +1,21 @@
-# View A Link
+# View Account Specific Transaction
 
-`Here, viewAccountLink(Identifiers identifiers, String linkReference) creates a GET request to /accounts/{accountId}/links/{linkReference}`
+`Here, viewAccountTransactions(Identifiers identifiers, TransactionFilter filter) creates a GET request to /accounts/{identifierType}/{identifier}/transactions`
 
-> `This endpoint returns a specific link.`
+> `This endpoint returns transactions linked to a specific account.`
 
 ### Usage/Examples
 
 ```java
 MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
-
-AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
-
-List<AccountIdentifier> sourceAccountIdentifiers = new ArrayList<>();
-RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-List<CustomData> customDataList = new ArrayList<>();
-
-sourceAccountIdentifiers.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
-
-customDataList.add(new CustomData("keytest", "keyvalue"));
-
-requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
-requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
-
-Link link = new Link();
-link.setSourceAccountIdentifiers(sourceAccountIdentifiers);
-link.setMode(Mode.BOTH.getMode());
-link.setStatus(Status.ACTIVE.getStatus());
-link.setRequestingOrganisation(requestingOrganisation);
-link.setRequestDate("2018-07-03T11:43:27.405Z");
-link.setCustomData(customDataList);
-
-accountLinkingRequest.setLink(link);
-
+TransactionFilter filter = new TransactionFilter();
 List<AccountIdentifier> identifierList = new ArrayList<>();
-identifierList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
+identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+filter.setLimit(20);
+filter.setOffset(0);
 
-sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-
-String linkRef = sdkResponse.getObjectReference();
-Link linkResponse = mmClient.addRequest(accountLinkingRequest).viewAccountLink(new Identifiers(identifierList), linkRef);
+List<Transaction> transactions = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 ```
 
 ### Response Example

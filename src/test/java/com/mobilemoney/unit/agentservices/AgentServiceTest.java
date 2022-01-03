@@ -2,6 +2,7 @@ package com.mobilemoney.unit.agentservices;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import com.mobilemoney.agentservices.model.Account;
 import com.mobilemoney.agentservices.model.Identity;
 import com.mobilemoney.agentservices.request.AgentServiceRequest;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.billpayment.request.BillPaymentRequest;
 import com.mobilemoney.common.model.AccountHolderName;
 import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.AsyncResponse;
@@ -250,6 +252,14 @@ public class AgentServiceTest {
 	}
 	
 	@Test
+	@DisplayName("Create Withdrawal Transaction Test Failure")
+	void createWithdrawalTestFailure() {
+		AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+		assertThrows(MobileMoneyException.class, () -> agentServiceRequest.createWithdrawalTransaction());
+	}
+	
+	@Test
 	@DisplayName("Create Deposit Transaction Test Success")
 	void createDepositTransactionTestSuccess() throws MobileMoneyException {
 		AsyncResponse expectedSdkResponse = getAsyncResponse();
@@ -267,6 +277,14 @@ public class AgentServiceTest {
 	}
 	
 	@Test
+	@DisplayName("Create Deposit Transaction Test Failure")
+	void createDepositTestFailure() {
+		AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+		assertThrows(MobileMoneyException.class, () -> agentServiceRequest.createDepositTransaction());
+	}
+	
+	@Test
 	@DisplayName("Create Account Test Success")
 	void createAccountTestSuccess() throws MobileMoneyException {
 		AsyncResponse expectedSdkResponse = getAsyncResponse();
@@ -281,6 +299,14 @@ public class AgentServiceTest {
 		assertNotNull(actualSdkResponse);
 		assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
 		assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+	}
+	
+	@Test
+	@DisplayName("Create Account Test Failure")
+	void createAccountTestFailure() {
+		AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+		assertThrows(MobileMoneyException.class, () -> agentServiceRequest.createAccount());
 	}
 	
 	@Test
@@ -306,6 +332,14 @@ public class AgentServiceTest {
 	}
 	
 	@Test
+	@DisplayName("View Account Test Failure")
+	void viewAccountTestFailure() {
+		AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+		assertThrows(MobileMoneyException.class, () -> agentServiceRequest.viewAccount(null));
+	}
+	
+	@Test
 	@DisplayName("Update Account Identity Test Success")
 	void updateAccountIdentityTestSuccess() throws MobileMoneyException {
 		AsyncResponse expectedSdkResponse = getAsyncResponse();
@@ -326,6 +360,14 @@ public class AgentServiceTest {
 		assertNotNull(actualSdkResponse);
 		assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
 		assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+	}
+	
+	@Test
+	@DisplayName("Update Account Identity Test Failure")
+	void updateAccountIdentityTestFailure() {
+		AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+		assertThrows(MobileMoneyException.class, () -> agentServiceRequest.updateAccountIdentity(null, null));
 	}
 	
 	/**

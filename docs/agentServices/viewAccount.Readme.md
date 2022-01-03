@@ -1,148 +1,108 @@
-# View A Transaction
+# View an Account
 
-`Here, viewTransaction(String transactionReference) creates a GET request to /transactions/{transactionReference}`
+`Here, viewAccount(Identifiers identifiers) creates a GET request to /accounts/{identifierType}/{identifier}`
 
-> `This endpoint returns the details of a transaction.`
+> `This endpoint returns the details of an account.`
 
 ### Usage/Examples
 
 ```java
 MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
 
-AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+Account account = new Account();
 
-Transaction transaction = new Transaction();
+List<AccountIdentifier> identifierList = new ArrayList<>();
+identifierList.add(new AccountIdentifier("msisdn", "+440123456789"));
+
+List<Identity> identityList = new ArrayList<>();
+Identity identity = new Identity();
+
+List<CustomData> customDataList = new ArrayList<>();
+customDataList.add(new CustomData("test", "custom"));
+
+List<CustomData> customDataList1 = new ArrayList<>();
+customDataList.add(new CustomData("test", "custom1"));
+
 KYCInformation senderKyc = new KYCInformation();
-Name kycSubject = new Name();
-RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-Address address = new Address("GB");
-IdDocument idDocument = new IdDocument("nationalidcard");
-InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
-
-List<AccountIdentifier> debitPartyList = new ArrayList<>();
-List<AccountIdentifier> creditPartyList = new ArrayList<>();
 List<IdDocument> identificationList = new ArrayList<>();
 
-idDocument.setIdNumber("1234567");
-idDocument.setIssuer("UKPA");
-idDocument.setIssuerPlace("GB");
-idDocument.setIssuerCountry("GB");
-idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
-idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
-idDocument.setOtherIddescription("test");
+IdDocument idDocument = new IdDocument("passport");
+idDocument.setIdType("passport");
+idDocument.setIdNumber("111111");
+idDocument.setIssuer("ABC");
+idDocument.setIssuerPlace("DEF");
+idDocument.setIssuerCountry("AD");
+idDocument.setIssueDate("2018-11-20");
+idDocument.setExpiryDate("2018-11-20");
 identificationList.add(idDocument);
 
-kycSubject.setTitle("Mr");
-kycSubject.setFirstName("Luke");
-kycSubject.setMiddleName("R");
-kycSubject.setLastName("Skywalker");
-kycSubject.setFullName("Luke R Skywalker");
-kycSubject.setNativeName("ABC");
+Address address = new Address("AD");
+address.setAddressLine1("37");
+address.setAddressLine2("ABC Drive");
+address.setAddressLine3("string");
+address.setCity("Berlin");
+address.setStateProvince("string");
+address.setPostalCode("AF1234");
+address.setCountry("AD");
 
-senderKyc.setNationality("GB");
-senderKyc.setBirthCountry("GB");
-senderKyc.setOccupation("Manager");
-senderKyc.setEmployerName("MFX");
-senderKyc.setContactPhone("+447125588999");
+Name kycSubject = new Name();
+kycSubject.setTitle("Mr");
+kycSubject.setFirstName("H");
+kycSubject.setMiddleName("I");
+kycSubject.setLastName("J");
+kycSubject.setFullName("H I J");
+kycSubject.setNativeName("string");
+
+senderKyc.setNationality("AD");
+senderKyc.setBirthCountry("AD");
+senderKyc.setOccupation("Miner");
+senderKyc.setEmployerName("string");
+senderKyc.setContactPhone("+447777777777");
 senderKyc.setGender("m");
-senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
-senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
+senderKyc.setDateOfBirth("2000-11-20");
+senderKyc.setEmailAddress("xyz@xyz.com");
 senderKyc.setIdDocument(identificationList);
 senderKyc.setPostalAddress(address);
 senderKyc.setSubjectName(kycSubject);
 
-requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
-requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
+identity.setAccountRelationship("accountholder");
+identity.setCustomData(customDataList);
+identity.setIdentityKyc(senderKyc);
+identity.setKycLevel(1);
+identity.setKycVerificationEntity("ABC Agent");
+identity.setKycVerificationStatus("verified");
+identityList.add(identity);
 
-debitPartyList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
-creditPartyList.add(new AccountIdentifier("accountid", "<Place your account id of credit party here>"));
+List<Fees> feesList = new ArrayList<>();
+Fees fees = new Fees();
+fees.setFeeType("string");
+fees.setFeeAmount("5.46");
+fees.setFeeCurrency("AED");
+feesList.add(fees);
 
-transaction.setAmount("16.00");
-transaction.setCurrency("USD");
-transaction.setInternationalTransferInformation(transferInformation);
-transaction.setSenderKyc(senderKyc);
-transaction.setRequestingOrganisation(requestingOrganisation);
-transaction.setCreditParty(creditPartyList);
-transaction.setDebitParty(debitPartyList);
+account.setAccountIdentifiers(identifierList);
+account.setIdentity(identityList);
+account.setAccountType("string");
+account.setCustomData(customDataList1);
+account.setFees(feesList);
+account.setRegisteringEntity("ABC Agent");
+account.setRequestDate("2021-02-17T15:41:45.194Z");
 
-accountLinkingRequest.setTransaction(transaction);
+AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+agentServiceRequest.setAccount(account);
+AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createAccount();
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
+List<AccountIdentifier> identifierList = new ArrayList<>();
+identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-
-String txnRef = sdkResponse.getObjectReference();
-Transaction transactionResponse = mmClient.addRequest(accountLinkingRequest).viewTransaction(txnRef);
+Account accountViewed = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList));
 ```
 
 ### Response Example
 
 ```java
 {
-  "transactionReference": "REF-1640158853973",
-  "creditParty": [
-    {
-      "key": "msisdn",
-      "value": "+44012345678"
-    },
-    {
-      "key": "accountid",
-      "value": "3"
-    },
-    {
-      "key": "mandatereference",
-      "value": "REF-1601985847787"
-    },
-    {
-      "key": "mandatereference",
-      "value": "REF-1601985859399"
-    },
-    {
-      "key": "mandatereference",
-      "value": "REF-1601986025735"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493640797"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493642261"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493662185"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493749407"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493750632"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493820584"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493821921"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493851726"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493852975"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493881467"
-    }
-  ],
-  "debitParty": [
+  "accountIdentifiers": [
     {
       "key": "msisdn",
       "value": "+449999999"
@@ -726,53 +686,210 @@ Transaction transactionResponse = mmClient.addRequest(accountLinkingRequest).vie
     {
       "key": "mandatereference",
       "value": "REF-1639986873564"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168068933"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168168179"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168378727"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168722282"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252420215"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252426452"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252433112"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252449240"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252615312"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252620610"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252627263"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252644708"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253128100"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253133676"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253141344"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253158631"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253861729"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253868188"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253874939"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253891020"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253929045"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253934845"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253941631"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253957605"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253985045"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253990759"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253999987"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254017113"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254091848"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254097466"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254104143"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254144241"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254149719"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254158314"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254396956"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254402565"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254410353"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254427439"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254600918"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254608265"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254616112"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254632935"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255549510"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255556704"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255563564"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255581982"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257220848"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257226807"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257233756"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257250467"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640670500083"
     }
-  ],
-  "type": "transfer",
-  "transactionStatus": "completed",
-  "amount": "100.00",
-  "currency": "GBP",
-  "internationalTransferInformation": {
-    "originCountry": "GB"
-  },
-  "senderKyc": {
-    "nationality": "GB",
-    "dateOfBirth": "1970-07-03",
-    "occupation": "Manager",
-    "employerName": "MFX",
-    "contactPhone": "+447125588999",
-    "gender": "m",
-    "idDocument": [
-      {
-        "idType": "nationalidcard",
-        "idNumber": "1234567",
-        "issueDate": "2018-07-03",
-        "expiryDate": "2021-07-03",
-        "issuer": "UKPA",
-        "issuerPlace": "GB",
-        "issuerCountry": "GB"
-      }
-    ],
-    "postalAddress": {
-      "country": "GB"
-    },
-    "subjectName": {
-      "title": "Mr",
-      "firstName": "Luke",
-      "middleName": "R",
-      "lastName": "Skywalker",
-      "fullName": "Luke R Skywalker",
-      "nativeName": "ABC"
-    },
-    "emailAddress": "luke.skywalkeraaabbb@gmail.com",
-    "birthCountry": "GB"
-  },
-  "requestingOrganisation": {
-    "requestingOrganisationIdentifierType": "organisationid",
-    "requestingOrganisationIdentifier": "testorganisation"
-  },
-  "creationDate": "2021-12-22T07:40:54",
-  "modificationDate": "2021-12-22T07:40:54",
-  "requestDate": "2021-12-22T07:40:54"
-}
+  ],...}
 ```

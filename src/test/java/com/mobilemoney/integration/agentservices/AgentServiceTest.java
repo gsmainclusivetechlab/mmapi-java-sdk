@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.mobilemoney.accountlinking.model.Link;
+import com.mobilemoney.accountlinking.request.AccountLinkingRequest;
 import com.mobilemoney.agentservices.model.Account;
 import com.mobilemoney.agentservices.model.Identity;
 import com.mobilemoney.agentservices.request.AgentServiceRequest;
@@ -220,27 +222,27 @@ public class AgentServiceTest {
         identifierList.add(new AccountIdentifier("walletid", "1"));//identityId=1
 //        identifierList.add(new AccountIdentifier("accountid", "2000"));//identityId=105
 
-        Account account = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList));
+        Account accountViewed = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList));
 
-        assertNotNull(account);
-        assertNotNull(account.getAccountIdentifiers());
-        assertTrue(account.getAccountIdentifiers().size() > 0);
-        if (account.getAccountIdentifiers().size() > 0) {
-            assertNotNull(account.getAccountIdentifiers().get(0).getKey());
-            assertNotNull(account.getAccountIdentifiers().get(0).getValue());
+        assertNotNull(accountViewed);
+        assertNotNull(accountViewed.getAccountIdentifiers());
+        assertTrue(accountViewed.getAccountIdentifiers().size() > 0);
+        if (accountViewed.getAccountIdentifiers().size() > 0) {
+            assertNotNull(accountViewed.getAccountIdentifiers().get(0).getKey());
+            assertNotNull(accountViewed.getAccountIdentifiers().get(0).getValue());
         }
-        assertNotNull(account.getIdentity());
+        assertNotNull(accountViewed.getIdentity());
 
         String identityId = "0";
 
-        if (account.getIdentity().size() > 0) {
-            assertNotNull(account.getIdentity().get(0).getIdentityId());
-            identityId = account.getIdentity().get(0).getIdentityId();
-            assertNotNull(account.getIdentity().get(0).getIdentityType());
-            assertNotNull(account.getIdentity().get(0).getIdentityKyc());
-            assertNotNull(account.getIdentity().get(0).getAccountRelationship());
+        if (accountViewed.getIdentity().size() > 0) {
+            assertNotNull(accountViewed.getIdentity().get(0).getIdentityId());
+            identityId = accountViewed.getIdentity().get(0).getIdentityId();
+            assertNotNull(accountViewed.getIdentity().get(0).getIdentityType());
+            assertNotNull(accountViewed.getIdentity().get(0).getIdentityKyc());
+            assertNotNull(accountViewed.getIdentity().get(0).getAccountRelationship());
         }
-        assertNotNull(account.getAccountStatus());
+        assertNotNull(accountViewed.getAccountStatus());
 
         List<PatchData> patchDataList = new ArrayList<>();
         patchDataList.add(new PatchData(OP.REPLACE.getOP(), "/kycVerificationStatus", Value.VERIFIED.getValue()));
@@ -320,15 +322,26 @@ public class AgentServiceTest {
     @DisplayName("Retrieve a Missing API Response")
     void retrieveMissingAPIResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
 
-        agentServiceRequest.setTransaction(getTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).createWithdrawalTransaction();
+        agentServiceRequest.setAccount(getRequestAccountObject());
+        
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createAccount();
 
         String clientCorrelationId = agentServiceRequest.getClientCorrelationId();
-        Transaction transaction = mmClient.addRequest(agentServiceRequest).viewResponse(clientCorrelationId, Transaction.class);
+        Account accountResponse = mmClient.addRequest(agentServiceRequest).viewResponse(clientCorrelationId, Account.class);
 
-        assertNotNull(transaction);
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertNotNull(accountResponse);
     }
 
     /**
