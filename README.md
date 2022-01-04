@@ -615,22 +615,6 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
 </thead>
 <tbody>
   <tr>
-    <td rowspan="3">Common</td>
-    <td><a href="/docs/accountLinking/viewAccountBalance.Readme.md">Obtain a Financial Service Provider Balance</a></td>
-    <td>viewAccountBalance</td>
-    <td>Identifiers identifiers</td>
-  </tr>
-  <tr>
-    <td><a href="/docs/accountLinking/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
-    <td>viewServiceAvailability</td>
-    <td>NA</td>
-  </tr>
-  <tr>
-    <td><a href="/docs/accountLinking/viewResponse.Readme.md">Retrieve a Missing API Response</a></td>
-    <td>viewResponse</td>
-    <td>String clientCorrelationId, Class<T> objectReference</td>
-  </tr>
-  <tr>
     <td>Setup an Account Link</td>
     <td><a href="/docs/accountLinking/createAccountLink.Readme.md">Establish an Account to Account Link</a></td>
     <td>createAccountLink</td>
@@ -665,16 +649,29 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
     <td>String transactionReference</td>
   </tr>
   <tr>
+    <td>Obtain a Financial Service Provider Balance</td>
+    <td><a href="/docs/accountLinking/viewAccountBalance.Readme.md">Get an Account Balance
+</a></td>
+    <td>viewAccountBalance</td>
+    <td>Identifiers identifiers</td>
+  </tr>
+  <tr>
     <td>Retrieve Transfers for a Financial Service Provider</td>
     <td><a href="/docs/accountLinking/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
     <td>Identifiers identifiers</td>
   </tr>
   <tr>
-    <td>Read a specific link for a given account.</td>
-    <td><a href="/docs/accountLinking/viewAccountLink.Readme.md">Read a specific link for a given account</a></td>
-    <td>viewAccountLink</td>
-    <td>Identifiers identifiers, String linkReference</td>
+    <td>Check for Service Availability</td>
+    <td><a href="/docs/accountLinking/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
+    <td>viewServiceAvailability</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td>Retrieve a Missing API Response</td>
+    <td><a href="/docs/accountLinking/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
+    <td>viewResponse</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>
@@ -757,17 +754,6 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
   </tr>
 </thead>
 <tbody>
-  <tr>
-    <td rowspan="2">Common</td>
-    <td><a href="docs/agentService/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
-    <td>viewServiceAvailability</td>
-    <td>NA</td>
-  </tr>
-  <tr>
-    <td><a href="docs/agentService/viewResponse.Readme.md">Retrieve a Missing API Response</a></td>
-    <td>viewResponse</td>
-    <td>String clientCorrelationId, Class<T> objectReference</td>
-  </tr>
   <tr>
     <td>Agent-initiated Cash-out</td>
     <td><a href="docs/agentService/createWithdrawalTransaction.Readme.md">Agent Initiated Cash-Out</a></td>
@@ -857,6 +843,18 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
     <td><a href="docs/agentService/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
     <td>Identifiers identifiers, TransactionFilter filter</td>
+  </tr>
+  <tr>
+    <td>Check for Service Availability</td>
+    <td><a href="docs/agentService/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
+    <td>viewServiceAvailability</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td>Retrieve a Missing API Response</td>
+    <td><a href="docs/agentService/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
+    <td>viewResponse</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>
