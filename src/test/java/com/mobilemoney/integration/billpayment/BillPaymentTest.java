@@ -87,7 +87,7 @@ public class BillPaymentTest {
 		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
-		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest)
+		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).setNotificationType(NotificationType.POLLING)
 				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
 
 		assertNotNull(sdkResponse);

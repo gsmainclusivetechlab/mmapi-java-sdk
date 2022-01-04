@@ -7,6 +7,7 @@ import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.common.model.AuthorisationCode;
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.*;
 import com.mobilemoney.merchantpayment.request.MerchantPaymentRequest;
 
@@ -121,7 +122,7 @@ public class MerchantPaymentTest {
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 
         merchantPaymentRequest.setTransaction(getTransactionObject());
-        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).setNotificationType(NotificationType.POLLING).createMerchantTransaction();
 
         sdkResponse = mmClient.addRequest(merchantPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
