@@ -13,10 +13,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.mobilemoney.accountlinking.model.Link;
 import com.mobilemoney.agentservices.model.Account;
 import com.mobilemoney.agentservices.model.Identity;
 import com.mobilemoney.agentservices.request.AgentServiceRequest;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.billpayment.request.BillPaymentRequest;
 import com.mobilemoney.common.model.AccountHolderName;
 import com.mobilemoney.common.model.AccountIdentifier;
@@ -283,6 +285,20 @@ public class AgentServiceTest {
 
 		assertThrows(MobileMoneyException.class, () -> agentServiceRequest.createDepositTransaction());
 	}
+
+    @Test
+    @DisplayName("Create Account With Payload Success")
+    void createAccountPayloadTestSuccess() throws MobileMoneyException {
+        Account account = getAccountObject();
+        String jsonString = account.toJSON();
+        Account account1 = JSONFormatter.fromJSON(jsonString, Account.class);
+
+        assertNotNull(jsonString);
+        assertNotNull(account1);
+        assertEquals(account.getAccountStatus(), account1.getAccountStatus());
+        assertEquals(account.getAccountIdentifiers().get(0).getKey(), account1.getAccountIdentifiers().get(0).getKey());
+        assertEquals(account.getIdentity().get(0).getIdentityId(), account1.getIdentity().get(0).getIdentityId());
+    }
 	
 	@Test
 	@DisplayName("Create Account Test Success")

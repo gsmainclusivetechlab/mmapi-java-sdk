@@ -2,6 +2,7 @@ package com.mobilemoney.unit.accountlinking;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import org.mockito.Mockito;
 
 import com.mobilemoney.accountlinking.model.Link;
 import com.mobilemoney.accountlinking.request.AccountLinkingRequest;
+import com.mobilemoney.agentservices.request.AgentServiceRequest;
 import com.mobilemoney.base.constants.Mode;
 import com.mobilemoney.base.constants.Status;
 import com.mobilemoney.base.exception.MobileMoneyException;
@@ -94,8 +96,8 @@ public class AccountLinkingTest {
     }
 
     @Test
-    @DisplayName("Create Account Link Success")
-    void createAccountLinkTestSuccess() throws MobileMoneyException {
+    @DisplayName("Create Account Link With Payload Success")
+    void createAccountLinkPayloadTestSuccess() throws MobileMoneyException {
         Link link = getLinkObject();
         String jsonString = link.toJSON();
         Link link1 = JSONFormatter.fromJSON(jsonString, Link.class);
@@ -104,6 +106,37 @@ public class AccountLinkingTest {
         assertNotNull(link1);
         assertEquals(link.getLinkReference(), link1.getLinkReference());
     }
+
+    @Test
+    @DisplayName("Create Account Link Success")
+    void createAccountLinkTestSuccess() throws MobileMoneyException {
+    	AsyncResponse expectedSdkResponse = getAsyncResponse();
+
+        AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
+
+        AccountLinkingRequest accountLinkingRequestSpy = Mockito.spy(accountLinkingRequest);
+
+        Mockito.doReturn(expectedSdkResponse).when(accountLinkingRequestSpy).createAccountLink(identifiers);
+
+        AsyncResponse actualSdkResponse = accountLinkingRequestSpy.createAccountLink(identifiers);
+
+        assertNotNull(expectedSdkResponse);
+        assertNotNull(actualSdkResponse);
+        assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
+        assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+    }
+	
+	@Test
+	@DisplayName("Create Account Link Test Failure")
+	void createAccountLinkTestFailure() {
+		AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+		assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.createAccountLink(null));
+	}
 
     @Test
     @DisplayName("Initiate AccountLink Transfer Success")
@@ -228,6 +261,14 @@ public class AccountLinkingTest {
         assertNotNull(linkResponse);
         assertTrue(expectedResponse.getStatus().equals(linkResponse.getStatus()));
     }
+	
+	@Test
+	@DisplayName("Get Details of a Specific Account Link Test Failure")
+	void viewAccountLinkTestFailure() {
+		AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+		assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.viewAccountLink(null, null));
+	}
 
     /**
      * *
