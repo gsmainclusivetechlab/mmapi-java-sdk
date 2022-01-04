@@ -99,6 +99,7 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
 -   [Recurring Payments](#recurring-payments)
 -   [Account Linking](#account-linking)
 -   [Bill Payments](#bill-payments)
+-   [Agent Services](#agent-services)
 
 ### Merchant Payments
 
@@ -614,22 +615,6 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
 </thead>
 <tbody>
   <tr>
-    <td rowspan="3">Common</td>
-    <td><a href="/docs/accountLinking/viewAccountBalance.Readme.md">Obtain a Financial Service Provider Balance</a></td>
-    <td>viewAccountBalance</td>
-    <td>Identifiers identifiers</td>
-  </tr>
-  <tr>
-    <td><a href="/docs/accountLinking/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
-    <td>viewServiceAvailability</td>
-    <td>NA</td>
-  </tr>
-  <tr>
-    <td><a href="/docs/accountLinking/viewResponse.Readme.md">Retrieve a Missing API Response</a></td>
-    <td>viewResponse</td>
-    <td>String clientCorrelationId, Class<T> objectReference</td>
-  </tr>
-  <tr>
     <td>Setup an Account Link</td>
     <td><a href="/docs/accountLinking/createAccountLink.Readme.md">Establish an Account to Account Link</a></td>
     <td>createAccountLink</td>
@@ -664,16 +649,29 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
     <td>String transactionReference</td>
   </tr>
   <tr>
+    <td>Obtain a Financial Service Provider Balance</td>
+    <td><a href="/docs/accountLinking/viewAccountBalance.Readme.md">Get an Account Balance
+</a></td>
+    <td>viewAccountBalance</td>
+    <td>Identifiers identifiers</td>
+  </tr>
+  <tr>
     <td>Retrieve Transfers for a Financial Service Provider</td>
     <td><a href="/docs/accountLinking/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
     <td>viewAccountTransactions</td>
     <td>Identifiers identifiers</td>
   </tr>
   <tr>
-    <td>Read a specific link for a given account.</td>
-    <td><a href="/docs/accountLinking/viewAccountLink.Readme.md">Read a specific link for a given account</a></td>
-    <td>viewAccountLink</td>
-    <td>Identifiers identifiers, String linkReference</td>
+    <td>Check for Service Availability</td>
+    <td><a href="/docs/accountLinking/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
+    <td>viewServiceAvailability</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td>Retrieve a Missing API Response</td>
+    <td><a href="/docs/accountLinking/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
+    <td>viewResponse</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>
@@ -740,6 +738,123 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
     <td><a href="/docs/billPayment/viewBillPayment.Readme.md">Retrieve a Missing Response</a></td>
     <td>viewResponse</td>
     <td>String clientCorrelationId, Class objectReference</td>
+  </tr>
+</tbody>
+</table>
+
+### Agent Services
+
+<table>
+<thead>
+  <tr>
+    <th>Scenarios</th>
+    <th>API</th>
+    <th>Function</th>
+    <th>Parameters</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Agent-initiated Cash-out</td>
+    <td><a href="docs/agentService/createWithdrawalTransaction.Readme.md">Agent Initiated Cash-Out</a></td>
+    <td>createWithdrawalTransaction</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td rowspan="3">Agent-initiated Cash-out using the Polling Method</td>
+    <td><a href="docs/agentService/createWithdrawalTransaction.Readme.md">Agent Initiated Cash-out</a></td>
+    <td>createWithdrawalTransaction</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td><a href="docs/agentService/viewRequestState.Readme.md">Poll to Determine the Request State</a></td>
+    <td>viewRequestState</td>
+    <td>String serverCorrelationId</td>
+  </tr>
+  <tr>
+    <td><a href="docs/agentService/viewTransaction.Readme.md">Retrieve a Transaction</a></td>
+    <td>viewTransaction</td>
+    <td>String transactionReference</td>
+  </tr>
+  <tr>
+    <td>Customer-initiated Cash-out</td>
+    <td><a href="docs/agentService/createWithdrawalTransaction.Readme.md">Customer Initiated Cash-Out</a></td>
+    <td>createWithdrawalTransaction</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td rowspan="3">Customer Cash-out at an ATM using an Authorisation Code</td>
+    <td><a href="docs/agentService/createAuthorisationCode.Readme.md">Obtain an Authorisation Code</a></td>
+    <td>createAuthorisationCode</td>
+    <td>Identifiers identifiers</td>
+  </tr>
+  <tr>
+    <td><a href="docs/agentService/createWithdrawalTransaction.Readme.md">ATM Initiated Cash-Out</a></td>
+    <td>createWithdrawalTransaction</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td><a href="docs/agentService/viewAuthorisationCode.Readme.md">Retrieve Authorisation Code</a></td>
+    <td>viewAuthorisationCode</td>
+    <td>Identifiers identifiers, String authorisationCode</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Agent-initiated Customer Cash-in</td>
+    <td><a href="docs/agentService/viewAccountName.Readme.md">Retrieve the Name of the Depositing Customer</a></td>
+    <td>viewAccountName</td>
+    <td>Identifiers identifiers</td>
+  </tr>
+  <tr>
+    <td><a href="docs/agentService/createDepositTransaction.Readme.md">Agent Initiated Cash-in</a></td>
+    <td>createDepositTransaction</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td>Cash-out Reversal</td>
+    <td><a href="docs/agentService/createReversal.Readme.md">Perform a Transaction Reversal</a></td>
+    <td>createReversal</td>
+    <td>String transactionReference</td>
+  </tr>
+  <tr>
+    <td>Register a Customer Mobile Money Account</td>
+    <td><a href="docs/agentService/createAccount.Readme.md">Create a Mobile Money Account</a></td>
+    <td>createAccount</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Verify the KYC of a Customer</td>
+    <td><a href="docs/agentService/viewAccount.Readme.md">Retrieve Account Information</a></td>
+    <td>viewAccount</td>
+    <td>Identifiers identifiers</td>
+  </tr>
+  <tr>
+    <td><a href="docs/agentService/updateAccountIdentity.Readme.md">Update KYC Verification Status</a></td>
+    <td>updateAccountIdentity</td>
+    <td>Identifiers identifiers, String identityId</td>
+  </tr>
+  <tr>
+    <td>Obtain an Agent Balance</td>
+    <td><a href="docs/agentService/viewAccountBalance.Readme.md">Obtain an Agent Balance</a></td>
+    <td>viewAccountBalance</td>
+    <td>Identifiers identifiers</td>
+  </tr>
+  <tr>
+    <td>Retrieve Transactions for an Agent</td>
+    <td><a href="docs/agentService/viewAccountTransactions.Readme.md">Retrieve a Set of Transactions for an Account</a></td>
+    <td>viewAccountTransactions</td>
+    <td>Identifiers identifiers, TransactionFilter filter</td>
+  </tr>
+  <tr>
+    <td>Check for Service Availability</td>
+    <td><a href="docs/agentService/viewServiceAvailability.Readme.md">Check for Service Availability</a></td>
+    <td>viewServiceAvailability</td>
+    <td>NA</td>
+  </tr>
+  <tr>
+    <td>Retrieve a Missing API Response</td>
+    <td><a href="docs/agentService/viewResponse.Readme.md">Retrieve a Missing Response</a></td>
+    <td>viewResponse</td>
+    <td>String clientCorrelationId, Class<T> objectReference</td>
   </tr>
 </tbody>
 </table>

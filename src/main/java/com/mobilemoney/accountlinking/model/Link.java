@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /***
- * Class AccountLink
+ * Class Link
  */
-public class AccountLink implements Serializable {
+public class Link implements Serializable {
     private static final long serialVersionUID = -1455607870159785699L;
 
     // Indicates the Link reference. This enables a linked account to be uniquely identified.

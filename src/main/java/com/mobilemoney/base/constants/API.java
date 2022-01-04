@@ -90,5 +90,14 @@ public final class API {
     
     // REST Endpoint: View Bill Payments
     public static final String VIEW_BILL_PAYMENTS = "/accounts/{identifierType}/{identifier}/bills/{billReference}/payments";
+    
+    // REST Endpoint: Create an Account
+    public static final String VIEW_ACCOUNT_IDENTITY_TYPE = "/accounts/{identityType}";
+    
+    // REST Endpoint: View an Account
+    public static final String VIEW_ACCOUNT_IDENTIFIER = "/accounts/{identifierType}/{identifier}";
+    
+    // REST Endpoint: Update an Account Identity
+    public static final String VIEW_ACCOUNT_IDENTITY_ID = "/accounts/{identifierType}/{identifier}/identities/{identityId}";
 
 }

@@ -7,7 +7,9 @@
 ### Usage/Examples
 
 ```java
-AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
 Transaction transaction = new Transaction();
 KYCInformation senderKyc = new KYCInformation();
@@ -63,9 +65,9 @@ transaction.setRequestingOrganisation(requestingOrganisation);
 transaction.setCreditParty(creditPartyList);
 transaction.setDebitParty(debitPartyList);
 
-accountLinkRequest.setTransaction(transaction);
+accountLinkingRequest.setTransaction(transaction);
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
 ```
 
 ### Response Example

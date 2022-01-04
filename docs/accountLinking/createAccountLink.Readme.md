@@ -7,6 +7,8 @@
 ### Usage/Examples
 
 ```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+
 List<AccountIdentifier> sourceAccountIdentifiers = new ArrayList<>();
 RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
 List<CustomData> customDataList = new ArrayList<>();
@@ -18,23 +20,23 @@ customDataList.add(new CustomData("keytest", "keyvalue"));
 requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
 
-AccountLink accountLink = new AccountLink();
-accountLink.setSourceAccountIdentifiers(sourceAccountIdentifiers);
-accountLink.setMode("active");
-accountLink.setStatus("both");
-accountLink.setRequestingOrganisation(requestingOrganisation);
-accountLink.setRequestDate("2018-07-03T11:43:27.405Z");
-accountLink.setCustomData(customDataList);
+Link link = new Link();
+link.setSourceAccountIdentifiers(sourceAccountIdentifiers);
+link.setMode("active");
+link.setStatus("both");
+link.setRequestingOrganisation(requestingOrganisation);
+link.setRequestDate("2018-07-03T11:43:27.405Z");
+link.setCustomData(customDataList);
 
-AccountLinkRequest accountLinkRequest = new AccountLinkRequest();
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
-accountLinkRequest.setAccountLink(accountLink);
+accountLinkingRequest.setLink(link);
 
 List<AccountIdentifier> identifierList = new ArrayList<>();
 
 identifierList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccountLink(new Identifiers(identifierList));
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
 ```
 
 ### Response Example
@@ -48,3 +50,9 @@ AsyncResponse sdkResponse = mmClient.addRequest(accountLinkRequest).createAccoun
   "pollLimit": 100
 }
 ```
+
+### NOTE
+
+In asynchronous flows, a callback mechanism or polling mechanism is utilised to allow the client to determine the request's final state.
+Use the <a href="viewRequestState.Readme.md">viewRequestState()</a> function for the polling mechanism to receive the status of a request, and the <a href="viewAccountLink.Readme.md">viewAccountLink()</a> 
+function to acquire the final representation of the AccountLink object.

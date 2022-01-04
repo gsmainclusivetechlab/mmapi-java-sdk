@@ -7,6 +7,8 @@
 ### Usage/Examples
 
 ```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+
 TransactionFilter filter = new TransactionFilter();
 List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -14,7 +16,7 @@ identifierList.add(new AccountIdentifier("<identifier type>", "<identifier type 
 filter.setLimit(10);
 filter.setOffset(0);
 
-List<TransactionResponse> transactions = mmClient.addRequest(new AccountLinkRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+List<TransactionResponse> transactions = mmClient.addRequest(new AccountLinkingRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 ```
 
 ### Response Example

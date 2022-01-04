@@ -8,141 +8,33 @@
 
 ```java
 MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
-
-AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
-
+AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
 Transaction transaction = new Transaction();
-KYCInformation senderKyc = new KYCInformation();
-Name kycSubject = new Name();
-RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-Address address = new Address("GB");
-IdDocument idDocument = new IdDocument("nationalidcard");
-InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
-
 List<AccountIdentifier> debitPartyList = new ArrayList<>();
 List<AccountIdentifier> creditPartyList = new ArrayList<>();
-List<IdDocument> identificationList = new ArrayList<>();
 
-idDocument.setIdNumber("1234567");
-idDocument.setIssuer("UKPA");
-idDocument.setIssuerPlace("GB");
-idDocument.setIssuerCountry("GB");
-idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
-idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
-idDocument.setOtherIddescription("test");
-identificationList.add(idDocument);
+debitPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+creditPartyList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-kycSubject.setTitle("Mr");
-kycSubject.setFirstName("Luke");
-kycSubject.setMiddleName("R");
-kycSubject.setLastName("Skywalker");
-kycSubject.setFullName("Luke R Skywalker");
-kycSubject.setNativeName("ABC");
-
-senderKyc.setNationality("GB");
-senderKyc.setBirthCountry("GB");
-senderKyc.setOccupation("Manager");
-senderKyc.setEmployerName("MFX");
-senderKyc.setContactPhone("+447125588999");
-senderKyc.setGender("m");
-senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
-senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
-senderKyc.setIdDocument(identificationList);
-senderKyc.setPostalAddress(address);
-senderKyc.setSubjectName(kycSubject);
-
-requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
-requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
-
-debitPartyList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
-creditPartyList.add(new AccountIdentifier("accountid", "<Place your account id of credit party here>"));
-
-transaction.setAmount("16.00");
-transaction.setCurrency("USD");
-transaction.setInternationalTransferInformation(transferInformation);
-transaction.setSenderKyc(senderKyc);
-transaction.setRequestingOrganisation(requestingOrganisation);
-transaction.setCreditParty(creditPartyList);
 transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount("<amount>");
+transaction.setCurrency("<currency>");
+agentServiceRequest.setTransaction(transaction);
 
-accountLinkingRequest.setTransaction(transaction);
+AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createWithdrawalTransaction();
 
-AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
-
-sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-
+sdkResponse = mmClient.addRequest(agentServiceRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 String txnRef = sdkResponse.getObjectReference();
-Transaction transactionResponse = mmClient.addRequest(accountLinkingRequest).viewTransaction(txnRef);
+Transaction transactionResponse = mmClient.addRequest(agentServiceRequest).viewTransaction(txnRef);
 ```
 
 ### Response Example
 
 ```java
 {
-  "transactionReference": "REF-1640158853973",
+  "transactionReference": "REF-1641165429924",
   "creditParty": [
-    {
-      "key": "msisdn",
-      "value": "+44012345678"
-    },
-    {
-      "key": "accountid",
-      "value": "3"
-    },
-    {
-      "key": "mandatereference",
-      "value": "REF-1601985847787"
-    },
-    {
-      "key": "mandatereference",
-      "value": "REF-1601985859399"
-    },
-    {
-      "key": "mandatereference",
-      "value": "REF-1601986025735"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493640797"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493642261"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493662185"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493749407"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493750632"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493820584"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493821921"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493851726"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493852975"
-    },
-    {
-      "key": "linkref",
-      "value": "REF-1639493881467"
-    }
-  ],
-  "debitParty": [
     {
       "key": "msisdn",
       "value": "+449999999"
@@ -726,53 +618,213 @@ Transaction transactionResponse = mmClient.addRequest(accountLinkingRequest).vie
     {
       "key": "mandatereference",
       "value": "REF-1639986873564"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168068933"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168168179"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168378727"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640168722282"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252420215"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252426452"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252433112"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252449240"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252615312"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252620610"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252627263"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640252644708"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253128100"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253133676"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253141344"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253158631"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253861729"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253868188"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253874939"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253891020"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253929045"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253934845"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253941631"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253957605"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253985045"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253990759"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640253999987"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254017113"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254091848"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254097466"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254104143"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254144241"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254149719"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254158314"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254396956"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254402565"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254410353"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254427439"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254600918"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254608265"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254616112"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640254632935"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255549510"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255556704"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255563564"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640255581982"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257220848"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257226807"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257233756"
+    },
+    {
+      "key": "mandatereference",
+      "value": "REF-1640257250467"
     }
-  ],
-  "type": "transfer",
-  "transactionStatus": "completed",
-  "amount": "100.00",
-  "currency": "GBP",
-  "internationalTransferInformation": {
-    "originCountry": "GB"
-  },
-  "senderKyc": {
-    "nationality": "GB",
-    "dateOfBirth": "1970-07-03",
-    "occupation": "Manager",
-    "employerName": "MFX",
-    "contactPhone": "+447125588999",
-    "gender": "m",
-    "idDocument": [
-      {
-        "idType": "nationalidcard",
-        "idNumber": "1234567",
-        "issueDate": "2018-07-03",
-        "expiryDate": "2021-07-03",
-        "issuer": "UKPA",
-        "issuerPlace": "GB",
-        "issuerCountry": "GB"
-      }
-    ],
-    "postalAddress": {
-      "country": "GB"
-    },
-    "subjectName": {
-      "title": "Mr",
-      "firstName": "Luke",
-      "middleName": "R",
-      "lastName": "Skywalker",
-      "fullName": "Luke R Skywalker",
-      "nativeName": "ABC"
-    },
-    "emailAddress": "luke.skywalkeraaabbb@gmail.com",
-    "birthCountry": "GB"
-  },
-  "requestingOrganisation": {
-    "requestingOrganisationIdentifierType": "organisationid",
-    "requestingOrganisationIdentifier": "testorganisation"
-  },
-  "creationDate": "2021-12-22T07:40:54",
-  "modificationDate": "2021-12-22T07:40:54",
-  "requestDate": "2021-12-22T07:40:54"
+  ],...
 }
 ```
+
+### NOTE
+
+In asynchronous flows, a callback mechanism or polling mechanism is utilised to allow the client to determine the request's final state.
+Use the <a href="viewRequestState.Readme.md">viewRequestState()</a> function for the polling mechanism to receive the status of a request, and the <a href="viewTransaction.Readme.md">viewTransaction()</a>
+function to acquire the final representation of the Transaction object.
