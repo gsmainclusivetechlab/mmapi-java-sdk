@@ -76,6 +76,7 @@ public class ViewTransactionRequest extends CommonRequest {
 
         if (requestResponse.getPayLoad() instanceof String) {
             if (requestResponse.getResponseCode().equals(HttpStatusCode.OK)) {
+            	System.out.println(requestResponse.getResponseHeader());
                 transactions = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(), Transaction.class);
             }
         }

@@ -2,6 +2,7 @@ package com.mobilemoney.integration.disbursement;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.*;
 import com.mobilemoney.config.PropertiesLoader;
@@ -32,12 +33,28 @@ public class DisbursementTest {
     }
 	
     @Test
-    @DisplayName("Individual Disbursement Test Success")
+    @DisplayName("Individual Disbursement Transaction Test Success")
     void createDisbursementTransactionTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
         disbursementRequest.setTransaction(getTransactionObject());
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Individual Disbursement Transaction With Json Input Test Success")
+    void createDisbursementTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        DisbursementRequest disbursementRequest = new DisbursementRequest();
+
+        String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        disbursementRequest.setTransaction(transactionObjectString);
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
         
         assertNotNull(sdkResponse);
@@ -58,7 +75,7 @@ public class DisbursementTest {
     }
 
     @Test
-    @DisplayName("Bulk Disbursement Test Success")
+    @DisplayName("Bulk Disbursement Transaction Test Success")
     void createBatchTransactionTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
@@ -79,6 +96,24 @@ public class DisbursementTest {
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
+    @Test
+    @DisplayName("Bulk Disbursement Transaction With Json Input Test Success")
+    void createBatchTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        DisbursementRequest disbursementRequest = new DisbursementRequest();
+        List<Transaction> transactions = new ArrayList<>();
+
+        String batchTransactionJsonString = "{\"transactions\": [{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}]}";
+        disbursementRequest.setBatchTransaction(batchTransactionJsonString);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
     @Test
     @DisplayName("Bulk Disbursement Test Failure")
     void createBatchTransactionTestFailure() {
@@ -123,7 +158,7 @@ public class DisbursementTest {
     }
 
     @Test
-    @DisplayName("Update Batch Transaction Status")
+    @DisplayName("Update Batch Transaction Status Test Success")
     void updateBatchTransactionTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
@@ -142,9 +177,37 @@ public class DisbursementTest {
         sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
         patchDataList.add(new PatchData("replace", "/batchStatus", "approved"));
-
         disbursementRequest = new DisbursementRequest();
         disbursementRequest.setPatchData(patchDataList);
+        sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).updateBatchTransaction(sdkResponse.getObjectReference());
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Update Batch Transaction Status With Json Input Test Success")
+    void updateBatchTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        DisbursementRequest disbursementRequest = new DisbursementRequest();
+        BatchTransaction batchTransaction = new BatchTransaction();
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction transaction = getTransactionObject();
+
+        transactions.add(transaction);
+        batchTransaction.setTransactions(transactions);
+        disbursementRequest.setBatchTransaction(batchTransaction);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createBatchTransaction();
+
+        sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+
+        String patchDataJsonInput = "[{\"op\":\"replace\",\"path\":\"/batchStatus\",\"value\":\"approved\"}]";
+        disbursementRequest = new DisbursementRequest();
+        disbursementRequest.setPatchData(patchDataJsonInput);
         sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).updateBatchTransaction(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
@@ -235,6 +298,27 @@ public class DisbursementTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         disbursementRequest.setReversal(reversal);
+        sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Disbursement Reversal With Json Input Test Success")
+    void reversalWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        DisbursementRequest disbursementRequest = new DisbursementRequest();
+
+        disbursementRequest.setTransaction(getTransactionObject());
+        AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
+
+        sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        disbursementRequest.setReversal(reversalJsonString);
         sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);

@@ -34,241 +34,315 @@ import java.util.UUID;
  */
 public class AgentServiceRequest extends ViewTransactionRequest {
 
-    // Transaction reference
-    private Transaction transaction;
+	// Transaction reference
+	private Transaction transaction;
 
-    // AuthorizationCodeRequest reference
-    private AuthorizationCodeRequest authorizationCodeRequest;
+	// AuthorizationCodeRequest reference
+	private AuthorizationCodeRequest authorizationCodeRequest;
 
-    //RequestAccount reference
-    private Account account;
+	// RequestAccount reference
+	private Account account;
 
-    // PatchData reference
-    private List<PatchData> patchData;
+	// PatchData reference
+	private List<PatchData> patchData;
 
-    /**
-     * *
-     * Default constructor
-     *
-     */
-    public AgentServiceRequest() {
-        this.authorizationCodeRequest = new AuthorizationCodeRequest();
-    }
+	/**
+	 * * Default constructor
+	 *
+	 */
+	public AgentServiceRequest() {
+		this.authorizationCodeRequest = new AuthorizationCodeRequest();
+	}
 
-    /**
-     * *
-     *
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createWithdrawalTransaction() throws MobileMoneyException {
-        this.clientCorrelationId = UUID.randomUUID().toString();
-        if (this.transaction == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
-        }
-        String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.WITHDRAWAL);
-        MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, this.transaction.toJSON(), this.notificationType, this.callBackURL, AsyncResponse.class);
-    }
+	/**
+	 * *
+	 *
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createWithdrawalTransaction() throws MobileMoneyException {
+		this.clientCorrelationId = UUID.randomUUID().toString();
+		if (this.transaction == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
+		}
+		String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.WITHDRAWAL);
+		MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
+		return createRequest(HttpMethod.POST, resourcePath, this.transaction.toJSON(), this.notificationType,
+				this.callBackURL, AsyncResponse.class);
+	}
 
-    /**
-     * *
-     *
-     * @param identifiers
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createAuthorisationCode(Identifiers identifiers) throws MobileMoneyException {
-        this.clientCorrelationId = UUID.randomUUID().toString();
-        if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
-        return this.authorizationCodeRequest.createAuthorisationCode(identifiers, this.callBackURL, this.clientCorrelationId);
-    }
+	/**
+	 * *
+	 *
+	 * @param identifiers
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createAuthorisationCode(Identifiers identifiers) throws MobileMoneyException {
+		this.clientCorrelationId = UUID.randomUUID().toString();
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
+		return this.authorizationCodeRequest.createAuthorisationCode(identifiers, this.callBackURL,
+				this.clientCorrelationId);
+	}
 
-    /**
-     * *
-     *
-     * @param identifiers
-     * @param authorisationCode
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AuthorisationCode viewAuthorisationCode(Identifiers identifiers, final String authorisationCode) throws MobileMoneyException {
-    	if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
-        return this.authorizationCodeRequest.viewAuthorisationCode(identifiers, authorisationCode);
-    }
+	/**
+	 * *
+	 *
+	 * @param identifiers
+	 * @param authorisationCode
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AuthorisationCode viewAuthorisationCode(Identifiers identifiers, final String authorisationCode)
+			throws MobileMoneyException {
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
+		return this.authorizationCodeRequest.viewAuthorisationCode(identifiers, authorisationCode);
+	}
 
-    /**
-     * *
-     *
-     * @param identifiers
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AccountHolderName viewAccountName(Identifiers identifiers) throws MobileMoneyException {
-    	if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
-        return this.authorizationCodeRequest.viewAccountName(identifiers);
-    }
+	/**
+	 * *
+	 *
+	 * @param identifiers
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AccountHolderName viewAccountName(Identifiers identifiers) throws MobileMoneyException {
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
+		return this.authorizationCodeRequest.viewAccountName(identifiers);
+	}
 
-    /**
-     * *
-     *
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createDepositTransaction() throws MobileMoneyException {
-        this.clientCorrelationId = UUID.randomUUID().toString();
-        if (this.transaction == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
-        }
-        String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.DEPOSIT);
-        MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, this.transaction.toJSON(), this.notificationType, this.callBackURL, AsyncResponse.class);
-    }
+	/**
+	 * *
+	 *
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createDepositTransaction() throws MobileMoneyException {
+		this.clientCorrelationId = UUID.randomUUID().toString();
+		if (this.transaction == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.TRANSACTION_OBJECT_INIT_ERROR).build());
+		}
+		String resourcePath = API.TRANSACTION_TYPE.replace(Constants.TRANSACTION_TYPE, TransactionType.DEPOSIT);
+		MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
+		return createRequest(HttpMethod.POST, resourcePath, this.transaction.toJSON(), this.notificationType,
+				this.callBackURL, AsyncResponse.class);
+	}
 
-    /**
-     * *
-     *
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createAccount() throws MobileMoneyException {
-        this.clientCorrelationId = UUID.randomUUID().toString();
-        if (this.account == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.ACCOUNT_OBJECT_INIT_ERROR).build());
-        }
-        String resourcePath = API.VIEW_ACCOUNT_IDENTITY_TYPE.replace(Constants.IDENTITY_TYPE, Constants.INDIVIDUAL);
-        MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, this.account.toJSON(), this.notificationType, this.callBackURL, AsyncResponse.class);
-    }
+	/**
+	 * *
+	 *
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createAccount() throws MobileMoneyException {
+		this.clientCorrelationId = UUID.randomUUID().toString();
+		if (this.account == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.ACCOUNT_OBJECT_INIT_ERROR).build());
+		}
+		String resourcePath = API.VIEW_ACCOUNT_IDENTITY_TYPE.replace(Constants.IDENTITY_TYPE, Constants.INDIVIDUAL);
+		MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
+		return createRequest(HttpMethod.POST, resourcePath, this.account.toJSON(), this.notificationType,
+				this.callBackURL, AsyncResponse.class);
+	}
 
-    /**
-     * *
-     *
-     * @param identifiers
-     * @return
-     * @throws MobileMoneyException
-     */
-    public Account viewAccount(Identifiers identifiers) throws MobileMoneyException {
-        if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
-        return createRequest(HttpMethod.GET, getResourcePath(API.VIEW_ACCOUNT_IDENTIFIER, identifiers), Account.class);
-    }
+	/**
+	 * *
+	 *
+	 * @param identifiers
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public Account viewAccount(Identifiers identifiers) throws MobileMoneyException {
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
+		return createRequest(HttpMethod.GET, getResourcePath(API.VIEW_ACCOUNT_IDENTIFIER, identifiers), Account.class);
+	}
 
-    /**
-     * *
-     *
-     * @param identifiers
-     * @param identityId
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse updateAccountIdentity(Identifiers identifiers, final String identityId) throws MobileMoneyException {
-        this.clientCorrelationId = UUID.randomUUID().toString();
-        if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
-        if (this.patchData == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.PATCH_DATA_OBJECT_INIT_ERROR).build());
-        }
-        if (StringUtils.isNullOrEmpty(identityId)) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
-        }
-        String resourcePath = getResourcePath(API.VIEW_ACCOUNT_IDENTITY_ID, identifiers).replace(Constants.IDENTITY_ID, identityId);
-        MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.PATCH, resourcePath, JSONFormatter.toJSONArray(this.patchData), notificationType, callBackURL, AsyncResponse.class);
-    }
+	/**
+	 * *
+	 *
+	 * @param identifiers
+	 * @param identityId
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse updateAccountIdentity(Identifiers identifiers, final String identityId)
+			throws MobileMoneyException {
+		this.clientCorrelationId = UUID.randomUUID().toString();
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
+		if (this.patchData == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.PATCH_DATA_OBJECT_INIT_ERROR).build());
+		}
+		if (StringUtils.isNullOrEmpty(identityId)) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY,
+							Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+		}
+		String resourcePath = getResourcePath(API.VIEW_ACCOUNT_IDENTITY_ID, identifiers).replace(Constants.IDENTITY_ID,
+				identityId);
+		MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
+		return createRequest(HttpMethod.PATCH, resourcePath, JSONFormatter.toJSONArray(this.patchData),
+				notificationType, callBackURL, AsyncResponse.class);
+	}
 
-    /**
-     * *
-     *
-     * @param account
-     */
-    public void setAccount(Account account) {
-        this.account = account;
-    }
+	/**
+	 * *
+	 *
+	 * @param account
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
 
-    /**
-     * *
-     *
-     * @return
-     */
-    public List<PatchData> getPatchData() {
-        return patchData;
-    }
+	/***
+	 * 
+	 * @param accountJsonString
+	 */
+	public void setAccount(final String accountJsonString) {
+		this.account = JSONFormatter.fromJSON(accountJsonString, Account.class);
+	}
 
-    /**
-     * *
-     *
-     * @param patchData
-     */
-    public void setPatchData(List<PatchData> patchData) {
-        this.patchData = patchData;
-    }
+	/**
+	 * *
+	 *
+	 * @return
+	 */
+	public List<PatchData> getPatchData() {
+		return patchData;
+	}
 
-    /**
-     * *
-     *
-     * @param authorisationCode
-     */
-    public void setAuthorisationCodeRequest(AuthorisationCode authorisationCode) {
-        this.authorizationCodeRequest.setAuthorisationCodeRequest(authorisationCode);
-    }
+	/**
+	 * *
+	 *
+	 * @param patchData
+	 */
+	public void setPatchData(List<PatchData> patchData) {
+		this.patchData = patchData;
+	}
 
-    /**
-     * *
-     *
-     * @param transaction
-     */
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-    }
+	/***
+	 * 
+	 * @param patchDataJsonString
+	 */
+	public void setPatchData(final String patchDataJsonString) {
+		this.patchData = JSONFormatter.fromJSONList(patchDataJsonString, PatchData.class);
+	}
 
-    /**
-     * *
-     * Set call back URL
-     *
-     * @param callBackURL
-     * @return
-     */
-    public AgentServiceRequest addCallBack(final String callBackURL) {
-        this.callBackURL = callBackURL;
-        return setNotificationType(NotificationType.CALLBACK);
-    }
+	/**
+	 * *
+	 *
+	 * @param authorisationCode
+	 */
+	public void setAuthorisationCodeRequest(AuthorisationCode authorisationCode) {
+		this.authorizationCodeRequest.setAuthorisationCodeRequest(authorisationCode);
+	}
+	
+	/***
+	 * 
+	 * @param authorisationCodeJsonString
+	 */
+	public void setAuthorisationCodeRequest(final String authorisationCodeJsonString) {
+		this.authorizationCodeRequest.setAuthorisationCodeRequest(authorisationCodeJsonString);
+	}
 
-    /**
-     * *
-     * Set notification type
-     *
-     * @param notificationType
-     * @return
-     */
-    public AgentServiceRequest setNotificationType(final NotificationType notificationType) {
-        this.notificationType = notificationType;
-        return this;
-    }
+	/**
+	 * *
+	 *
+	 * @param transaction
+	 */
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+	}
 
-    /**
-     * *
-     *
-     * @param reversal
-     */
-    public void setReversal(Reversal reversal) {
-        this.reversal = reversal;
-    }
+	/***
+	 * 
+	 * @param transactionJsonString
+	 */
+	public void setTransaction(final String transactionJsonString) {
+		this.transaction = JSONFormatter.fromJSON(transactionJsonString, Transaction.class);
+	}
 
-    /**
-     * *
-     *
-     * @return
-     */
-    public String getClientCorrelationId() {
-        return this.clientCorrelationId;
-    }
+	/**
+	 * * Set call back URL
+	 *
+	 * @param callBackURL
+	 * @return
+	 */
+	public AgentServiceRequest addCallBack(final String callBackURL) {
+		this.callBackURL = callBackURL;
+		return setNotificationType(NotificationType.CALLBACK);
+	}
+
+	/**
+	 * * Set notification type
+	 *
+	 * @param notificationType
+	 * @return
+	 */
+	public AgentServiceRequest setNotificationType(final NotificationType notificationType) {
+		this.notificationType = notificationType;
+		return this;
+	}
+
+	/**
+	 * *
+	 *
+	 * @param reversal
+	 */
+	public void setReversal(Reversal reversal) {
+		this.reversal = reversal;
+	}
+
+	/***
+	 * 
+	 * @param reversalJsonString
+	 */
+	public void setReversal(final String reversalJsonString) {
+		this.reversal = JSONFormatter.fromJSON(reversalJsonString, Reversal.class);
+	}
+
+	/**
+	 * *
+	 *
+	 * @return
+	 */
+	public String getClientCorrelationId() {
+		return this.clientCorrelationId;
+	}
 }

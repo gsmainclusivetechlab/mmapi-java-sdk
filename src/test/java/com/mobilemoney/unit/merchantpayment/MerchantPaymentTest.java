@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.merchantpayment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +37,7 @@ public class MerchantPaymentTest {
     void merchantTransactionCorrelationIdTestSuccess() throws MobileMoneyException, NoSuchFieldException, SecurityException {
     	MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
     	merchantPaymentRequest.setTransaction(getTransactionObject());
-        
+    	
         CreateTransactionRequest transactionReqMock = Mockito.mock(CreateTransactionRequest.class);
         FieldSetter.setField(merchantPaymentRequest, merchantPaymentRequest.getClass().getDeclaredField("createTransactionRequest"), transactionReqMock);
 
@@ -44,6 +45,28 @@ public class MerchantPaymentTest {
         assertNotNull(merchantPaymentRequest.getClientCorrelationId());
     }
     
+	@Test
+    @DisplayName("Json String To Transaction Object Test Success")
+	void jsonToTransactionObjectTestSuccess() {
+		String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+		Transaction transaction = JSONFormatter.fromJSON(transactionObjectString, Transaction.class);
+		
+		assertNotNull(transaction);
+		assertEquals(transaction.getAmount(), "16.00");
+		assertEquals(transaction.getCurrency(), "USD");
+	}
+	
+	@Test
+    @DisplayName("Json String To Transaction Object Test Failure")
+	void jsonToTransactionObjectTestFailure() {
+		String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+		Transaction transaction = JSONFormatter.fromJSON(transactionObjectString, Transaction.class);
+		
+		assertNotNull(transaction);
+		assertNotEquals(transaction.getAmount(), "15.00");
+		assertNotEquals(transaction.getCurrency(), "JWT");
+	}
+	
     @Test
     @DisplayName("Create Authorisation Code Client Correlation Id Test Success")
     void createAuthorisationCodeCorrelationIdTestSuccess() throws MobileMoneyException, NoSuchFieldException, SecurityException {

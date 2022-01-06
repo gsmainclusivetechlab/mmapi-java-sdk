@@ -44,6 +44,24 @@ public class MerchantPaymentTest {
     }
 
     @Test
+    @DisplayName("Create Merchant Transaction With Transaction String Test Success")
+    void createMerchantTransactionWithTransactionStringTestSuccess() throws MobileMoneyException {
+    	String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+    	
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+
+        merchantPaymentRequest.setTransaction(transactionObjectString);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createMerchantTransaction();
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
     @DisplayName("Create Merchant Transaction Test Failure")
     void createMerchantTransactionTestFailure() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
@@ -69,6 +87,28 @@ public class MerchantPaymentTest {
         authorisationCode.setCurrency("USD");
 
         merchantPaymentRequest.setAuthorisationCodeRequest(authorisationCode);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createAuthorisationCode(new Identifiers(identifierList));
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Obtain an Authorisation Code With Json Input Test Success")
+    void createAuthorisationCodeWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("walletid", "1"));
+
+        String authorisationCodeJsonString = "{\"amount\": \"1000.00\",\"currency\": \"USD\",\"codeLifetime\": 1,\"holdFundsIndicator\": false}";
+        merchantPaymentRequest.setAuthorisationCodeRequest(authorisationCodeJsonString);
 
         AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
@@ -174,7 +214,7 @@ public class MerchantPaymentTest {
     }
 
     @Test
-    @DisplayName("Transaction Reversal")
+    @DisplayName("Transaction Reversal Test Success")
     void createReversalTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
@@ -197,12 +237,35 @@ public class MerchantPaymentTest {
     }
 
     @Test
+    @DisplayName("Transaction Reversal With Json Input Test Success")
+    void createReversalWithJsonInputTestSuccess() throws MobileMoneyException {
+    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+
+        merchantPaymentRequest.setTransaction(getTransactionObject());
+        AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
+
+        sdkResponse = mmClient.addRequest(merchantPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        
+        merchantPaymentRequest.setReversal(reversalJsonString);
+        sdkResponse =  mmClient.addRequest(merchantPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(txnRef);
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
     @DisplayName("Retrieve Merchant Payments")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
+        //identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));
         identifierList.add(new AccountIdentifier("walletid", "1"));
         filter.setLimit(10);
         filter.setOffset(0);

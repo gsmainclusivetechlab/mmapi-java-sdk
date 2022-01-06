@@ -51,6 +51,25 @@ public class BillPaymentTest {
 		assertEquals(sdkResponse.getNotificationMethod(), "callback");
 		assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
 	}
+	
+	@Test
+	@DisplayName("Create Bill Transaction With Json Input Test Success")
+	void createBillTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"),
+				loader.get("API_KEY"));
+		BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
+
+		String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+		billPaymentRequest.setTransaction(transactionObjectString);
+
+		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).addCallBack(loader.get("CALLBACK_URL"))
+				.createBillTransaction();
+
+		assertNotNull(sdkResponse);
+		assertNotNull(sdkResponse.getServerCorrelationId());
+		assertEquals(sdkResponse.getNotificationMethod(), "callback");
+		assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+	}
 
 	@Test
 	@DisplayName("Create Bill Payment with Callback Test Success")
@@ -65,6 +84,29 @@ public class BillPaymentTest {
 		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
+		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).addCallBack(loader.get("CALLBACK_URL"))
+				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+
+		assertNotNull(sdkResponse);
+		assertNotNull(sdkResponse.getServerCorrelationId());
+		assertEquals(sdkResponse.getNotificationMethod(), "callback");
+		assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+	}
+	
+	@Test
+	@DisplayName("Create Bill Payment with Callback With Json Input Test Success")
+	void billPaymentWithCallBackWithJsonInputTestSuccess() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"),
+				loader.get("API_KEY"));
+		BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
+		List<AccountIdentifier> identifierList = new ArrayList<>();
+
+		identifierList.add(new AccountIdentifier("walletid", "1"));
+
+		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+
+		String billPayJsonString = "{\"amountPaid\": \"16.00\",\"currency\": \"USD\"}";
+		billPaymentRequest.setBillPayment(billPayJsonString);
 		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).addCallBack(loader.get("CALLBACK_URL"))
 				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
 

@@ -227,6 +227,14 @@ public class DisbursementRequest extends ViewTransactionRequest {
     public void setBatchTransaction(BatchTransaction batchTransaction) {
         this.batchTransaction = batchTransaction;
     }
+    
+    /***
+     * 
+     * @param batchTransactionJsonString
+     */
+    public void setBatchTransaction(final String batchTransactionJsonString) {
+        this.batchTransaction = JSONFormatter.fromJSON(batchTransactionJsonString, BatchTransaction.class);
+    }
 
     /***
      *
@@ -238,18 +246,26 @@ public class DisbursementRequest extends ViewTransactionRequest {
     
     /***
      * 
+     * @param transactionJsonString
+     */
+    public void setTransaction(final String transactionJsonString) {
+		this.transaction = JSONFormatter.fromJSON(transactionJsonString, Transaction.class);
+	}
+    
+    /***
+     * 
      * @param reversal
      */
     public void setReversal(Reversal reversal) {
     	this.reversal = reversal;
     }
-
+    
     /***
-     *
-     * @return
+     * 
+     * @param reversalJsonString
      */
-    public List<PatchData> getPatchData() {
-        return patchData;
+    public void setReversal(final String reversalJsonString) {
+    	this.reversal = JSONFormatter.fromJSON(reversalJsonString, Reversal.class);
     }
 
     /***
@@ -258,6 +274,14 @@ public class DisbursementRequest extends ViewTransactionRequest {
      */
     public void setPatchData(List<PatchData> patchData) {
         this.patchData = patchData;
+    }
+    
+    /***
+     * 
+     * @param patchDataJsonString
+     */
+    public void setPatchData(final String patchDataJsonString) {
+        this.patchData = JSONFormatter.fromJSONList(patchDataJsonString, PatchData.class);;
     }
 
     /***

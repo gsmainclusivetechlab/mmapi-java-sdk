@@ -242,6 +242,14 @@ public class BillPaymentRequest extends CommonRequest {
 	public void setTransaction(Transaction transaction) {
 		this.transaction = transaction;
 	}
+	
+	/***
+	 * 
+	 * @param transactionJsonString
+	 */
+	public void setTransaction(final String transactionJsonString) {
+		this.transaction = JSONFormatter.fromJSON(transactionJsonString, Transaction.class);
+	}
 
 	/***
 	 *
@@ -249,6 +257,14 @@ public class BillPaymentRequest extends CommonRequest {
 	 */
 	public void setBillPayment(BillPay billPay) {
 		this.billPay = billPay;
+	}
+	
+	/***
+	 * 
+	 * @param billPayJsonString
+	 */
+	public void setBillPayment(final String billPayJsonString) {
+		this.billPay = JSONFormatter.fromJSON(billPayJsonString, BillPay.class);
 	}
 
 	/***

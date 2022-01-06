@@ -47,6 +47,25 @@ public class P2PTransferTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
+    
+    @Test
+    @DisplayName("Request a P2P Transfer Quotation With Json Input Success")
+    void p2pTransferQuotationRequestWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+        String quotationJsonString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2000\"}],\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}]}";
+        p2PTransferRequest.setQuotation(quotationJsonString);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createQuotation();
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
 
     @Test
     @DisplayName("Initiate P2P Transfer Success")
@@ -55,6 +74,25 @@ public class P2PTransferTest {
         P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 
         p2PTransferRequest.setTransaction(createP2PTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createTransferTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Initiate P2P Transfer With Json Input Success")
+    void initiateP2PTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+        String p2pTransactionJsonString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"internationalTransferInformation\": {\"originCountry\": \"GB\"},\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"debitParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"creditParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        p2PTransferRequest.setTransaction(p2pTransactionJsonString);
 
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
@@ -168,6 +206,30 @@ public class P2PTransferTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         p2PTransferRequest.setReversal(reversal);
+        sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("P2P Transfer Reversal With Json Input Success")
+    void p2pTransferReversalWithJsonInput() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+        p2PTransferRequest.setTransaction(createP2PTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createTransferTransaction();
+
+        sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        p2PTransferRequest.setReversal(reversalJsonString);
         sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);

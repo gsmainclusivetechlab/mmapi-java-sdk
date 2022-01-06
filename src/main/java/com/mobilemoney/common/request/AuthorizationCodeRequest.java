@@ -9,6 +9,7 @@ import com.mobilemoney.base.constants.Constants;
 import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.context.MobileMoneyContext;
 import com.mobilemoney.base.exception.MobileMoneyException;
+import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.ResourceUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
@@ -92,5 +93,13 @@ public class AuthorizationCodeRequest extends ResourceUtils {
      */
     public void setAuthorisationCodeRequest(AuthorisationCode authorisationCode) {
         this.authorisationCode = authorisationCode;
+    }
+    
+    /***
+     * 
+     * @param authorisationCodeJsonString
+     */
+    public void setAuthorisationCodeRequest(final String authorisationCodeJsonString) {
+        this.authorisationCode = JSONFormatter.fromJSON(authorisationCodeJsonString, AuthorisationCode.class);
     }
 }
