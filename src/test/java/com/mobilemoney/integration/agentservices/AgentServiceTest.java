@@ -65,13 +65,13 @@ public class AgentServiceTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
-    
+
     @Test
     @DisplayName("Agent-initiated Cash-out With Json Input Success")
     void agentInitiatedCashOutWithJsonInputTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
-        
+
         String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
         agentServiceRequest.setTransaction(transactionObjectString);
 
@@ -165,7 +165,7 @@ public class AgentServiceTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
-    
+
     @Test
     @DisplayName("Customer Cash-out at an ATM using an Authorisation Code With Json Input Test Success")
     void customerCashOutATMUsingAuthorisationWithJsonInputTestSuccess() throws MobileMoneyException {
@@ -252,7 +252,7 @@ public class AgentServiceTest {
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
 
     }
-    
+
     @Test
     @DisplayName("Cash-out Reversal With Json Input Test Success")
     void cashOutReversalWithJsonInputTestSuccess() throws MobileMoneyException {
@@ -289,14 +289,14 @@ public class AgentServiceTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
-    
+
     @Test
     @DisplayName("Register a Customer Mobile Money Account With Json Input Test Success")
     void registerCustomerMobileMoneyAccountWithJsonInputTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
-        
-        String accountJsonString = "{\"accountIdentifiers\": [{\"key\": \"msisdn\",\"value\": \"+44"+getPhoneNumber()+"\"}],\"identity\": [{\"identityKyc\": {\"birthCountry\": \"AD\",\"contactPhone\": \"+447777777777\",\"dateOfBirth\": \"2000-11-20\",\"emailAddress\": \"xyz@xyz.com\",\"employerName\": \"string\",\"gender\": \"m\",\"nationality\": \"AD\",\"occupation\": \"Miner\",\"postalAddress\": {\"addressLine1\": \"37\",\"addressLine2\": \"ABC Drive\",\"addressLine3\": \"string\",\"city\": \"Berlin\",\"stateProvince\": \"string\",\"postalCode\": \"AF1234\",\"country\": \"AD\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"H\",\"middleName\": \"I\",\"lastName\": \"J\",\"fullName\": \"H I J\",\"nativeName\": \"string\"},\"idDocument\": [{\"idType\": \"passport\",\"idNumber\": \"111111\",\"issueDate\": \"2018-11-20\",\"expiryDate\": \"2018-11-20\",\"issuer\": \"ABC\",\"issuerPlace\": \"DEF\",\"issuerCountry\": \"AD\"}]},\"accountRelationship\": \"accountholder\",\"kycVerificationStatus\": \"verified\",\"kycVerificationEntity\": \"ABC Agent\",\"kycLevel\": 1,\"customData\": [{\"key\": \"test\",\"value\": \"custom\"},{\"key\": \"test\",\"value\": \"custom1\"}]}],\"accountType\": \"string\",\"customData\": [],\"fees\": [{\"feeType\": \"string\",\"feeAmount\": \"5.46\",\"feeCurrency\": \"AED\"}],\"registeringEntity\": \"ABC Agent\",\"requestDate\": \"2021-02-17T15:41:45.194Z\"}";
+
+        String accountJsonString = "{\"accountIdentifiers\": [{\"key\": \"msisdn\",\"value\": \"+44" + getPhoneNumber() + "\"}],\"identity\": [{\"identityKyc\": {\"birthCountry\": \"AD\",\"contactPhone\": \"+447777777777\",\"dateOfBirth\": \"2000-11-20\",\"emailAddress\": \"xyz@xyz.com\",\"employerName\": \"string\",\"gender\": \"m\",\"nationality\": \"AD\",\"occupation\": \"Miner\",\"postalAddress\": {\"addressLine1\": \"37\",\"addressLine2\": \"ABC Drive\",\"addressLine3\": \"string\",\"city\": \"Berlin\",\"stateProvince\": \"string\",\"postalCode\": \"AF1234\",\"country\": \"AD\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"H\",\"middleName\": \"I\",\"lastName\": \"J\",\"fullName\": \"H I J\",\"nativeName\": \"string\"},\"idDocument\": [{\"idType\": \"passport\",\"idNumber\": \"111111\",\"issueDate\": \"2018-11-20\",\"expiryDate\": \"2018-11-20\",\"issuer\": \"ABC\",\"issuerPlace\": \"DEF\",\"issuerCountry\": \"AD\"}]},\"accountRelationship\": \"accountholder\",\"kycVerificationStatus\": \"verified\",\"kycVerificationEntity\": \"ABC Agent\",\"kycLevel\": 1,\"customData\": [{\"key\": \"test\",\"value\": \"custom\"},{\"key\": \"test\",\"value\": \"custom1\"}]}],\"accountType\": \"string\",\"customData\": [],\"fees\": [{\"feeType\": \"string\",\"feeAmount\": \"5.46\",\"feeCurrency\": \"AED\"}],\"registeringEntity\": \"ABC Agent\",\"requestDate\": \"2021-02-17T15:41:45.194Z\"}";
         agentServiceRequest.setAccount(accountJsonString);
         AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createAccount();
 
@@ -308,7 +308,7 @@ public class AgentServiceTest {
 
     @Test
     @DisplayName("Verify a Customer’s KYC")
-    void cerifyCustomerKYCTestSuccess() throws MobileMoneyException {
+    void verifyCustomerKYCTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
         agentServiceRequest.setAccount(getRequestAccountObject());
@@ -387,7 +387,7 @@ public class AgentServiceTest {
 
         assertNotNull(transactions);
         if (transactions.size() > 0) {
-        	assertNotNull(transactions.get(0).getTransactionReference());
+            assertNotNull(transactions.get(0).getTransactionReference());
             assertNotNull(transactions.get(0).getTransactionStatus());
             assertNotNull(transactions.get(0).getAmount());
             assertNotNull(transactions.get(0).getCurrency());
@@ -397,7 +397,7 @@ public class AgentServiceTest {
             assertTrue(transactions.get(0).getDebitParty().size() > 0);
             assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
         }
-        
+
         filter.setLimit(20);
         filter.setOffset(20);
         List<Transaction> transactions1 = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
@@ -409,7 +409,7 @@ public class AgentServiceTest {
     void checkForServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         ServiceAvailability serviceAvailability = mmClient.addRequest(new AgentServiceRequest()).viewServiceAvailability();
-        
+
         assertNotNull(serviceAvailability);
         assertNotNull(serviceAvailability.getServiceStatus());
     }
@@ -418,11 +418,11 @@ public class AgentServiceTest {
     @DisplayName("Retrieve a Missing API Response")
     void retrieveMissingAPIResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
-        
+
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
 
         agentServiceRequest.setAccount(getRequestAccountObject());
-        
+
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("accountid", "15523"));
@@ -432,7 +432,6 @@ public class AgentServiceTest {
         String clientCorrelationId = agentServiceRequest.getClientCorrelationId();
         Account accountResponse = mmClient.addRequest(agentServiceRequest).viewResponse(clientCorrelationId, Account.class);
 
-        
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));

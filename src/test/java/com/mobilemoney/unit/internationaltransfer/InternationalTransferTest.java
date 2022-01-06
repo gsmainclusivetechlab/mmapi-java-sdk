@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.internationaltransfer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,371 +34,398 @@ import com.mobilemoney.internationaltransfer.model.Quotation;
 import com.mobilemoney.internationaltransfer.request.InternationalTransferRequest;
 
 public class InternationalTransferTest {
-	private static final String SERVER_CORRELATION_ID = UUID.randomUUID().toString();
 
-	@Test
-	@DisplayName("International Transfer Quotation Payload Test Success")
-	void quotationPayloadTestSuccess() {
-		Quotation quotation = createQuotationObject();
-		String jsonString = quotation.toJSON();
-		Quotation quotation1 = JSONFormatter.fromJSON(jsonString, Quotation.class);
+    private static final String SERVER_CORRELATION_ID = UUID.randomUUID().toString();
 
-		assertNotNull(jsonString);
-		assertNotNull(quotation1);
-		assertEquals(quotation.getRequestAmount(), quotation1.getRequestAmount());
-	}
+    @Test
+    @DisplayName("International Transfer Quotation Payload Test Success")
+    void quotationPayloadTestSuccess() {
+        Quotation quotation = createQuotationObject();
+        String jsonString = quotation.toJSON();
+        Quotation quotation1 = JSONFormatter.fromJSON(jsonString, Quotation.class);
 
-	@Test
-	@DisplayName("International Transaction Payload Success")
-	void internationalTransactionPayLoadTestSuccess() {
-		Transaction transaction = createInternationalTransactionObject();
-		String jsonString = transaction.toJSON();
-		Transaction transaction1 = JSONFormatter.fromJSON(jsonString, Transaction.class);
+        assertNotNull(jsonString);
+        assertNotNull(quotation1);
+        assertEquals(quotation.getRequestAmount(), quotation1.getRequestAmount());
+    }
 
-		assertNotNull(jsonString);
-		assertNotNull(transaction1);
-		assertEquals(transaction.getAmount(), transaction1.getAmount());
-	}
+    @Test
+    @DisplayName("Json String To Quotation Object Test Success")
+    void jsonToQuotationObjectTestSuccess() {
+        String quotationObjectString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2000\"}],\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}]}";
+        Quotation quotation = JSONFormatter.fromJSON(quotationObjectString, Quotation.class);
 
-	@Test
-	@DisplayName("International Transfer Quotation Without Payload Test Failure")
-	void quotationWithoutPayloadTestFailure() {
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        assertNotNull(quotation);
+        assertEquals(quotation.getRequestAmount(), "75.30");
+    }
 
-		assertThrows(MobileMoneyException.class, () -> internationalTransferRequest.createQuotation());
-	}
+    @Test
+    @DisplayName("Json String To Quotation Object Test Failure")
+    void jsonToQuotationObjectTestFailure() {
+        String quotationObjectString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2000\"}],\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}]}";
+        Quotation quotation = JSONFormatter.fromJSON(quotationObjectString, Quotation.class);
 
-	@Test
-	@DisplayName("International Transaction Without Payload Failure")
-	void internationalTransactionWithoutPayLoadTestFailure() {
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        assertNotNull(quotation);
+        assertNotEquals(quotation.getRequestAmount(), "65.30");
+    }
 
-		assertThrows(MobileMoneyException.class, () -> internationalTransferRequest.createInternationalTransaction());
-	}
+    @Test
+    @DisplayName("International Transaction Payload Success")
+    void internationalTransactionPayLoadTestSuccess() {
+        Transaction transaction = createInternationalTransactionObject();
+        String jsonString = transaction.toJSON();
+        Transaction transaction1 = JSONFormatter.fromJSON(jsonString, Transaction.class);
 
-	@Test
-	@DisplayName("Request a International Transfer Quotation Success")
-	void internationalTransferQuotationRequestTestSuccess() throws MobileMoneyException {
-		AsyncResponse expectedSdkResponse = getAsyncResponse();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		internationalTransferRequest.setQuotation(createQuotationObject());
+        assertNotNull(jsonString);
+        assertNotNull(transaction1);
+        assertEquals(transaction.getAmount(), transaction1.getAmount());
+    }
 
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+    @Test
+    @DisplayName("International Transfer Quotation Without Payload Test Failure")
+    void quotationWithoutPayloadTestFailure() {
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
-		Mockito.doReturn(expectedSdkResponse).when(internationalTransferRequestSpy).createQuotation();
+        assertThrows(MobileMoneyException.class, () -> internationalTransferRequest.createQuotation());
+    }
 
-		AsyncResponse actualSdkResponse = internationalTransferRequestSpy.createQuotation();
+    @Test
+    @DisplayName("International Transaction Without Payload Failure")
+    void internationalTransactionWithoutPayLoadTestFailure() {
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
-		assertNotNull(expectedSdkResponse);
-		assertNotNull(actualSdkResponse);
-		assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
-		assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
-	}
+        assertThrows(MobileMoneyException.class, () -> internationalTransferRequest.createInternationalTransaction());
+    }
 
-	@Test
-	@DisplayName("International Transfer Reversal Success")
-	void internationalTransferReversal() throws MobileMoneyException {
-		AsyncResponse expectedSdkResponse = getAsyncResponse();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		Reversal reversal = new Reversal();
+    @Test
+    @DisplayName("Request a International Transfer Quotation Success")
+    void internationalTransferQuotationRequestTestSuccess() throws MobileMoneyException {
+        AsyncResponse expectedSdkResponse = getAsyncResponse();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        internationalTransferRequest.setQuotation(createQuotationObject());
 
-		reversal.setType("reversal");
-		internationalTransferRequest.setReversal(reversal);
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
 
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+        Mockito.doReturn(expectedSdkResponse).when(internationalTransferRequestSpy).createQuotation();
 
-		Mockito.doReturn(expectedSdkResponse).when(internationalTransferRequestSpy)
-				.createReversal("transactionReference");
+        AsyncResponse actualSdkResponse = internationalTransferRequestSpy.createQuotation();
 
-		AsyncResponse actualSdkResponse = internationalTransferRequestSpy.createReversal("transactionReference");
+        assertNotNull(expectedSdkResponse);
+        assertNotNull(actualSdkResponse);
+        assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
+        assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+    }
 
-		assertNotNull(expectedSdkResponse);
-		assertNotNull(actualSdkResponse);
-		assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
-		assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
-	}
+    @Test
+    @DisplayName("International Transfer Reversal Success")
+    void internationalTransferReversal() throws MobileMoneyException {
+        AsyncResponse expectedSdkResponse = getAsyncResponse();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        Reversal reversal = new Reversal();
 
-	@Test
-	@DisplayName("Retrieve Missing API Response for International Transaction")
-	void viewResponseTestSuccess() throws MobileMoneyException {
-		Transaction expectedTransaction = createInternationalTransactionObject();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+        reversal.setType("reversal");
+        internationalTransferRequest.setReversal(reversal);
 
-		Mockito.doReturn(expectedTransaction).when(internationalTransferRequestSpy).viewResponse("clientCorrelationId",
-				Transaction.class);
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
 
-		Transaction actualTransaction = internationalTransferRequestSpy.viewResponse("clientCorrelationId",
-				Transaction.class);
+        Mockito.doReturn(expectedSdkResponse).when(internationalTransferRequestSpy)
+                .createReversal("transactionReference");
 
-		assertNotNull(expectedTransaction);
-		assertNotNull(actualTransaction);
-		assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
-	}
+        AsyncResponse actualSdkResponse = internationalTransferRequestSpy.createReversal("transactionReference");
 
-	@Test
-	@DisplayName("View Quatation Test Success")
-	void viewQuotationTestSuccess() throws MobileMoneyException {
-		Quotation expectedQuotation = createQuotationObject();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+        assertNotNull(expectedSdkResponse);
+        assertNotNull(actualSdkResponse);
+        assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
+        assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
+    }
 
-		Mockito.doReturn(expectedQuotation).when(internationalTransferRequestSpy).viewQuotation("quotationReference");
+    @Test
+    @DisplayName("Retrieve Missing API Response for International Transaction")
+    void viewResponseTestSuccess() throws MobileMoneyException {
+        Transaction expectedTransaction = createInternationalTransactionObject();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
 
-		Quotation actualQuotation = internationalTransferRequestSpy.viewQuotation("quotationReference");
+        Mockito.doReturn(expectedTransaction).when(internationalTransferRequestSpy).viewResponse("clientCorrelationId",
+                Transaction.class);
 
-		assertNotNull(expectedQuotation);
-		assertNotNull(actualQuotation);
-		assertEquals(expectedQuotation.getRequestAmount(), actualQuotation.getRequestAmount());
-	}
+        Transaction actualTransaction = internationalTransferRequestSpy.viewResponse("clientCorrelationId",
+                Transaction.class);
 
-	@Test
-	@DisplayName("Retrieve Transactions Test Success")
-	void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-		List<Transaction> expectedList = getTransactionList();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		List<AccountIdentifier> identifierList = new ArrayList<>();
+        assertNotNull(expectedTransaction);
+        assertNotNull(actualTransaction);
+        assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
+    }
 
-		identifierList.add(new AccountIdentifier("accountid", "15523"));
-		Identifiers identifiers = new Identifiers(identifierList);
+    @Test
+    @DisplayName("View Quatation Test Success")
+    void viewQuotationTestSuccess() throws MobileMoneyException {
+        Quotation expectedQuotation = createQuotationObject();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
 
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+        Mockito.doReturn(expectedQuotation).when(internationalTransferRequestSpy).viewQuotation("quotationReference");
 
-		Mockito.doReturn(expectedList).when(internationalTransferRequestSpy).viewAccountTransactions(identifiers);
+        Quotation actualQuotation = internationalTransferRequestSpy.viewQuotation("quotationReference");
 
-		List<Transaction> actualList = internationalTransferRequestSpy.viewAccountTransactions(identifiers);
+        assertNotNull(expectedQuotation);
+        assertNotNull(actualQuotation);
+        assertEquals(expectedQuotation.getRequestAmount(), actualQuotation.getRequestAmount());
+    }
 
-		assertNotNull(expectedList);
-		assertNotNull(actualList);
-		assertEquals(expectedList.size(), actualList.size());
-		assertTrue(expectedList.size() == 2);
-		assertTrue(actualList.size() == 2);
-		assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
-	}
+    @Test
+    @DisplayName("Retrieve Transactions Test Success")
+    void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
+        List<Transaction> expectedList = getTransactionList();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-	@Test
-	@DisplayName("Get Merchant Balance")
-	void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
-		Balance expectedBalance = getBalanceObject();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		List<AccountIdentifier> identifierList = new ArrayList<>();
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
 
-		identifierList.add(new AccountIdentifier("accountid", "15523"));
-		Identifiers identifiers = new Identifiers(identifierList);
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
 
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+        Mockito.doReturn(expectedList).when(internationalTransferRequestSpy).viewAccountTransactions(identifiers);
 
-		Mockito.doReturn(expectedBalance).when(internationalTransferRequestSpy).viewAccountBalance(identifiers);
+        List<Transaction> actualList = internationalTransferRequestSpy.viewAccountTransactions(identifiers);
 
-		Balance actualBalance = internationalTransferRequestSpy.viewAccountBalance(identifiers);
+        assertNotNull(expectedList);
+        assertNotNull(actualList);
+        assertEquals(expectedList.size(), actualList.size());
+        assertTrue(expectedList.size() == 2);
+        assertTrue(actualList.size() == 2);
+        assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+    }
 
-		assertNotNull(expectedBalance);
-		assertNotNull(actualBalance);
-		assertEquals(expectedBalance.getAccountStatus(), actualBalance.getAccountStatus());
-		assertEquals(expectedBalance.getAvailableBalance(), actualBalance.getAvailableBalance());
-	}
-	
-	@Test
+    @Test
+    @DisplayName("Get Merchant Balance")
+    void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
+        Balance expectedBalance = getBalanceObject();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        Identifiers identifiers = new Identifiers(identifierList);
+
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
+
+        Mockito.doReturn(expectedBalance).when(internationalTransferRequestSpy).viewAccountBalance(identifiers);
+
+        Balance actualBalance = internationalTransferRequestSpy.viewAccountBalance(identifiers);
+
+        assertNotNull(expectedBalance);
+        assertNotNull(actualBalance);
+        assertEquals(expectedBalance.getAccountStatus(), actualBalance.getAccountStatus());
+        assertEquals(expectedBalance.getAvailableBalance(), actualBalance.getAvailableBalance());
+    }
+
+    @Test
     @DisplayName("Check Service Availability")
     void viewServiceAvailabilityTestSuccess() throws MobileMoneyException {
-		ServiceAvailability expectedResponse = getServiceAvailabilityObject();
-		InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
-		InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
-		
-		Mockito.doReturn(expectedResponse).when(internationalTransferRequestSpy).viewServiceAvailability();
-    	
-    	ServiceAvailability actualResponse = internationalTransferRequestSpy.viewServiceAvailability();
-    	
-    	assertNotNull(expectedResponse);
-    	assertNotNull(actualResponse);
-    	assertEquals(expectedResponse.getServiceStatus(), actualResponse.getServiceStatus());
-	}
+        ServiceAvailability expectedResponse = getServiceAvailabilityObject();
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+        InternationalTransferRequest internationalTransferRequestSpy = Mockito.spy(internationalTransferRequest);
 
-	/***
-	 * 
-	 * @return
-	 */
-	private AsyncResponse getAsyncResponse() {
-		AsyncResponse asyncResponse = new AsyncResponse();
+        Mockito.doReturn(expectedResponse).when(internationalTransferRequestSpy).viewServiceAvailability();
 
-		asyncResponse.setServerCorrelationId(SERVER_CORRELATION_ID);
-		asyncResponse.setStatus("pending");
+        ServiceAvailability actualResponse = internationalTransferRequestSpy.viewServiceAvailability();
 
-		return asyncResponse;
-	}
+        assertNotNull(expectedResponse);
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse.getServiceStatus(), actualResponse.getServiceStatus());
+    }
 
-	/***
-	 * 
-	 * @return
-	 */
-	private ServiceAvailability getServiceAvailabilityObject() {
-		ServiceAvailability serviceAvailability = new ServiceAvailability();
-		serviceAvailability.setServiceStatus("available");
-		return serviceAvailability;
-	}
+    /**
+     * *
+     *
+     * @return
+     */
+    private AsyncResponse getAsyncResponse() {
+        AsyncResponse asyncResponse = new AsyncResponse();
 
-	/***
-	 * 
-	 * @return
-	 */
-	private Balance getBalanceObject() {
-		Balance balance = new Balance();
-		balance.setAccountStatus("available");
-		balance.setAvailableBalance("100.00");
-		return balance;
-	}
+        asyncResponse.setServerCorrelationId(SERVER_CORRELATION_ID);
+        asyncResponse.setStatus("pending");
 
-	/***
-	 * 
-	 * @return
-	 */
-	private List<Transaction> getTransactionList() {
-		List<Transaction> transactions = new ArrayList<>();
-		List<AccountIdentifier> debitPartyList = new ArrayList<>();
-		List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        return asyncResponse;
+    }
 
-		debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
-		creditPartyList.add(new AccountIdentifier("walletid", "1"));
+    /**
+     * *
+     *
+     * @return
+     */
+    private ServiceAvailability getServiceAvailabilityObject() {
+        ServiceAvailability serviceAvailability = new ServiceAvailability();
+        serviceAvailability.setServiceStatus("available");
+        return serviceAvailability;
+    }
 
-		Transaction transaction1 = new Transaction();
-		transaction1.setDebitParty(debitPartyList);
-		transaction1.setCreditParty(creditPartyList);
-		transaction1.setAmount("16.00");
-		transaction1.setCurrency("USD");
+    /**
+     * *
+     *
+     * @return
+     */
+    private Balance getBalanceObject() {
+        Balance balance = new Balance();
+        balance.setAccountStatus("available");
+        balance.setAvailableBalance("100.00");
+        return balance;
+    }
 
-		Transaction transaction2 = new Transaction();
-		transaction2.setDebitParty(debitPartyList);
-		transaction2.setCreditParty(creditPartyList);
-		transaction2.setAmount("17.00");
-		transaction2.setCurrency("USD");
+    /**
+     * *
+     *
+     * @return
+     */
+    private List<Transaction> getTransactionList() {
+        List<Transaction> transactions = new ArrayList<>();
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-		transactions.add(transaction1);
-		transactions.add(transaction2);
+        debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        creditPartyList.add(new AccountIdentifier("walletid", "1"));
 
-		return transactions;
-	}
+        Transaction transaction1 = new Transaction();
+        transaction1.setDebitParty(debitPartyList);
+        transaction1.setCreditParty(creditPartyList);
+        transaction1.setAmount("16.00");
+        transaction1.setCurrency("USD");
 
-	/***
-	 *
-	 * @return
-	 */
-	private Transaction createInternationalTransactionObject() {
-		Transaction transaction = new Transaction();
-		KYCInformation senderKyc = new KYCInformation();
-		Name kycSubject = new Name();
-		RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-		Address address = new Address("GB");
-		IdDocument idDocument = new IdDocument("nationalidcard");
-		InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
+        Transaction transaction2 = new Transaction();
+        transaction2.setDebitParty(debitPartyList);
+        transaction2.setCreditParty(creditPartyList);
+        transaction2.setAmount("17.00");
+        transaction2.setCurrency("USD");
 
-		List<AccountIdentifier> debitPartyList = new ArrayList<>();
-		List<AccountIdentifier> creditPartyList = new ArrayList<>();
-		List<IdDocument> identificationList = new ArrayList<>();
+        transactions.add(transaction1);
+        transactions.add(transaction2);
 
-		idDocument.setIdNumber("1234567");
-		idDocument.setIssuer("UKPA");
-		idDocument.setIssuerPlace("GB");
-		idDocument.setIssuerCountry("GB");
-		idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
-		idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
-		idDocument.setOtherIddescription("test");
-		identificationList.add(idDocument);
+        return transactions;
+    }
 
-		kycSubject.setTitle("Mr");
-		kycSubject.setFirstName("Luke");
-		kycSubject.setMiddleName("R");
-		kycSubject.setLastName("Skywalker");
-		kycSubject.setFullName("Luke R Skywalker");
-		kycSubject.setNativeName("ABC");
+    /**
+     * *
+     *
+     * @return
+     */
+    private Transaction createInternationalTransactionObject() {
+        Transaction transaction = new Transaction();
+        KYCInformation senderKyc = new KYCInformation();
+        Name kycSubject = new Name();
+        RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
+        Address address = new Address("GB");
+        IdDocument idDocument = new IdDocument("nationalidcard");
+        InternationalTransferInformation transferInformation = new InternationalTransferInformation("GB");
 
-		senderKyc.setNationality("GB");
-		senderKyc.setBirthCountry("GB");
-		senderKyc.setOccupation("Manager");
-		senderKyc.setEmployerName("MFX");
-		senderKyc.setContactPhone("+447125588999");
-		senderKyc.setGender("m");
-		senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
-		senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
-		senderKyc.setIdDocument(identificationList);
-		senderKyc.setPostalAddress(address);
-		senderKyc.setSubjectName(kycSubject);
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-		requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
-		requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
-		// debitPartyList.add(new AccountIdentifier("walletid", "1"));
-		// creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
-		debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-		creditPartyList.add(new AccountIdentifier("accountid", "2999"));
+        kycSubject.setTitle("Mr");
+        kycSubject.setFirstName("Luke");
+        kycSubject.setMiddleName("R");
+        kycSubject.setLastName("Skywalker");
+        kycSubject.setFullName("Luke R Skywalker");
+        kycSubject.setNativeName("ABC");
 
-		transaction.setAmount("100.00");
-		transaction.setCurrency("GBP");
-		transaction.setInternationalTransferInformation(transferInformation);
-		transaction.setSenderKyc(senderKyc);
-		transaction.setRequestingOrganisation(requestingOrganisation);
-		transaction.setCreditParty(creditPartyList);
-		transaction.setDebitParty(debitPartyList);
+        senderKyc.setNationality("GB");
+        senderKyc.setBirthCountry("GB");
+        senderKyc.setOccupation("Manager");
+        senderKyc.setEmployerName("MFX");
+        senderKyc.setContactPhone("+447125588999");
+        senderKyc.setGender("m");
+        senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
+        senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
+        senderKyc.setIdDocument(identificationList);
+        senderKyc.setPostalAddress(address);
+        senderKyc.setSubjectName(kycSubject);
 
-		return transaction;
-	}
+        requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
+        requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-	/***
-	 *
-	 * @return
-	 */
-	private Quotation createQuotationObject() {
-		IdDocument idDocument = new IdDocument("nationalidcard");
-		Address address = new Address("GB");
-		Name kycSubject = new Name();
-		KYCInformation senderKyc = new KYCInformation();
+        // debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        // creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
+        creditPartyList.add(new AccountIdentifier("accountid", "2999"));
 
-		List<AccountIdentifier> debitPartyList = new ArrayList<>();
-		List<AccountIdentifier> creditPartyList = new ArrayList<>();
-		List<CustomData> customDataList = new ArrayList<>();
-		List<IdDocument> identificationList = new ArrayList<>();
+        transaction.setAmount("100.00");
+        transaction.setCurrency("GBP");
+        transaction.setInternationalTransferInformation(transferInformation);
+        transaction.setSenderKyc(senderKyc);
+        transaction.setRequestingOrganisation(requestingOrganisation);
+        transaction.setCreditParty(creditPartyList);
+        transaction.setDebitParty(debitPartyList);
 
-		idDocument.setIdNumber("1234567");
-		idDocument.setIssuer("UKPA");
-		idDocument.setIssuerPlace("GB");
-		idDocument.setIssuerCountry("GB");
-		idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
-		idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
-		idDocument.setOtherIddescription("test");
-		identificationList.add(idDocument);
+        return transaction;
+    }
 
-		kycSubject.setTitle("Mr");
-		kycSubject.setFirstName("Luke");
-		kycSubject.setMiddleName("R");
-		kycSubject.setLastName("Skywalker");
-		kycSubject.setFullName("Luke R Skywalker");
-		kycSubject.setNativeName("ABC");
+    /**
+     * *
+     *
+     * @return
+     */
+    private Quotation createQuotationObject() {
+        IdDocument idDocument = new IdDocument("nationalidcard");
+        Address address = new Address("GB");
+        Name kycSubject = new Name();
+        KYCInformation senderKyc = new KYCInformation();
 
-		senderKyc.setNationality("GB");
-		senderKyc.setBirthCountry("GB");
-		senderKyc.setOccupation("Manager");
-		senderKyc.setEmployerName("MFX");
-		senderKyc.setContactPhone("+447125588999");
-		senderKyc.setGender("m");
-		senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
-		senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
-		senderKyc.setIdDocument(identificationList);
-		senderKyc.setPostalAddress(address);
-		senderKyc.setSubjectName(kycSubject);
+        List<AccountIdentifier> debitPartyList = new ArrayList<>();
+        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+        List<CustomData> customDataList = new ArrayList<>();
+        List<IdDocument> identificationList = new ArrayList<>();
 
-		debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-		creditPartyList.add(new AccountIdentifier("accountid", "2000"));
-		customDataList.add(new CustomData("keytest", "keyvalue"));
+        idDocument.setIdNumber("1234567");
+        idDocument.setIssuer("UKPA");
+        idDocument.setIssuerPlace("GB");
+        idDocument.setIssuerCountry("GB");
+        idDocument.setIssueDate("2018-07-03T11:43:27.405Z");
+        idDocument.setExpiryDate("2021-07-03T11:43:27.405Z");
+        idDocument.setOtherIddescription("test");
+        identificationList.add(idDocument);
 
-		Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);
-		quotation.setSubType("abc");
-		quotation.setChosenDeliveryMethod("agent");
-		quotation.setSendingServiceProviderCountry("AD");
-		quotation.setOriginCountry("AD");
-		quotation.setReceivingCountry("AD");
-		quotation.setRequestDate("2018-07-03T11:43:27.405Z");
-		quotation.setSenderKyc(senderKyc);
-		quotation.setCustomData(customDataList);
+        kycSubject.setTitle("Mr");
+        kycSubject.setFirstName("Luke");
+        kycSubject.setMiddleName("R");
+        kycSubject.setLastName("Skywalker");
+        kycSubject.setFullName("Luke R Skywalker");
+        kycSubject.setNativeName("ABC");
 
-		return quotation;
-	}
+        senderKyc.setNationality("GB");
+        senderKyc.setBirthCountry("GB");
+        senderKyc.setOccupation("Manager");
+        senderKyc.setEmployerName("MFX");
+        senderKyc.setContactPhone("+447125588999");
+        senderKyc.setGender("m");
+        senderKyc.setDateOfBirth("1970-07-03T11:43:27.405Z");
+        senderKyc.setEmailAddress("luke.skywalkeraaabbb@gmail.com");
+        senderKyc.setIdDocument(identificationList);
+        senderKyc.setPostalAddress(address);
+        senderKyc.setSubjectName(kycSubject);
+
+        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
+        creditPartyList.add(new AccountIdentifier("accountid", "2000"));
+        customDataList.add(new CustomData("keytest", "keyvalue"));
+
+        Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);
+        quotation.setSubType("abc");
+        quotation.setChosenDeliveryMethod("agent");
+        quotation.setSendingServiceProviderCountry("AD");
+        quotation.setOriginCountry("AD");
+        quotation.setReceivingCountry("AD");
+        quotation.setRequestDate("2018-07-03T11:43:27.405Z");
+        quotation.setSenderKyc(senderKyc);
+        quotation.setCustomData(customDataList);
+
+        return quotation;
+    }
 }
