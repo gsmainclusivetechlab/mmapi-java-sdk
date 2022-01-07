@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.mobilemoney.accountlinking.model.Link;
-import com.mobilemoney.accountlinking.request.AccountLinkingRequest;
 import com.mobilemoney.agentservices.model.Account;
 import com.mobilemoney.agentservices.model.Identity;
 import com.mobilemoney.agentservices.request.AgentServiceRequest;
@@ -37,6 +35,7 @@ import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
@@ -345,7 +344,7 @@ public class AgentServiceTest {
 //    	agentServiceRequest = new AgentServiceRequest();
         agentServiceRequest.setPatchData(patchDataList);
         sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).updateAccountIdentity(new Identifiers(identifierList), identityId);
-
+			
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
@@ -383,24 +382,25 @@ public class AgentServiceTest {
         filter.setLimit(20);
         filter.setOffset(0);
 
-        List<Transaction> transactions = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
-        if (transactions.size() > 0) {
-            assertNotNull(transactions.get(0).getTransactionReference());
-            assertNotNull(transactions.get(0).getTransactionStatus());
-            assertNotNull(transactions.get(0).getAmount());
-            assertNotNull(transactions.get(0).getCurrency());
-            assertNotNull(transactions.get(0).getCreditParty());
-            assertNotNull(transactions.get(0).getDebitParty());
-            assertTrue(transactions.get(0).getCreditParty().size() > 0);
-            assertTrue(transactions.get(0).getDebitParty().size() > 0);
-            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+        assertNotNull(transactions.getTransactions());
+        if (transactions.getTransactions().size() > 0) {
+            assertNotNull(transactions.getTransactions().get(0).getTransactionReference());
+            assertNotNull(transactions.getTransactions().get(0).getTransactionStatus());
+            assertNotNull(transactions.getTransactions().get(0).getAmount());
+            assertNotNull(transactions.getTransactions().get(0).getCurrency());
+            assertNotNull(transactions.getTransactions().get(0).getCreditParty());
+            assertNotNull(transactions.getTransactions().get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.getTransactions().get(0).getType()));
+            assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
 
         filter.setLimit(20);
         filter.setOffset(20);
-        List<Transaction> transactions1 = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions1 = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
     }
 

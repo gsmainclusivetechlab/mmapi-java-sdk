@@ -15,8 +15,9 @@ import org.junit.jupiter.api.Test;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
-import com.mobilemoney.billpayment.model.Bill;
 import com.mobilemoney.billpayment.model.BillPay;
+import com.mobilemoney.billpayment.model.BillPayments;
+import com.mobilemoney.billpayment.model.Bills;
 import com.mobilemoney.billpayment.request.BillPaymentRequest;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AccountIdentifier;
@@ -81,11 +82,11 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
 		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).addCallBack(loader.get("CALLBACK_URL"))
-				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+				.createBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
 
 		assertNotNull(sdkResponse);
 		assertNotNull(sdkResponse.getServerCorrelationId());
@@ -103,12 +104,12 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		String billPayJsonString = "{\"amountPaid\": \"16.00\",\"currency\": \"USD\"}";
 		billPaymentRequest.setBillPayment(billPayJsonString);
 		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).addCallBack(loader.get("CALLBACK_URL"))
-				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+				.createBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
 
 		assertNotNull(sdkResponse);
 		assertNotNull(sdkResponse.getServerCorrelationId());
@@ -126,11 +127,11 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
 		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).setNotificationType(NotificationType.POLLING)
-				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+				.createBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
 
 		assertNotNull(sdkResponse);
 		assertNotNull(sdkResponse.getServerCorrelationId());
@@ -148,23 +149,24 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
 		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest)
 				.setNotificationType(NotificationType.POLLING)
-				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+				.createBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
 
 		sdkResponse = mmClient.addRequest(billPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
-		List<BillPay> billPayments = mmClient.addRequest(billPaymentRequest)
-				.viewBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+		BillPayments billPayments = mmClient.addRequest(billPaymentRequest)
+				.viewBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
 
 		assertNotNull(billPayments);
-		if (billPayments.size() > 0) {
-			assertNotNull(billPayments.get(0).getBillPaymentStatus());
-			assertNotNull(billPayments.get(0).getAmountPaid());
-			assertNotNull(billPayments.get(0).getCurrency());
+		assertNotNull(billPayments.getBillPayments());
+		if (billPayments.getBillPayments().size() > 0) {
+			assertNotNull(billPayments.getBillPayments().get(0).getBillPaymentStatus());
+			assertNotNull(billPayments.getBillPayments().get(0).getAmountPaid());
+			assertNotNull(billPayments.getBillPayments().get(0).getCurrency());
 		}
 	}
 
@@ -178,7 +180,7 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
 
@@ -196,9 +198,10 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		assertNotNull(bills);
+		assertNotNull(bills.getBills());
 	}
 
 	@Test
@@ -211,11 +214,11 @@ public class BillPaymentTest {
 
 		identifierList.add(new AccountIdentifier("walletid", "1"));
 
-		List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 		billPaymentRequest.setBillPayment(getBillPayment());
 		AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).addCallBack(loader.get("CALLBACK_URL"))
-				.createBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+				.createBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
 
 		String clientCorrelationId = billPaymentRequest.getClientCorrelationId();
 

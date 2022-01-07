@@ -17,6 +17,8 @@ import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.billpayment.model.Bill;
 import com.mobilemoney.billpayment.model.BillPay;
+import com.mobilemoney.billpayment.model.BillPayments;
+import com.mobilemoney.billpayment.model.Bills;
 import com.mobilemoney.billpayment.request.BillPaymentRequest;
 import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.AsyncResponse;
@@ -157,7 +159,7 @@ public class BillPaymentTest {
     @Test
     @DisplayName("View Account Bills Test Success")
     void viewAccountBillsTestSuccess() throws MobileMoneyException {
-        List<Bill> expectedBillList = getBillList();
+        Bills expectedBillList = getBillList();
         BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
         BillPaymentRequest billPaymentRequestSpy = Mockito.spy(billPaymentRequest);
         List<AccountIdentifier> identifierList = new ArrayList<>();
@@ -167,18 +169,20 @@ public class BillPaymentTest {
 
         Mockito.doReturn(expectedBillList).when(billPaymentRequestSpy).viewAccountBills(identifiers);
 
-        List<Bill> actualBillList = billPaymentRequestSpy.viewAccountBills(identifiers);
+        Bills actualBillList = billPaymentRequestSpy.viewAccountBills(identifiers);
 
         assertNotNull(expectedBillList);
         assertNotNull(actualBillList);
-        assertEquals(expectedBillList.size(), actualBillList.size());
-        assertEquals(expectedBillList.get(0).getBillReference(), actualBillList.get(0).getBillReference());
+        assertNotNull(expectedBillList.getBills());
+        assertNotNull(actualBillList.getBills());
+        assertEquals(expectedBillList.getBills().size(), actualBillList.getBills().size());
+        assertEquals(expectedBillList.getBills().get(0).getBillReference(), actualBillList.getBills().get(0).getBillReference());
     }
 
     @Test
     @DisplayName("View Bill Payment Test Success")
     void viewBillPaymentTestSuccess() throws MobileMoneyException {
-        List<BillPay> expectedBillPaymentList = getBillPaymentList();
+    	BillPayments expectedBillPaymentList = getBillPaymentList();
         BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
         BillPaymentRequest billPaymentRequestSpy = Mockito.spy(billPaymentRequest);
         List<AccountIdentifier> identifierList = new ArrayList<>();
@@ -188,12 +192,14 @@ public class BillPaymentTest {
 
         Mockito.doReturn(expectedBillPaymentList).when(billPaymentRequestSpy).viewBillPayment(identifiers, "REF-XYZ");
 
-        List<BillPay> actualBillPaymentList = billPaymentRequestSpy.viewBillPayment(identifiers, "REF-XYZ");
+        BillPayments actualBillPaymentList = billPaymentRequestSpy.viewBillPayment(identifiers, "REF-XYZ");
 
         assertNotNull(expectedBillPaymentList);
         assertNotNull(actualBillPaymentList);
-        assertEquals(expectedBillPaymentList.size(), actualBillPaymentList.size());
-        assertEquals(expectedBillPaymentList.get(0).getAmountPaid(), actualBillPaymentList.get(0).getAmountPaid());
+        assertNotNull(expectedBillPaymentList.getBillPayments());
+        assertNotNull(actualBillPaymentList.getBillPayments());
+        assertEquals(expectedBillPaymentList.getBillPayments().size(), actualBillPaymentList.getBillPayments().size());
+        assertEquals(expectedBillPaymentList.getBillPayments().get(0).getAmountPaid(), actualBillPaymentList.getBillPayments().get(0).getAmountPaid());
     }
 
     @Test
@@ -268,14 +274,18 @@ public class BillPaymentTest {
      *
      * @return
      */
-    private List<BillPay> getBillPaymentList() {
-        List<BillPay> billPayments = new ArrayList<BillPay>();
+    private BillPayments getBillPaymentList() {
+        List<BillPay> billPaymentList = new ArrayList<BillPay>();
         BillPay bill = new BillPay();
 
         bill.setCurrency("USD");
         bill.setAmountPaid("16.00");
 
-        billPayments.add(bill);
+        billPaymentList.add(bill);
+
+        BillPayments billPayments = new BillPayments();
+        billPayments.setBillPayments(billPaymentList);
+        
         return billPayments;
     }
 
@@ -284,14 +294,17 @@ public class BillPaymentTest {
      *
      * @return
      */
-    private List<Bill> getBillList() {
-        List<Bill> bills = new ArrayList<Bill>();
+    private Bills getBillList() {
+        List<Bill> billList = new ArrayList<Bill>();
         Bill bill = new Bill();
 
         bill.setCurrency("USD");
         bill.setBillReference("REF-XYZ");
 
-        bills.add(bill);
+        billList.add(bill);
+        
+        Bills bills = new Bills();
+        bills.setBills(billList);
         return bills;
     }
 

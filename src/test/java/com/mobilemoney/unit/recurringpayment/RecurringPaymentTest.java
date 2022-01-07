@@ -25,6 +25,7 @@ import com.mobilemoney.common.model.Identifiers;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.common.request.CreateTransactionRequest;
 import com.mobilemoney.recurringpayment.model.DebitMandate;
 import com.mobilemoney.recurringpayment.request.RecurringPaymentRequest;
@@ -237,7 +238,7 @@ public class RecurringPaymentTest {
     @Test
     @DisplayName("View Account Transactions Test Success")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        List<Transaction> expectedList = getTransactionList();
+    	Transactions expectedList = getTransactionList();
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -248,14 +249,16 @@ public class RecurringPaymentTest {
 
         Mockito.doReturn(expectedList).when(recurringPaymentRequestSpy).viewAccountTransactions(identifiers);
 
-        List<Transaction> actualList = recurringPaymentRequestSpy.viewAccountTransactions(identifiers);
+        Transactions actualList = recurringPaymentRequestSpy.viewAccountTransactions(identifiers);
 
         assertNotNull(expectedList);
         assertNotNull(actualList);
-        assertEquals(expectedList.size(), actualList.size());
-        assertTrue(expectedList.size() == 2);
-        assertTrue(actualList.size() == 2);
-        assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+        assertNotNull(expectedList.getTransactions());
+        assertNotNull(actualList.getTransactions());
+        assertEquals(expectedList.getTransactions().size(), actualList.getTransactions().size());
+        assertTrue(expectedList.getTransactions().size() == 2);
+        assertTrue(actualList.getTransactions().size() == 2);
+        assertEquals(expectedList.getTransactions().get(0).getAmount(), actualList.getTransactions().get(0).getAmount());
     }
 
     @Test
@@ -462,7 +465,7 @@ public class RecurringPaymentTest {
      *
      * @return
      */
-    private List<Transaction> getTransactionList() {
+    private Transactions getTransactionList() {
         List<Transaction> transactions = new ArrayList<>();
         List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
@@ -485,6 +488,9 @@ public class RecurringPaymentTest {
         transactions.add(transaction1);
         transactions.add(transaction2);
 
-        return transactions;
+        Transactions transactionsObject = new Transactions();
+        transactionsObject.setTransactions(transactions);
+        
+        return transactionsObject;
     }
 }

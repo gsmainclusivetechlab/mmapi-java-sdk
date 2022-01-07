@@ -24,8 +24,11 @@ import com.mobilemoney.common.model.PatchData;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.disbursement.model.BatchCompletion;
+import com.mobilemoney.disbursement.model.BatchCompletions;
 import com.mobilemoney.disbursement.model.BatchRejection;
+import com.mobilemoney.disbursement.model.BatchRejections;
 import com.mobilemoney.disbursement.model.BatchTransaction;
 import com.mobilemoney.disbursement.request.DisbursementRequest;
 
@@ -49,7 +52,7 @@ public class DisbursementTest {
     @DisplayName("Batch Transaction Payload Test Success")
     void batchTransactionPayloadTestSuccess() {
         BatchTransaction batchTransaction = new BatchTransaction();
-        batchTransaction.setTransactions(getTransactionList());
+        batchTransaction.setTransactions(getTransactionList().getTransactions());
         String jsonString = batchTransaction.toJSON();
         BatchTransaction batchTransaction1 = JSONFormatter.fromJSON(jsonString, BatchTransaction.class);
 
@@ -127,7 +130,7 @@ public class DisbursementTest {
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         BatchTransaction batchTransaction = new BatchTransaction();
 
-        batchTransaction.setTransactions(getTransactionList());
+        batchTransaction.setTransactions(getTransactionList().getTransactions());
         disbursementRequest.setBatchTransaction(batchTransaction);
 
         DisbursementRequest disbursementRequestSpy = Mockito.spy(disbursementRequest);
@@ -207,39 +210,43 @@ public class DisbursementTest {
     @Test
     @DisplayName("Get Completed Transactions of a Batch")
     void viewBatchCompletionsTestSuccess() throws MobileMoneyException {
-        List<BatchCompletion> expectedCompletionList = getBatchCompletionList();
+    	BatchCompletions expectedCompletionList = getBatchCompletionList();
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         DisbursementRequest disbursementRequestSpy = Mockito.spy(disbursementRequest);
 
         Mockito.doReturn(expectedCompletionList).when(disbursementRequestSpy).viewBatchCompletions("batchReference");
 
-        List<BatchCompletion> actualCompletionList = disbursementRequestSpy.viewBatchCompletions("batchReference");
+        BatchCompletions actualCompletionList = disbursementRequestSpy.viewBatchCompletions("batchReference");
 
         assertNotNull(expectedCompletionList);
         assertNotNull(actualCompletionList);
-        assertEquals(expectedCompletionList.size(), actualCompletionList.size());
-        assertTrue(expectedCompletionList.size() == 1);
-        assertTrue(actualCompletionList.size() == 1);
-        assertEquals(expectedCompletionList.get(0).getTransactionReference(), actualCompletionList.get(0).getTransactionReference());
+        assertNotNull(expectedCompletionList.getBatchCompletions());
+        assertNotNull(actualCompletionList.getBatchCompletions());
+        assertEquals(expectedCompletionList.getBatchCompletions().size(), actualCompletionList.getBatchCompletions().size());
+        assertTrue(expectedCompletionList.getBatchCompletions().size() == 1);
+        assertTrue(actualCompletionList.getBatchCompletions().size() == 1);
+        assertEquals(expectedCompletionList.getBatchCompletions().get(0).getTransactionReference(), actualCompletionList.getBatchCompletions().get(0).getTransactionReference());
     }
 
     @Test
     @DisplayName("Get Rejected Transactions of a Batch")
     void viewBatchRejectionsTestSuccess() throws MobileMoneyException {
-        List<BatchRejection> expectedRejectionList = getBatchRejectionList();
+    	BatchRejections expectedRejectionList = getBatchRejectionList();
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         DisbursementRequest disbursementRequestSpy = Mockito.spy(disbursementRequest);
 
         Mockito.doReturn(expectedRejectionList).when(disbursementRequestSpy).viewBatchRejections("batchReference");
 
-        List<BatchRejection> actualRejectionList = disbursementRequestSpy.viewBatchRejections("batchReference");
+        BatchRejections actualRejectionList = disbursementRequestSpy.viewBatchRejections("batchReference");
 
         assertNotNull(expectedRejectionList);
         assertNotNull(actualRejectionList);
-        assertEquals(expectedRejectionList.size(), actualRejectionList.size());
-        assertTrue(expectedRejectionList.size() == 1);
-        assertTrue(actualRejectionList.size() == 1);
-        assertEquals(expectedRejectionList.get(0).getTransactionReference(), actualRejectionList.get(0).getTransactionReference());
+        assertNotNull(expectedRejectionList.getBatchRejections());
+        assertNotNull(actualRejectionList.getBatchRejections());
+        assertEquals(expectedRejectionList.getBatchRejections().size(), actualRejectionList.getBatchRejections().size());
+        assertTrue(expectedRejectionList.getBatchRejections().size() == 1);
+        assertTrue(actualRejectionList.getBatchRejections().size() == 1);
+        assertEquals(expectedRejectionList.getBatchRejections().get(0).getTransactionReference(), actualRejectionList.getBatchRejections().get(0).getTransactionReference());
     }
 
     @Test
@@ -300,7 +307,7 @@ public class DisbursementTest {
     @Test
     @DisplayName("Retrieve Merchant Payments")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        List<Transaction> expectedList = getTransactionList();
+    	Transactions expectedList = getTransactionList();
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -311,14 +318,16 @@ public class DisbursementTest {
 
         Mockito.doReturn(expectedList).when(disbursementRequestSpy).viewAccountTransactions(identifiers);
 
-        List<Transaction> actualList = disbursementRequestSpy.viewAccountTransactions(identifiers);
+        Transactions actualList = disbursementRequestSpy.viewAccountTransactions(identifiers);
 
         assertNotNull(expectedList);
         assertNotNull(actualList);
-        assertEquals(expectedList.size(), actualList.size());
-        assertTrue(expectedList.size() == 2);
-        assertTrue(actualList.size() == 2);
-        assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+        assertNotNull(expectedList.getTransactions());
+        assertNotNull(actualList.getTransactions());
+        assertEquals(expectedList.getTransactions().size(), actualList.getTransactions().size());
+        assertTrue(expectedList.getTransactions().size() == 2);
+        assertTrue(actualList.getTransactions().size() == 2);
+        assertEquals(expectedList.getTransactions().get(0).getAmount(), actualList.getTransactions().get(0).getAmount());
     }
 
     @Test
@@ -433,11 +442,15 @@ public class DisbursementTest {
      *
      * @return
      */
-    private List<BatchCompletion> getBatchCompletionList() {
-        List<BatchCompletion> batchCompletions = new ArrayList<BatchCompletion>();
+    private BatchCompletions getBatchCompletionList() {
+        List<BatchCompletion> batchCompletionList = new ArrayList<BatchCompletion>();
         BatchCompletion batchCompletion = new BatchCompletion();
         batchCompletion.setTransactionReference("reference");
-        batchCompletions.add(batchCompletion);
+        batchCompletionList.add(batchCompletion);
+        
+        BatchCompletions batchCompletions = new BatchCompletions();
+        batchCompletions.setBatchCompletions(batchCompletionList);
+        
         return batchCompletions;
     }
 
@@ -446,11 +459,15 @@ public class DisbursementTest {
      *
      * @return
      */
-    private List<BatchRejection> getBatchRejectionList() {
-        List<BatchRejection> batchRejections = new ArrayList<BatchRejection>();
+    private BatchRejections getBatchRejectionList() {
+        List<BatchRejection> batchRejectionList = new ArrayList<BatchRejection>();
         BatchRejection batchRejection = new BatchRejection();
         batchRejection.setTransactionReference("reference");
-        batchRejections.add(batchRejection);
+        batchRejectionList.add(batchRejection);
+        
+        BatchRejections batchRejections = new BatchRejections();
+        batchRejections.setBatchRejections(batchRejectionList);
+        
         return batchRejections;
     }
 
@@ -459,7 +476,7 @@ public class DisbursementTest {
      *
      * @return
      */
-    private List<Transaction> getTransactionList() {
+    private Transactions getTransactionList() {
         List<Transaction> transactions = new ArrayList<>();
         List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
@@ -482,6 +499,9 @@ public class DisbursementTest {
         transactions.add(transaction1);
         transactions.add(transaction2);
 
-        return transactions;
+        Transactions transactionsObject = new Transactions();
+        transactionsObject.setTransactions(transactions);
+        
+        return transactionsObject;
     }
 }

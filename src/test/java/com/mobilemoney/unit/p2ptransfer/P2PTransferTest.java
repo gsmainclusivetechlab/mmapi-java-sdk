@@ -27,6 +27,7 @@ import com.mobilemoney.common.model.RequestingOrganisation;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
@@ -156,7 +157,7 @@ public class P2PTransferTest {
 	@Test
 	@DisplayName("Retrieve Merchant Payments")
 	void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-		List<Transaction> expectedList = getTransactionList();
+		Transactions expectedList = getTransactionList();
 		P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 		List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -167,14 +168,17 @@ public class P2PTransferTest {
 
 		Mockito.doReturn(expectedList).when(p2PTransferRequestSpy).viewAccountTransactions(identifiers);
 
-		List<Transaction> actualList = p2PTransferRequestSpy.viewAccountTransactions(identifiers);
+		Transactions actualList = p2PTransferRequestSpy.viewAccountTransactions(identifiers);
 
 		assertNotNull(expectedList);
 		assertNotNull(actualList);
-		assertEquals(expectedList.size(), actualList.size());
-		assertTrue(expectedList.size() == 2);
-		assertTrue(actualList.size() == 2);
-		assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+		assertNotNull(expectedList.getTransactions());
+		assertNotNull(actualList.getTransactions());
+		assertEquals(expectedList.getTransactions().size(), actualList.getTransactions().size());
+		assertTrue(expectedList.getTransactions().size() == 2);
+		assertTrue(actualList.getTransactions().size() == 2);
+		assertEquals(expectedList.getTransactions().get(0).getAmount(),
+		actualList.getTransactions().get(0).getAmount());
 	}
 
 	@Test
@@ -284,7 +288,7 @@ public class P2PTransferTest {
 	 * 
 	 * @return
 	 */
-	private List<Transaction> getTransactionList() {
+	private Transactions getTransactionList() {
 		List<Transaction> transactions = new ArrayList<>();
 		List<AccountIdentifier> debitPartyList = new ArrayList<>();
 		List<AccountIdentifier> creditPartyList = new ArrayList<>();
@@ -307,7 +311,10 @@ public class P2PTransferTest {
 		transactions.add(transaction1);
 		transactions.add(transaction2);
 
-		return transactions;
+		Transactions transactionsObject = new Transactions();
+        transactionsObject.setTransactions(transactions);
+        
+        return transactionsObject;
 	}
 
 	/***

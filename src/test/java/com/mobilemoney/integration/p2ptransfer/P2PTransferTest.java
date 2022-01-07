@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class P2PTransferTest {
-	private static PropertiesLoader loader;
+        private static PropertiesLoader loader;
 
     @BeforeAll
     public static void setUp(){
         loader = new PropertiesLoader();
     }
-    
+
     @Test
     @DisplayName("Request a P2P Transfer Quotation Success")
     void p2pTransferQuotationRequestTestSuccess() throws MobileMoneyException {
@@ -41,13 +41,13 @@ public class P2PTransferTest {
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
                 .createQuotation();
-        
+
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
-    
+
     @Test
     @DisplayName("Request a P2P Transfer Quotation With Json Input Success")
     void p2pTransferQuotationRequestWithJsonInputTestSuccess() throws MobileMoneyException {
@@ -60,7 +60,7 @@ public class P2PTransferTest {
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
                 .createQuotation();
-        
+
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
@@ -84,7 +84,7 @@ public class P2PTransferTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
-    
+
     @Test
     @DisplayName("Initiate P2P Transfer With Json Input Success")
     void initiateP2PTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
@@ -118,9 +118,9 @@ public class P2PTransferTest {
 
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
         String txnRef = sdkResponse.getObjectReference();
-        
+
         Transaction transaction = mmClient.addRequest(p2PTransferRequest).viewTransaction(txnRef);
-        
+
         assertNotNull(transaction);
         assertNotNull(transaction.getTransactionReference());
         assertNotNull(transaction.getTransactionStatus());
@@ -132,11 +132,11 @@ public class P2PTransferTest {
         assertTrue(transaction.getCreditParty().size() > 0);
         assertTrue(transaction.getDebitParty().size() > 0);
     }
-    
+
     @Test
     @DisplayName("View Quatation Test Success")
     void viewQuotationTestSuccess() throws MobileMoneyException {
-    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 
         p2PTransferRequest.setQuotation(createQuotationObject());
@@ -144,14 +144,14 @@ public class P2PTransferTest {
         AsyncResponse sdkResponse = mmClient.addRequest(p2PTransferRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
                 .createQuotation();
-        
+
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        
+
         String qtnRef = sdkResponse.getObjectReference();
         if (qtnRef == null) qtnRef = "REF-1637057900018";
-     
+
         Quotation quotation = mmClient.addRequest(p2PTransferRequest).viewQuotation(qtnRef);
-        
+
         assertNotNull(quotation);
         assertNotNull(quotation.getQuotationReference());
         assertNotNull(quotation.getRequestAmount());
@@ -161,11 +161,11 @@ public class P2PTransferTest {
         assertTrue(quotation.getCreditParty().size() > 0);
         assertTrue(quotation.getDebitParty().size() > 0);
     }
-    
+
     @Test
     @DisplayName("Retrieve Missing API Response for P2P Transaction")
     void viewResponseTestSuccess() throws MobileMoneyException {
-    	MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
 
         p2PTransferRequest.setTransaction(createP2PTransactionObject());
@@ -188,7 +188,7 @@ public class P2PTransferTest {
         assertTrue(transaction.getCreditParty().size() > 0);
         assertTrue(transaction.getDebitParty().size() > 0);
     }
-    
+
     @Test
     @DisplayName("P2P Transfer Reversal Success")
     void p2pTransferReversal() throws MobileMoneyException {
@@ -202,7 +202,7 @@ public class P2PTransferTest {
                 .createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        
+
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         p2PTransferRequest.setReversal(reversal);
@@ -213,7 +213,7 @@ public class P2PTransferTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
-    
+
     @Test
     @DisplayName("P2P Transfer Reversal With Json Input Success")
     void p2pTransferReversalWithJsonInput() throws MobileMoneyException {
@@ -227,7 +227,7 @@ public class P2PTransferTest {
                 .createTransferTransaction();
 
         sdkResponse = mmClient.addRequest(p2PTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
-        
+
         String reversalJsonString = "{\"type\": \"reversal\"}";
         p2PTransferRequest.setReversal(reversalJsonString);
         sdkResponse = mmClient.addRequest(p2PTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
@@ -249,19 +249,20 @@ public class P2PTransferTest {
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<Transaction> transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
-        if (transactions.size() > 0) {
-        	assertNotNull(transactions.get(0).getTransactionReference());
-            assertNotNull(transactions.get(0).getTransactionStatus());
-            assertNotNull(transactions.get(0).getAmount());
-            assertNotNull(transactions.get(0).getCurrency());
-            assertNotNull(transactions.get(0).getCreditParty());
-            assertNotNull(transactions.get(0).getDebitParty());
-            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
-            assertTrue(transactions.get(0).getCreditParty().size() > 0);
-            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        assertNotNull(transactions.getTransactions());
+        if (transactions.getTransactions().size() > 0) {
+            assertNotNull(transactions.getTransactions().get(0).getTransactionReference());
+            assertNotNull(transactions.getTransactions().get(0).getTransactionStatus());
+            assertNotNull(transactions.getTransactions().get(0).getAmount());
+            assertNotNull(transactions.getTransactions().get(0).getCurrency());
+            assertNotNull(transactions.getTransactions().get(0).getCreditParty());
+            assertNotNull(transactions.getTransactions().get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.getTransactions().get(0).getType()));
+            assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
     }
 

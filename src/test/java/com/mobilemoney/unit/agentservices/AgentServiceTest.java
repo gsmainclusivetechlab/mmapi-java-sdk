@@ -31,6 +31,7 @@ import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
@@ -195,7 +196,7 @@ public class AgentServiceTest {
     @Test
     @DisplayName("View AccountTransactions")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        List<Transaction> expectedList = getTransactionList();
+    	Transactions expectedList = getTransactionList();
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
         AgentServiceRequest agentServiceRequestSpy = Mockito.spy(agentServiceRequest);
 
@@ -209,14 +210,16 @@ public class AgentServiceTest {
 
         Mockito.doReturn(expectedList).when(agentServiceRequestSpy).viewAccountTransactions(identifiers, filter);
 
-        List<Transaction> actualList = agentServiceRequestSpy.viewAccountTransactions(identifiers, filter);
+        Transactions actualList = agentServiceRequestSpy.viewAccountTransactions(identifiers, filter);
 
         assertNotNull(expectedList);
         assertNotNull(actualList);
-        assertEquals(expectedList.size(), actualList.size());
-        assertTrue(expectedList.size() == 2);
-        assertTrue(actualList.size() == 2);
-        assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+        assertNotNull(expectedList.getTransactions());
+        assertNotNull(actualList.getTransactions());
+        assertEquals(expectedList.getTransactions().size(), actualList.getTransactions().size());
+        assertTrue(expectedList.getTransactions().size() == 2);
+        assertTrue(actualList.getTransactions().size() == 2);
+        assertEquals(expectedList.getTransactions().get(0).getAmount(), actualList.getTransactions().get(0).getAmount());
     }
 
     @Test
@@ -492,7 +495,7 @@ public class AgentServiceTest {
      *
      * @return
      */
-    private List<Transaction> getTransactionList() {
+    private Transactions getTransactionList() {
         List<Transaction> transactions = new ArrayList<>();
         List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
@@ -515,7 +518,10 @@ public class AgentServiceTest {
         transactions.add(transaction1);
         transactions.add(transaction2);
 
-        return transactions;
+        Transactions transactionsObject = new Transactions();
+        transactionsObject.setTransactions(transactions);
+        
+        return transactionsObject;
     }
 
     /**

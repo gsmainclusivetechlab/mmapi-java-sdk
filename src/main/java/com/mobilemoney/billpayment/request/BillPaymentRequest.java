@@ -15,6 +15,8 @@ import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.billpayment.model.Bill;
 import com.mobilemoney.billpayment.model.BillPay;
+import com.mobilemoney.billpayment.model.BillPayments;
+import com.mobilemoney.billpayment.model.Bills;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Filter;
@@ -110,7 +112,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<Bill> viewAccountBills(Identifiers identifiers) throws MobileMoneyException {
+	public Bills viewAccountBills(Identifiers identifiers) throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
 					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
@@ -128,7 +130,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<Bill> viewAccountBills(Identifiers identifiers, Filter filter) throws MobileMoneyException {
+	public Bills viewAccountBills(Identifiers identifiers, Filter filter) throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
 					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
@@ -142,9 +144,19 @@ public class BillPaymentRequest extends CommonRequest {
 			applyFilter(resourcePath, filter);
 		}
 
-		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		Bills bills = new Bills();
 
-		return convertResponseToList(requestResponse, Bill.class);
+		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		if (requestResponse.getPayLoad() instanceof String) {
+			bills.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_AVAILABLE_COUNT));
+			bills.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_RETURNED_COUNT));
+		}
+		List<Bill> billList = convertResponseToList(requestResponse, Bill.class);
+		bills.setBills(billList);
+
+		return bills;
 	}
 
 	/***
@@ -154,7 +166,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<BillPay> viewBillPayment(Identifiers identifiers, final String billReference)
+	public BillPayments viewBillPayment(Identifiers identifiers, final String billReference)
 			throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
@@ -174,7 +186,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<BillPay> viewBillPayment(Identifiers identifiers, final String billReference, Filter filter)
+	public BillPayments viewBillPayment(Identifiers identifiers, final String billReference, Filter filter)
 			throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
@@ -190,9 +202,19 @@ public class BillPaymentRequest extends CommonRequest {
 			applyFilter(resourcePath, filter);
 		}
 
-		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		BillPayments billPayments = new BillPayments();
 
-		return convertResponseToList(requestResponse, BillPay.class);
+		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		if (requestResponse.getPayLoad() instanceof String) {
+			billPayments.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_AVAILABLE_COUNT));
+			billPayments.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_RETURNED_COUNT));
+		}
+		List<BillPay> billPayList = convertResponseToList(requestResponse, BillPay.class);
+		billPayments.setBillPayments(billPayList);
+
+		return billPayments;
 	}
 
 	/***
@@ -242,7 +264,7 @@ public class BillPaymentRequest extends CommonRequest {
 	public void setTransaction(Transaction transaction) {
 		this.transaction = transaction;
 	}
-	
+
 	/***
 	 * 
 	 * @param transactionJsonString
@@ -258,7 +280,7 @@ public class BillPaymentRequest extends CommonRequest {
 	public void setBillPayment(BillPay billPay) {
 		this.billPay = billPay;
 	}
-	
+
 	/***
 	 * 
 	 * @param billPayJsonString
