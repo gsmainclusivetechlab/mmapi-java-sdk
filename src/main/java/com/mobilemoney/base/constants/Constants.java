@@ -197,8 +197,8 @@ public final class Constants {
     public static final String PATCH_DATA_OBJECT_INIT_ERROR = "Patch Data object is not initialized";
     
     // X-Records-Available-Count from ResponseHeader
-    public static final String X_RECORDS_AVAILABLE_COUNT = "X-Records-Available-Count";
+    public static final String RECORDS_AVAILABLE_COUNT = "X-Records-Available-Count";
     
     // X-Records-Returned-Count from ResponseHeader
-    public static final String X_RECORDS_RETURNED_COUNT = "X-Records-Returned-Count";
+    public static final String RECORDS_RETURNED_COUNT = "X-Records-Returned-Count";
 }

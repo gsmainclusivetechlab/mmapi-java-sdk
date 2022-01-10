@@ -149,12 +149,12 @@ public class BillPaymentRequest extends CommonRequest {
 		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
 		if (requestResponse.getPayLoad() instanceof String) {
 			bills.setAvailableCount(
-					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_AVAILABLE_COUNT));
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
 			bills.setAvailableCount(
-					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_RETURNED_COUNT));
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
 		}
-		List<Bill> billList = convertResponseToList(requestResponse, Bill.class);
-		bills.setBills(billList);
+		
+		bills.setBills(convertResponseToList(requestResponse, Bill.class));
 
 		return bills;
 	}
@@ -207,12 +207,12 @@ public class BillPaymentRequest extends CommonRequest {
 		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
 		if (requestResponse.getPayLoad() instanceof String) {
 			billPayments.setAvailableCount(
-					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_AVAILABLE_COUNT));
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
 			billPayments.setAvailableCount(
-					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_RETURNED_COUNT));
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
 		}
-		List<BillPay> billPayList = convertResponseToList(requestResponse, BillPay.class);
-		billPayments.setBillPayments(billPayList);
+
+		billPayments.setBillPayments(convertResponseToList(requestResponse, BillPay.class));
 
 		return billPayments;
 	}

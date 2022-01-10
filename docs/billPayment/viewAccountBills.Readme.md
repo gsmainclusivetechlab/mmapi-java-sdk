@@ -13,7 +13,7 @@ List<AccountIdentifier> identifierList = new ArrayList<>();
 
 identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 ```
 
 ### Response Example

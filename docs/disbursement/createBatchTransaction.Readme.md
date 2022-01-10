@@ -21,7 +21,7 @@ transaction.setCreditParty(creditPartyList);
 transaction.setAmount("<amount>");
 transaction.setCurrency("<currency>");
 
-List<Transaction> transactions = new ArrayList<>();
+List<Transactions> transactions = new ArrayList<>();
 transactions.add(transaction);
 ```
 

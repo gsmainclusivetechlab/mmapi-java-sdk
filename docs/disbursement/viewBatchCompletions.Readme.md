@@ -32,7 +32,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack
 
 sdkResponse = mmClient.addRequest(disbursementRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
-List<BatchCompletion> completedTransactions = mmClient.addRequest(disbursementRequest).viewBatchCompletions(sdkResponse.getObjectReference());
+BatchCompletions completedTransactions = mmClient.addRequest(disbursementRequest).viewBatchCompletions(sdkResponse.getObjectReference());
 ``` 
 
 ### Response Example

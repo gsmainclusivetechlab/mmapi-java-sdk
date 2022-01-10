@@ -192,9 +192,9 @@ public class DisbursementRequest extends ViewTransactionRequest {
 
 		if (requestResponse.getPayLoad() instanceof String) {
 			batchRejections.setAvailableCount(
-					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_AVAILABLE_COUNT));
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
 			batchRejections.setAvailableCount(
-					getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_RETURNED_COUNT));
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
 
 			completedTransactions = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(),
 					BatchRejection.class);

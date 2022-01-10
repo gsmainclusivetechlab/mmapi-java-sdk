@@ -15,7 +15,7 @@ identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 filter.setLimit(10);
 filter.setOffset(0);
 
-List<Transaction> transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+Transactions transactions = mmClient.addRequest(new P2PTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 ```
 
 ### Response Example

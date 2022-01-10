@@ -16,7 +16,7 @@ identifierList.add(new AccountIdentifier("<identifier type>", "<identifier type 
 filter.setLimit(10);
 filter.setOffset(0);
 
-List<TransactionResponse> transactions = mmClient.addRequest(new AccountLinkingRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+Transactions transactions = mmClient.addRequest(new AccountLinkingRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 ```
 
 ### Response Example

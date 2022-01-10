@@ -299,16 +299,25 @@ public class ResourceUtils {
 		return responseData;
 	}
 
-	public static Integer getRecordsCount(Map<String, List<String>> responseHeader, String XRecordsKey) {
-		String countString = responseHeader.containsKey(XRecordsKey)
-				? (((List<String>) responseHeader.get(XRecordsKey)).size() > 0
-						? ((List<String>) responseHeader.get(XRecordsKey)).get(0)
+	/***
+	 * Get count based on the key from headerMap
+	 *
+	 * @param headerMap
+	 * @param key
+	 * @return
+	 */
+	public static Integer getRecordsCount(Map<String, List<String>> headerMap, String key) {
+		List<String> headerKey = (List<String>)headerMap.get(key);
+		
+		String countString = headerMap.containsKey(key)
+				? (headerKey.size() > 0
+						? headerKey.get(0)
 						: null)
 				: null;
 		try {
 			return Integer.parseInt(countString);
 		} catch (NumberFormatException e) {
-			return null;
+			return 0;
 		}
 	}
 }

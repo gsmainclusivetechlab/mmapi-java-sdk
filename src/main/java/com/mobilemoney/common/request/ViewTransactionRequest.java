@@ -79,8 +79,8 @@ public class ViewTransactionRequest extends CommonRequest {
         
         if (requestResponse.getPayLoad() instanceof String) {
             if (requestResponse.getResponseCode().equals(HttpStatusCode.OK)) {
-            	transactions.setAvailableCount(getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_AVAILABLE_COUNT));
-            	transactions.setAvailableCount(getRecordsCount(requestResponse.getResponseHeader(), Constants.X_RECORDS_RETURNED_COUNT));
+            	transactions.setAvailableCount(getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
+            	transactions.setAvailableCount(getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
             	
             	transactionList = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(), Transaction.class);
             }
