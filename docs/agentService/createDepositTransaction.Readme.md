@@ -31,6 +31,19 @@ agentServiceRequest.setTransaction(transaction);
 AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createDepositTransaction();
 ```
 
+Additionally, if you want to use transaction details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+
+agentServiceRequest.setTransaction(transactionObjectString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createDepositTransaction();
+```
+
 ### Response Example
 
 ```java

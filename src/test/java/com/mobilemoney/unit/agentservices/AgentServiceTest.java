@@ -27,6 +27,7 @@ import com.mobilemoney.common.model.Balance;
 import com.mobilemoney.common.model.CustomData;
 import com.mobilemoney.common.model.Identifiers;
 import com.mobilemoney.common.model.Name;
+import com.mobilemoney.common.model.PatchData;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
@@ -406,6 +407,26 @@ public class AgentServiceTest {
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
 
         assertThrows(MobileMoneyException.class, () -> agentServiceRequest.updateAccountIdentity(null, null));
+    }
+
+    @Test
+    @DisplayName("Json String To PathData Object Test Success")
+    void jsonToPathDataObjectTestSuccess() {
+        String pathDataObjectString = "[{\"op\":\"replace\",\"path\":\"/kycVerificationStatus\",\"value\":\"verified\"}]";
+        List<PatchData> patchDatas  = JSONFormatter.fromJSONList(pathDataObjectString, PatchData.class);
+
+        assertNotNull(patchDatas);
+        assertEquals(patchDatas.get(0).getOp(), "replace");
+    }
+
+    @Test
+    @DisplayName("Json String To PathData Object Test Failure")
+    void jsonToPathDataObjectTestFailure() {
+        String pathDataObjectString = "[{\"op\":\"replace\",\"path\":\"/kycVerificationStatus\",\"value\":\"verified\"}]";
+        List<PatchData> patchDatas  = JSONFormatter.fromJSONList(pathDataObjectString, PatchData.class);
+
+        assertNotNull(patchDatas);
+        assertNotEquals(patchDatas.get(0).getOp(), "remove");
     }
 
     /**
