@@ -75,6 +75,19 @@ internationalTransferRequest.setTransaction(transaction);
 AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack("<Place you callback URL>").createInternationalTransaction();
 ```
 
+Additionally, if you want to use transaction details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+
+String internationalTransactionJsonString = "{\"amount\": \"100.00\",\"currency\": \"GBP\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"internationalTransferInformation\": {\"originCountry\": \"GB\"},\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+
+internationalTransferRequest.setTransaction(internationalTransactionJsonString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack("<Place you callback URL>").createInternationalTransaction();
+```
+
 ### Response Example
 
 ```java

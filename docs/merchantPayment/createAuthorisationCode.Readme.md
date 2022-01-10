@@ -23,6 +23,18 @@ merchantPaymentRequest.setAuthorisationCodeRequest(authorisationCode);
 AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack("<Place your callback URL>").createAuthorisationCode(new Identifiers(identifierList));
 ```
 
+Additionally, if you want to use authorisation code details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+
+String authorisationCodeJsonString = "{\"amount\": \"1000.00\",\"currency\": \"USD\",\"codeLifetime\": 1,\"holdFundsIndicator\": false}";
+merchantPaymentRequest.setAuthorisationCodeRequest(authorisationCodeJsonString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack("<Place your callback URL>").createAuthorisationCode(new Identifiers(identifierList));
+```
+
 ### Response Example
 
 ```java

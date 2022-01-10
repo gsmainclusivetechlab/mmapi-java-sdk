@@ -144,15 +144,17 @@ public class ViewTransactionRequest extends CommonRequest {
      * @return
      */
     private StringBuilder applyTransactionFilter(StringBuilder resourcePath, TransactionFilter filter) {
-        resourcePath.append("?");
-
-        if (filter.getLimit() >= 0) resourcePath.append("limit=").append(filter.getLimit()).append("&");
-        if (filter.getOffset() >= 0) resourcePath.append("offset=").append(filter.getOffset()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getTransactionStatus())) resourcePath.append("transactionStatus=").append(filter.getTransactionStatus()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getTransactionType())) resourcePath.append("transactionType=").append(filter.getTransactionType()).append("&");
-
+        if (filter.getLimit() > 0 && filter.getOffset() >= 0) {
+        	resourcePath.append("?");
+        	resourcePath.append("limit=").append(filter.getLimit()).append("&");
+            resourcePath.append("offset=").append(filter.getOffset()).append("&");
+            
+            if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getTransactionStatus())) resourcePath.append("transactionStatus=").append(filter.getTransactionStatus()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getTransactionType())) resourcePath.append("transactionType=").append(filter.getTransactionType()).append("&");
+        }
+        
         return resourcePath;
     }
 }

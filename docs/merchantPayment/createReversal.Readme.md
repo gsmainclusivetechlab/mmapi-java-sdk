@@ -34,6 +34,25 @@ merchantPaymentRequest.setReversal(reversal);
 sdkResponse =  mmClient.addRequest(merchantPaymentRequest).addCallBack("<Place your callback URL>").createReversal(txnRef);
 ```
 
+Additionally, if you want to use reversal details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+
+String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+
+merchantPaymentRequest.setTransaction(transactionObjectString);
+AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
+
+sdkResponse = mmClient.addRequest(merchantPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+String txnRef = sdkResponse.getObjectReference();
+String reversalJsonString = "{\"type\": \"reversal\"}";
+
+merchantPaymentRequest.setReversal(reversalJsonString);
+sdkResponse =  mmClient.addRequest(merchantPaymentRequest).addCallBack("<Place your callback URL>").createReversal(txnRef);
+```
+
 ### Response Example
 
 ```java

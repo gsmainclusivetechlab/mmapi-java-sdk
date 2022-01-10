@@ -327,14 +327,14 @@ public class DisbursementRequest extends ViewTransactionRequest {
 	 * @return
 	 */
 	private StringBuilder applyFilter(StringBuilder resourcePath, Filter filter) {
-		if (filter.getLimit() >= 0)
-			resourcePath.append("limit=").append(filter.getLimit()).append("&");
-		if (filter.getOffset() >= 0)
-			resourcePath.append("offset=").append(filter.getOffset()).append("&");
-		if (!StringUtils.isNullOrEmpty(filter.getFromDateTime()))
-			resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
-		if (!StringUtils.isNullOrEmpty(filter.getToDateTime()))
-			resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+		if (filter.getLimit() > 0 && filter.getOffset() >= 0) {
+        	resourcePath.append("?");
+        	resourcePath.append("limit=").append(filter.getLimit()).append("&");
+            resourcePath.append("offset=").append(filter.getOffset()).append("&");
+            
+            if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+        }
 
 		return resourcePath;
 	}
