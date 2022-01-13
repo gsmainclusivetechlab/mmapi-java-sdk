@@ -74,9 +74,6 @@ public final class APIManager {
             if (urlString == null || urlString.trim().isEmpty()) {
                 if (Environment.SANDBOX.name().equalsIgnoreCase(mode)) {
                     urlString = Constants.REST_API_SANDBOX_ENDPOINT;
-
-                    // TODO NOTE: Simulator URL
-                    // urlString = "http://18.132.20.60";
                 } else if (Environment.PRODUCTION.name().equalsIgnoreCase(mode)) {
                     urlString = Constants.REST_API_PRODUCTION_ENDPOINT;
                 }

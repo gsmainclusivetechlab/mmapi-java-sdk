@@ -23,6 +23,22 @@ agentServiceRequest.setAuthorisationCodeRequest(authorisationCode);
 AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createAuthorisationCode(new Identifiers(identifierList));
 ```
 
+Additionally, if you want to use authorisation code details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+List<AccountIdentifier> identifierList = new ArrayList<>();
+
+identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+
+String authorisationCodeJsonString = "{\"amount\": \"1000.00\",\"currency\": \"USD\",\"codeLifetime\": 1,\"holdFundsIndicator\": false}";
+
+agentServiceRequest.setAuthorisationCodeRequest(authorisationCodeJsonString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createAuthorisationCode(new Identifiers(identifierList));
+```
+
 ### Response Example
 
 ```java

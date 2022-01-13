@@ -17,6 +17,18 @@ disbursementRequest.setPatchData(patchDataList);
 AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack("<Place your callback URL>").updateBatchTransaction("batch reference");
 ``` 
 
+Additionally, if you want to use patch update details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+DisbursementRequest disbursementRequest = new DisbursementRequest();
+
+String patchDataJsonInput = "[{\"op\":\"replace\",\"path\":\"/batchStatus\",\"value\":\"approved\"}]";
+
+disbursementRequest.setPatchData(patchDataJsonInput);
+AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack("<Place your callback URL>").updateBatchTransaction("batch reference");
+```
+
 ### Response Example
 
 ```java

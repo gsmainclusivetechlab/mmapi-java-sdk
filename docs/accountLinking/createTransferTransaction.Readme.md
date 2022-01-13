@@ -70,6 +70,19 @@ accountLinkingRequest.setTransaction(transaction);
 AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
 ```
 
+Additionally, if you want to use transaction details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+String accountLinkTransactionJsonString = "{\"amount\": \"100.00\",\"currency\": \"GBP\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"internationalTransferInformation\": {\"originCountry\": \"GB\"},\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"debitParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"creditParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+
+accountLinkingRequest.setTransaction(accountLinkTransactionJsonString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack("<Place your callback URL>").createTransferTransaction();
+```
+
 ### Response Example
 
 ```java

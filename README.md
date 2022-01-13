@@ -16,6 +16,7 @@ This document contains the following sections:
      -  [Installation](#installation)
      -  [Development and Testing](#development-and-testing)
 -  [Setting Up](#setting-up)
+-  [Handling Errors](#handling-errors)
 -  [Use Cases](#use-cases)
 -  [Testing](#testing)
 
@@ -87,6 +88,57 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
 For example:
 ```java
 MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsumerSecret>", "<Place your apiKey>", Environment.SANDBOX, SecurityLevel.DEVELOPMENT);
+```
+
+## Handling Errors
+
+Error handling is a crucial aspect of software development. Both expected and unexpected errors should be handled by your code.
+
+The Java SDK provides an `MobileMoneyException` class that is used for common scenarios where exceptions are thrown. The `getError()` and `getMessage()` methods can provide useful information to understand the cause of errors.
+
+```java
+List<AccountIdentifier> debitPartyList = new ArrayList<>();
+List<AccountIdentifier> creditPartyList = new ArrayList<>();
+
+debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+creditPartyList.add(new AccountIdentifier("walletid", "1"));
+
+Transaction transaction = new Transaction();
+transaction.setDebitParty(debitPartyList);
+transaction.setCreditParty(creditPartyList);
+transaction.setAmount("-16.00");
+transaction.setCurrency("USD");
+
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+
+merchantPaymentRequest.setTransaction(transaction);
+
+try {
+	AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).addCallBack("<Place your callback URL>").createMerchantTransaction();
+} catch (MobileMoneyException me) {
+	System.out.println(me.getMessage());
+  	System.out.println(me.getError());
+}
+```
+
+Sample Response:
+
+```java
+Invalid JSON Field
+
+{
+  "errorCategory": "validation",
+  "errorCode": "formatError",
+  "errorDescription": "Invalid JSON Field",
+  "errorDateTime": "2022-01-12T05:30:25.514Z",
+  "errorParameters": [
+    {
+      "key": "amount",
+      "value": "must match \"^([0]|([1-9][0-9]{0,17}))([.][0-9]{0,3}[0-9])?$\""
+    }
+  ]
+}
 ```
 
 
@@ -861,6 +913,46 @@ MMClient mmClient = new MMClient("<Place your consumerKey>", "<Place your counsu
 
 ## Testing
 
-Tests for the SDK are in the src/test/java package. These tests are mainly for SDK development.
+The `test` package contains the test cases. These are logically divided in unit and integration tests. Integration tests require an active `consumer key`, `consumer secret` and `api key`.
+
+For integration tests:
 
 -   Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+
+### Execute unit tests only
+
+```java
+mvn test -Dtest=com.mobilemoney.unit.**
+```
+
+### Execute integration tests only
+
+```java
+mvn test -Dtest=com.mobilemoney.integration.**
+```
+
+To run tests individually:
+
+```java
+mvn test -Dtest=path/to/test/class/file
+```
+
+For example:
+
+```java
+mvn test -Dtest=com.mobilemoney.unit.merchantpayment.MerchantPaymentTest.java
+```
+
+### Execute all tests (unit + integration)
+
+Setup your integration config:
+
+1 - Copy the `config.properties.sample` file `config.properties`
+
+2 - Edit `config.properties` with your informations.
+
+Execute:
+
+```java
+mvn test
+```

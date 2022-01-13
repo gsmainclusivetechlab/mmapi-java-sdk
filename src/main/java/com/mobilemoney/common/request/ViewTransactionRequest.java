@@ -16,6 +16,7 @@ import com.mobilemoney.common.model.Identifiers;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.merchantpayment.constants.TransactionType;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class ViewTransactionRequest extends CommonRequest {
      * @return
      * @throws MobileMoneyException
      */
-    public List<Transaction> viewAccountTransactions(Identifiers identifiers) throws MobileMoneyException {
+    public Transactions viewAccountTransactions(Identifiers identifiers) throws MobileMoneyException {
         return viewAccountTransactions(identifiers, null);
     }
 
@@ -60,12 +61,12 @@ public class ViewTransactionRequest extends CommonRequest {
      * @return
      * @throws MobileMoneyException
      */
-    public List<Transaction> viewAccountTransactions(Identifiers identifiers, final TransactionFilter filter) throws MobileMoneyException {
+    public Transactions viewAccountTransactions(Identifiers identifiers, final TransactionFilter filter) throws MobileMoneyException {
         if (identifiers == null) {
             throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
         }
 
-        List<Transaction> transactions = null;
+        List<Transaction> transactionList = null;
         StringBuilder resourcePath = new StringBuilder(getResourcePath(API.ACCOUNT_TRANSACTIONS, identifiers));
 
         if (filter != null) {
@@ -74,11 +75,18 @@ public class ViewTransactionRequest extends CommonRequest {
 
         HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
 
+        Transactions transactions = new Transactions();
+        
         if (requestResponse.getPayLoad() instanceof String) {
             if (requestResponse.getResponseCode().equals(HttpStatusCode.OK)) {
-                transactions = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(), Transaction.class);
+            	transactions.setAvailableCount(getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
+            	transactions.setAvailableCount(getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
+            	
+            	transactionList = JSONFormatter.fromJSONList((String) requestResponse.getPayLoad(), Transaction.class);
             }
         }
+        transactions.setTransactions(transactionList);
+        
         return transactions;
     }
 
@@ -136,15 +144,17 @@ public class ViewTransactionRequest extends CommonRequest {
      * @return
      */
     private StringBuilder applyTransactionFilter(StringBuilder resourcePath, TransactionFilter filter) {
-        resourcePath.append("?");
-
-        if (filter.getLimit() >= 0) resourcePath.append("limit=").append(filter.getLimit()).append("&");
-        if (filter.getOffset() >= 0) resourcePath.append("offset=").append(filter.getOffset()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getTransactionStatus())) resourcePath.append("transactionStatus=").append(filter.getTransactionStatus()).append("&");
-        if (!StringUtils.isNullOrEmpty(filter.getTransactionType())) resourcePath.append("transactionType=").append(filter.getTransactionType()).append("&");
-
+        if (filter.getLimit() > 0 && filter.getOffset() >= 0) {
+        	resourcePath.append("?");
+        	resourcePath.append("limit=").append(filter.getLimit()).append("&");
+            resourcePath.append("offset=").append(filter.getOffset()).append("&");
+            
+            if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getTransactionStatus())) resourcePath.append("transactionStatus=").append(filter.getTransactionStatus()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getTransactionType())) resourcePath.append("transactionType=").append(filter.getTransactionType()).append("&");
+        }
+        
         return resourcePath;
     }
 }

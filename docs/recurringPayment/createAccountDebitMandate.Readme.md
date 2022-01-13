@@ -34,7 +34,24 @@ RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
 List<AccountIdentifier> identifierList = new ArrayList<>();
 identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
-recurringPaymentRequest.setDebitMandate("<debit mandate object>");
+
+recurringPaymentRequest.setDebitMandate(debitMandate);
+
+AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
+```
+
+Additionally, if you want to use account debit mandate details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+
+List<AccountIdentifier> identifierList = new ArrayList<>();
+identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+
+String debitMandateJsonString = "{\"currency\": \"USD\",\"startDate\": \"2018-07-03T10:43:27.405Z\",\"endDate\": \"2028-07-03T10:43:27.405Z\",\"requestDate\": \"2018-07-03T10:43:27.405Z\",\"frequencyType\": \"sixmonths\",\"amountLimit\": \"1000.00\",\"numberOfPayments\": 2,\"payee\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
+
+recurringPaymentRequest.setDebitMandate(debitMandateJsonString);
 
 AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
 ```

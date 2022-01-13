@@ -78,6 +78,19 @@ p2PTransferRequest.setReversal(reversal);
 AsyncResponse sdkResponse =  mmClient.addRequest(p2PTransferRequest).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
 ``` 
 
+Additionally, if you want to use reversal details as JSON string, you can use the following code;
+
+```java
+P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
+String reversalJsonString = "{\"type\": \"reversal\"}";
+
+p2PTransferRequest.setReversal(reversalJsonString);
+
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+AsyncResponse sdkResponse =  mmClient.addRequest(p2PTransferRequest).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
+```
+
 ### Response Example
 
 ```java

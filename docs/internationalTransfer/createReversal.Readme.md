@@ -78,6 +78,19 @@ internationalTransferRequest.setReversal(reversal);
 AsyncResponse sdkResponse =  mmClient.addRequest(internationalTransferRequest).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
 ``` 
 
+Additionally, if you want to use reversal details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+
+String reversalJsonString = "{\"type\": \"reversal\"}";
+
+internationalTransferRequest.setReversal(reversalJsonString);
+
+AsyncResponse sdkResponse =  mmClient.addRequest(internationalTransferRequest).addCallBack("<Place your callback URL>").createReversal("<transaction reference>");
+```
+
 ### Response Example
 
 ```java

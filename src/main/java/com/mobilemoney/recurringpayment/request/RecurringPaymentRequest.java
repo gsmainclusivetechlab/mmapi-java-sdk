@@ -6,6 +6,7 @@ import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.context.MobileMoneyContext;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.model.HttpErrorResponse;
+import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
@@ -22,134 +23,176 @@ import java.util.UUID;
  * Class RecurringPaymentRequest
  */
 public class RecurringPaymentRequest extends ViewTransactionRequest {
-    // DebitMandate Reference
-    private DebitMandate debitMandate;
+	// DebitMandate Reference
+	private DebitMandate debitMandate;
 
-    // Transaction Reference
-    private Transaction transaction;
+	// Transaction Reference
+	private Transaction transaction;
 
-    // CreateTransactionRequest Reference
-    private CreateTransactionRequest createTransactionRequest;
+	// CreateTransactionRequest Reference
+	private CreateTransactionRequest createTransactionRequest;
 
-    /***
-     * Default constructor
-     *
-     */
-    public RecurringPaymentRequest() {
-        this.createTransactionRequest = new CreateTransactionRequest();
-    }
+	/***
+	 * Default constructor
+	 *
+	 */
+	public RecurringPaymentRequest() {
+		this.createTransactionRequest = new CreateTransactionRequest();
+	}
 
-    /***
-     * Merchant initiates the payment and will be credited when the payer approves the request
-     *
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createMerchantTransaction() throws MobileMoneyException {
-        clientCorrelationId = UUID.randomUUID().toString();
-        return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL, this.notificationType, clientCorrelationId);
-    }
+	/***
+	 * Merchant initiates the payment and will be credited when the payer approves
+	 * the request
+	 *
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createMerchantTransaction() throws MobileMoneyException {
+		clientCorrelationId = UUID.randomUUID().toString();
+		return this.createTransactionRequest.createMerchantTransaction(this.transaction, this.callBackURL,
+				this.notificationType, clientCorrelationId);
+	}
 
-    /***
-     * Setup recurring payments
-     *
-     * @param identifiers
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createAccountDebitMandate(Identifiers identifiers) throws MobileMoneyException {
-        clientCorrelationId = UUID.randomUUID().toString();
+	/***
+	 * Setup recurring payments
+	 *
+	 * @param identifiers
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createAccountDebitMandate(Identifiers identifiers) throws MobileMoneyException {
+		clientCorrelationId = UUID.randomUUID().toString();
 
-        if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
 
-        if (debitMandate == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.DEBIT_MANDATE_OBJECT_INIT_ERROR).build());
-        }
+		if (debitMandate == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.DEBIT_MANDATE_OBJECT_INIT_ERROR).build());
+		}
 
-        String resourcePath = getResourcePath(API.CREATE_DEBIT_MANDATES, identifiers);
+		String resourcePath = getResourcePath(API.CREATE_DEBIT_MANDATES, identifiers);
 
-        MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, debitMandate.toJSON(), notificationType, callBackURL, AsyncResponse.class);
-    }
+		MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, clientCorrelationId);
+		return createRequest(HttpMethod.POST, resourcePath, debitMandate.toJSON(), notificationType, callBackURL,
+				AsyncResponse.class);
+	}
 
-    /***
-     * Returns debit mandate details of a given recurring payment transaction reference
-     *
-     * @param identifiers
-     * @param debitMandateReference
-     * @return
-     * @throws MobileMoneyException
-     */
-    public DebitMandate viewAccountDebitMandate(Identifiers identifiers, final String debitMandateReference) throws MobileMoneyException {
-        if (identifiers == null) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY, Constants.VALUE_NOT_SUPPLIED_ERROR_CODE).errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
-        }
+	/***
+	 * Returns debit mandate details of a given recurring payment transaction
+	 * reference
+	 *
+	 * @param identifiers
+	 * @param debitMandateReference
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public DebitMandate viewAccountDebitMandate(Identifiers identifiers, final String debitMandateReference)
+			throws MobileMoneyException {
+		if (identifiers == null) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+							Constants.VALUE_NOT_SUPPLIED_ERROR_CODE)
+									.errorDescription(Constants.IDENTIFIER_OBJECT_INIT_ERROR).build());
+		}
 
-        if (StringUtils.isNullOrEmpty(debitMandateReference)) {
-            throw new MobileMoneyException(new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY, Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
-        }
+		if (StringUtils.isNullOrEmpty(debitMandateReference)) {
+			throw new MobileMoneyException(
+					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.INTERNAL_ERROR_CATEGORY,
+							Constants.GENERIC_ERROR_CODE).errorDescription(Constants.NULL_VALUE_ERROR).build());
+		}
 
-        String resourcePath = getResourcePath(API.VIEW_DEBIT_MANDATES, identifiers).replace(Constants.DEBIT_MANDATE_REFERENCE, debitMandateReference);
-        return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, DebitMandate.class);
-    }
+		String resourcePath = getResourcePath(API.VIEW_DEBIT_MANDATES, identifiers)
+				.replace(Constants.DEBIT_MANDATE_REFERENCE, debitMandateReference);
+		return createRequest(HttpMethod.GET, resourcePath, null, notificationType, callBackURL, DebitMandate.class);
+	}
 
-    /***
-     * Perform a recurring payment refund
-     *
-     * @return
-     * @throws MobileMoneyException
-     */
-    public AsyncResponse createRefundTransaction() throws MobileMoneyException {
-        clientCorrelationId = UUID.randomUUID().toString();
-        
-        return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL, this.notificationType, clientCorrelationId);
-    }
+	/***
+	 * Perform a recurring payment refund
+	 *
+	 * @return
+	 * @throws MobileMoneyException
+	 */
+	public AsyncResponse createRefundTransaction() throws MobileMoneyException {
+		clientCorrelationId = UUID.randomUUID().toString();
 
-    /***
-     * Set call back URL
-     *
-     * @param callBackURL
-     * @return
-     */
-    public RecurringPaymentRequest addCallBack(final String callBackURL) {
-        this.callBackURL = callBackURL;
-        return setNotificationType(NotificationType.CALLBACK);
-    }
+		return this.createTransactionRequest.createRefundTransaction(this.transaction, this.callBackURL,
+				this.notificationType, clientCorrelationId);
+	}
 
-    /***
-     * Set notification type
-     *
-     * @param notificationType
-     * @return
-     */
-    public RecurringPaymentRequest setNotificationType(final NotificationType notificationType) {
-        this.notificationType = notificationType;
-        return this;
-    }
+	/***
+	 * Set call back URL
+	 *
+	 * @param callBackURL
+	 * @return
+	 */
+	public RecurringPaymentRequest addCallBack(final String callBackURL) {
+		this.callBackURL = callBackURL;
+		return setNotificationType(NotificationType.CALLBACK);
+	}
 
-    /***
-     *
-     * @param debitMandate
-     */
-    public void setDebitMandate(DebitMandate debitMandate) {
-        this.debitMandate = debitMandate;
-    }
+	/***
+	 * Set notification type
+	 *
+	 * @param notificationType
+	 * @return
+	 */
+	public RecurringPaymentRequest setNotificationType(final NotificationType notificationType) {
+		this.notificationType = notificationType;
+		return this;
+	}
 
-    /***
-     *
-     * @param transaction
-     */
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-    }
-    
-    /***
-     * 
-     * @param reversal
-     */
-    public void setReversal(Reversal reversal) {
-    	this.reversal = reversal;
-    }
+	/***
+	 *
+	 * @param debitMandate
+	 */
+	public void setDebitMandate(DebitMandate debitMandate) {
+		this.debitMandate = debitMandate;
+	}
+
+	/***
+	 * 
+	 * @param debitMandateJsonString
+	 */
+	public void setDebitMandate(final String debitMandateJsonString) {
+		this.debitMandate = JSONFormatter.fromJSON(debitMandateJsonString, DebitMandate.class);
+	}
+
+	/***
+	 *
+	 * @param transaction
+	 */
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+	}
+
+	/***
+	 * 
+	 * @param transactionJsonString
+	 */
+	public void setTransaction(final String transactionJsonString) {
+		this.transaction = JSONFormatter.fromJSON(transactionJsonString, Transaction.class);
+	}
+
+	/***
+	 * 
+	 * @param reversal
+	 */
+	public void setReversal(Reversal reversal) {
+		this.reversal = reversal;
+	}
+
+	/***
+	 * 
+	 * @param reversalJsonString
+	 */
+	public void setReversal(final String reversalJsonString) {
+		this.reversal = JSONFormatter.fromJSON(reversalJsonString, Reversal.class);
+	}
 }

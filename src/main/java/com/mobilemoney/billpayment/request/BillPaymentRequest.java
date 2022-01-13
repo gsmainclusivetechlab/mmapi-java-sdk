@@ -15,6 +15,8 @@ import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.billpayment.model.Bill;
 import com.mobilemoney.billpayment.model.BillPay;
+import com.mobilemoney.billpayment.model.BillPayments;
+import com.mobilemoney.billpayment.model.Bills;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Filter;
@@ -110,7 +112,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<Bill> viewAccountBills(Identifiers identifiers) throws MobileMoneyException {
+	public Bills viewAccountBills(Identifiers identifiers) throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
 					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
@@ -128,7 +130,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<Bill> viewAccountBills(Identifiers identifiers, Filter filter) throws MobileMoneyException {
+	public Bills viewAccountBills(Identifiers identifiers, Filter filter) throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
 					new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
@@ -142,9 +144,19 @@ public class BillPaymentRequest extends CommonRequest {
 			applyFilter(resourcePath, filter);
 		}
 
-		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		Bills bills = new Bills();
 
-		return convertResponseToList(requestResponse, Bill.class);
+		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		if (requestResponse.getPayLoad() instanceof String) {
+			bills.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
+			bills.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
+		}
+		
+		bills.setBills(convertResponseToList(requestResponse, Bill.class));
+
+		return bills;
 	}
 
 	/***
@@ -154,7 +166,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<BillPay> viewBillPayment(Identifiers identifiers, final String billReference)
+	public BillPayments viewBillPayment(Identifiers identifiers, final String billReference)
 			throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
@@ -174,7 +186,7 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 * @throws MobileMoneyException
 	 */
-	public List<BillPay> viewBillPayment(Identifiers identifiers, final String billReference, Filter filter)
+	public BillPayments viewBillPayment(Identifiers identifiers, final String billReference, Filter filter)
 			throws MobileMoneyException {
 		if (identifiers == null) {
 			throw new MobileMoneyException(
@@ -190,9 +202,19 @@ public class BillPaymentRequest extends CommonRequest {
 			applyFilter(resourcePath, filter);
 		}
 
-		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		BillPayments billPayments = new BillPayments();
 
-		return convertResponseToList(requestResponse, BillPay.class);
+		HttpResponse requestResponse = requestExecute(HttpMethod.GET, resourcePath.toString());
+		if (requestResponse.getPayLoad() instanceof String) {
+			billPayments.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_AVAILABLE_COUNT));
+			billPayments.setAvailableCount(
+					getRecordsCount(requestResponse.getResponseHeader(), Constants.RECORDS_RETURNED_COUNT));
+		}
+
+		billPayments.setBillPayments(convertResponseToList(requestResponse, BillPay.class));
+
+		return billPayments;
 	}
 
 	/***
@@ -244,11 +266,27 @@ public class BillPaymentRequest extends CommonRequest {
 	}
 
 	/***
+	 * 
+	 * @param transactionJsonString
+	 */
+	public void setTransaction(final String transactionJsonString) {
+		this.transaction = JSONFormatter.fromJSON(transactionJsonString, Transaction.class);
+	}
+
+	/***
 	 *
 	 * @param billPay
 	 */
 	public void setBillPayment(BillPay billPay) {
 		this.billPay = billPay;
+	}
+
+	/***
+	 * 
+	 * @param billPayJsonString
+	 */
+	public void setBillPayment(final String billPayJsonString) {
+		this.billPay = JSONFormatter.fromJSON(billPayJsonString, BillPay.class);
 	}
 
 	/***
@@ -278,16 +316,14 @@ public class BillPaymentRequest extends CommonRequest {
 	 * @return
 	 */
 	private StringBuilder applyFilter(StringBuilder resourcePath, Filter filter) {
-		resourcePath.append("?");
-
-		if (filter.getLimit() >= 0)
-			resourcePath.append("limit=").append(filter.getLimit()).append("&");
-		if (filter.getOffset() >= 0)
-			resourcePath.append("offset=").append(filter.getOffset()).append("&");
-		if (!StringUtils.isNullOrEmpty(filter.getFromDateTime()))
-			resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
-		if (!StringUtils.isNullOrEmpty(filter.getToDateTime()))
-			resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+		if (filter.getLimit() > 0 && filter.getOffset() >= 0) {
+        	resourcePath.append("?");
+        	resourcePath.append("limit=").append(filter.getLimit()).append("&");
+            resourcePath.append("offset=").append(filter.getOffset()).append("&");
+            
+            if (!StringUtils.isNullOrEmpty(filter.getFromDateTime())) resourcePath.append("fromDateTime=").append(filter.getFromDateTime()).append("&");
+            if (!StringUtils.isNullOrEmpty(filter.getToDateTime())) resourcePath.append("toDateTime=").append(filter.getToDateTime()).append("&");
+        }
 
 		return resourcePath;
 	}

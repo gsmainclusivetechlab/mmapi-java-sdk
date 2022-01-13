@@ -39,6 +39,22 @@ identifierList.add(new AccountIdentifier("accountid", "<Place your account id of
 AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
 ```
 
+Additionally, if you want to use account link details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+List<AccountIdentifier> identifierList = new ArrayList<>();
+identifierList.add(new AccountIdentifier("accountid", "<Place your account id of debit party here>"));
+
+String linkJsonString = "{\"sourceAccountIdentifiers\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"mode\": \"both\",\"status\": \"active\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
+
+accountLinkingRequest.setLink(linkJsonString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
+```
+
 ### Response Example
 
 ```java

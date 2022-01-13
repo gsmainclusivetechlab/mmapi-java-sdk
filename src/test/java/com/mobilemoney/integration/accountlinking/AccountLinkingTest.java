@@ -19,6 +19,7 @@ import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
@@ -62,6 +63,28 @@ class AccountLinkingTest {
     }
     
     @Test
+    @DisplayName("Create Account Link With Json Input Success")
+    void createAccountLinkWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+        String linkJsonString = "{\"sourceAccountIdentifiers\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"mode\": \"both\",\"status\": \"active\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
+        accountLinkingRequest.setLink(linkJsonString);
+        
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("accountid", "15523"));
+
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        
+    }
+    
+    @Test
     @DisplayName("Create Account Link Failed")
     void createAccountLinkTestFailed() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
@@ -83,6 +106,33 @@ class AccountLinkingTest {
         AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
         accountLinkingRequest.setTransaction(createAccountLinkTransactionObject());
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack(loader.get("CALLBACK_URL")).createTransferTransaction();
+        
+        sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+        
+        Transaction transaction = mmClient.addRequest(accountLinkingRequest).viewTransaction(txnRef);
+
+        assertNotNull(transaction);
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
+    }
+    
+    @Test
+    @DisplayName("Perform a Transfer for a Linked Account With Json Input Success")
+    void viewTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+        String accountLinkTransactionJsonString = "{\"amount\": \"100.00\",\"currency\": \"GBP\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"internationalTransferInformation\": {\"originCountry\": \"GB\"},\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"debitParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"creditParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        accountLinkingRequest.setTransaction(accountLinkTransactionJsonString);
         AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).addCallBack(loader.get("CALLBACK_URL")).createTransferTransaction();
         
         sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
@@ -172,6 +222,29 @@ class AccountLinkingTest {
     }
     
     @Test
+    @DisplayName("Perform a Transfer Reversal With Json Input Test Success")
+    void createReversalWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+        accountLinkingRequest.setTransaction(getTransactionObject("200.00", "RWF"));
+        
+        AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createTransferTransaction();
+
+        sdkResponse = mmClient.addRequest(accountLinkingRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        accountLinkingRequest.setReversal(reversalJsonString);
+        sdkResponse =  mmClient.addRequest(accountLinkingRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(txnRef);
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+    }
+    
+    @Test
     @DisplayName("Obtain a Financial Service Provider Balance")
     void viewAccountBalanceWithSingleIdentifierTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
@@ -191,23 +264,24 @@ class AccountLinkingTest {
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("accountid", "2000"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<Transaction> transactions = mmClient.addRequest(new AccountLinkingRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
-        
+        Transactions transactions = mmClient.addRequest(new AccountLinkingRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+
         assertNotNull(transactions);
-        if (transactions.size() > 0) {
-        	assertNotNull(transactions.get(0).getTransactionReference());
-            assertNotNull(transactions.get(0).getTransactionStatus());
-            assertNotNull(transactions.get(0).getAmount());
-            assertNotNull(transactions.get(0).getCurrency());
-            assertNotNull(transactions.get(0).getCreditParty());
-            assertNotNull(transactions.get(0).getDebitParty());
-            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
-            assertTrue(transactions.get(0).getCreditParty().size() > 0);
-            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        assertNotNull(transactions.getTransactions());
+        if (transactions.getTransactions().size() > 0) {
+            assertNotNull(transactions.getTransactions().get(0).getTransactionReference());
+            assertNotNull(transactions.getTransactions().get(0).getTransactionStatus());
+            assertNotNull(transactions.getTransactions().get(0).getAmount());
+            assertNotNull(transactions.getTransactions().get(0).getCurrency());
+            assertNotNull(transactions.getTransactions().get(0).getCreditParty());
+            assertNotNull(transactions.getTransactions().get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.getTransactions().get(0).getType()));
+            assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
     }
     

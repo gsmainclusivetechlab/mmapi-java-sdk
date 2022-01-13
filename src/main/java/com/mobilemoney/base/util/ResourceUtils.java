@@ -13,6 +13,7 @@ import com.mobilemoney.common.model.Identifiers;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -219,7 +220,7 @@ public class ResourceUtils {
 
 	/***
 	 * Configure HTTP headers for API request
-	 * 
+	 *
 	 * @param httpMethod
 	 * @param apiManager
 	 * @return
@@ -261,14 +262,14 @@ public class ResourceUtils {
 
 				if (++count >= Constants.MAX_RETRIES)
 					return null;
+				}
 			}
-		}
 		return null;
 	}
 
 	/***
 	 * Execute the REST API call and return response
-	 * 
+	 *
 	 * @param apiManager
 	 * @param httpConfiguration
 	 * @return
@@ -296,5 +297,27 @@ public class ResourceUtils {
 		}
 
 		return responseData;
+	}
+
+	/***
+	 * Get count based on the key from headerMap
+	 *
+	 * @param headerMap
+	 * @param key
+	 * @return
+	 */
+	public static Integer getRecordsCount(Map<String, List<String>> headerMap, String key) {
+		List<String> headerKey = (List<String>)headerMap.get(key);
+		
+		String countString = headerMap.containsKey(key)
+				? (headerKey.size() > 0
+						? headerKey.get(0)
+						: null)
+				: null;
+		try {
+			return Integer.parseInt(countString);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
 	}
 }

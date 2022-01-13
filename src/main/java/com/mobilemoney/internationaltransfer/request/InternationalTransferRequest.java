@@ -6,6 +6,7 @@ import com.mobilemoney.base.constants.HttpMethod;
 import com.mobilemoney.base.context.MobileMoneyContext;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.model.HttpErrorResponse;
+import com.mobilemoney.base.util.JSONFormatter;
 import com.mobilemoney.base.util.StringUtils;
 import com.mobilemoney.common.constants.NotificationType;
 import com.mobilemoney.common.model.AsyncResponse;
@@ -63,6 +64,14 @@ public class InternationalTransferRequest extends TransferRequest {
     public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
     }
+    
+    /***
+	 * 
+	 * @param transactionJsonString
+	 */
+	public void setTransaction(final String transactionJsonString) {
+		this.transaction = JSONFormatter.fromJSON(transactionJsonString, Transaction.class);
+	}
 
     /***
      * 
@@ -70,6 +79,14 @@ public class InternationalTransferRequest extends TransferRequest {
      */
     public void setReversal(Reversal reversal) {
     	this.reversal = reversal;
+    }
+    
+    /***
+     * 
+     * @param reversalJsonString
+     */
+    public void setReversal(final String reversalJsonString) {
+    	this.reversal = JSONFormatter.fromJSON(reversalJsonString, Reversal.class);
     }
     
     /***

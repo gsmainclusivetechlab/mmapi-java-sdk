@@ -84,4 +84,12 @@ public final class HttpResponse<T> {
     public HttpStatusCode getResponseCode() {
         return responseCode;
     }
+
+    /***
+     * 
+     * @return
+     */
+	public Map<String, List<String>> getResponseHeader() {
+		return responseHeader;
+	}
 }

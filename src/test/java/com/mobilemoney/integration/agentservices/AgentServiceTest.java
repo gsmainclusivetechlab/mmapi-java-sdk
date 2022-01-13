@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.mobilemoney.accountlinking.model.Link;
-import com.mobilemoney.accountlinking.request.AccountLinkingRequest;
 import com.mobilemoney.agentservices.model.Account;
 import com.mobilemoney.agentservices.model.Identity;
 import com.mobilemoney.agentservices.request.AgentServiceRequest;
@@ -37,6 +35,7 @@ import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
 import com.mobilemoney.common.model.TransactionFilter;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.config.PropertiesLoader;
 import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
@@ -57,6 +56,23 @@ public class AgentServiceTest {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
         agentServiceRequest.setTransaction(getTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createWithdrawalTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+
+    @Test
+    @DisplayName("Agent-initiated Cash-out With Json Input Success")
+    void agentInitiatedCashOutWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+        String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        agentServiceRequest.setTransaction(transactionObjectString);
 
         AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createWithdrawalTransaction();
 
@@ -147,7 +163,47 @@ public class AgentServiceTest {
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
 
+    @Test
+    @DisplayName("Customer Cash-out at an ATM using an Authorisation Code With Json Input Test Success")
+    void customerCashOutATMUsingAuthorisationWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+        String authorisationCodeJsonString = "{\"amount\": \"1000.00\",\"currency\": \"USD\",\"codeLifetime\": 1,\"holdFundsIndicator\": false}";
+        agentServiceRequest.setAuthorisationCodeRequest(authorisationCodeJsonString);
+
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+        identifierList.add(new AccountIdentifier("walletid", "1"));
+
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createAuthorisationCode(new Identifiers(identifierList));
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+
+        sdkResponse = mmClient.addRequest(agentServiceRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        AuthorisationCode authorisationCodeResponse = mmClient.addRequest(agentServiceRequest).viewAuthorisationCode(new Identifiers(identifierList), sdkResponse.getObjectReference());
+
+        assertNotNull(authorisationCodeResponse);
+        assertNotNull(authorisationCodeResponse.getAuthorisationCode());
+        assertNotNull(authorisationCodeResponse.getCodeState());
+        assertTrue(Arrays.asList("active", "expired", "cancelled").contains(authorisationCodeResponse.getCodeState()));
+
+        Transaction transaction = getTransactionObject();
+        transaction.setOneTimeCode(authorisationCodeResponse.getAuthorisationCode());
+
+        agentServiceRequest = new AgentServiceRequest();
+        agentServiceRequest.setTransaction(transaction);
+
+        sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createWithdrawalTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
 
     @Test
@@ -163,6 +219,29 @@ public class AgentServiceTest {
 
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
         agentServiceRequest.setTransaction(getTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createDepositTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+
+    @Test
+    @DisplayName("Agent-initiated Customer Cash-in With Json Input")
+    void agentInitiatedCustomerCashInWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("walletid", "1"));
+        AccountHolderName accountHolderName = mmClient.addRequest(new AgentServiceRequest()).viewAccountName(new Identifiers(identifierList));
+
+        assertNotNull(accountHolderName);
+
+        AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+        String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        agentServiceRequest.setTransaction(transactionObjectString);
 
         AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createDepositTransaction();
 
@@ -197,6 +276,29 @@ public class AgentServiceTest {
     }
 
     @Test
+    @DisplayName("Cash-out Reversal With Json Input Test Success")
+    void cashOutReversalWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+        agentServiceRequest.setTransaction(getTransactionObject());
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).createWithdrawalTransaction();
+
+        sdkResponse = mmClient.addRequest(agentServiceRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        agentServiceRequest.setReversal(reversalJsonString);
+        sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(txnRef);
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+
+    }
+
+    @Test
     @DisplayName("Register a Customer Mobile Money Account")
     void registerCustomerMobileMoneyAccountTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
@@ -211,8 +313,24 @@ public class AgentServiceTest {
     }
 
     @Test
+    @DisplayName("Register a Customer Mobile Money Account With Json Input Test Success")
+    void registerCustomerMobileMoneyAccountWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+        String accountJsonString = "{\"accountIdentifiers\": [{\"key\": \"msisdn\",\"value\": \"+44" + getPhoneNumber() + "\"}],\"identity\": [{\"identityKyc\": {\"birthCountry\": \"AD\",\"contactPhone\": \"+447777777777\",\"dateOfBirth\": \"2000-11-20\",\"emailAddress\": \"xyz@xyz.com\",\"employerName\": \"string\",\"gender\": \"m\",\"nationality\": \"AD\",\"occupation\": \"Miner\",\"postalAddress\": {\"addressLine1\": \"37\",\"addressLine2\": \"ABC Drive\",\"addressLine3\": \"string\",\"city\": \"Berlin\",\"stateProvince\": \"string\",\"postalCode\": \"AF1234\",\"country\": \"AD\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"H\",\"middleName\": \"I\",\"lastName\": \"J\",\"fullName\": \"H I J\",\"nativeName\": \"string\"},\"idDocument\": [{\"idType\": \"passport\",\"idNumber\": \"111111\",\"issueDate\": \"2018-11-20\",\"expiryDate\": \"2018-11-20\",\"issuer\": \"ABC\",\"issuerPlace\": \"DEF\",\"issuerCountry\": \"AD\"}]},\"accountRelationship\": \"accountholder\",\"kycVerificationStatus\": \"verified\",\"kycVerificationEntity\": \"ABC Agent\",\"kycLevel\": 1,\"customData\": [{\"key\": \"test\",\"value\": \"custom\"},{\"key\": \"test\",\"value\": \"custom1\"}]}],\"accountType\": \"string\",\"customData\": [],\"fees\": [{\"feeType\": \"string\",\"feeAmount\": \"5.46\",\"feeCurrency\": \"AED\"}],\"registeringEntity\": \"ABC Agent\",\"requestDate\": \"2021-02-17T15:41:45.194Z\"}";
+        agentServiceRequest.setAccount(accountJsonString);
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createAccount();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+
+    @Test
     @DisplayName("Verify a Customer’s KYC")
-    void cerifyCustomerKYCTestSuccess() throws MobileMoneyException {
+    void verifyCustomerKYCTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
         agentServiceRequest.setAccount(getRequestAccountObject());
@@ -246,10 +364,61 @@ public class AgentServiceTest {
 
         List<PatchData> patchDataList = new ArrayList<>();
         patchDataList.add(new PatchData(OP.REPLACE.getOP(), "/kycVerificationStatus", Value.VERIFIED.getValue()));
-//    	agentServiceRequest = new AgentServiceRequest();
+        
         agentServiceRequest.setPatchData(patchDataList);
         sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).updateAccountIdentity(new Identifiers(identifierList), identityId);
+			
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
 
+        sdkResponse = mmClient.addRequest(agentServiceRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+
+    @Test
+    @DisplayName("Verify a Customer’s KYC With Json Input")
+    void verifyCustomerKYCWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
+        AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+        agentServiceRequest.setAccount(getRequestAccountObject());
+        AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).createAccount();
+
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+        identifierList.add(new AccountIdentifier("walletid", "1"));//identityId=1
+//        identifierList.add(new AccountIdentifier("accountid", "2000"));//identityId=105
+
+        Account accountViewed = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList));
+
+        assertNotNull(accountViewed);
+        assertNotNull(accountViewed.getAccountIdentifiers());
+        assertTrue(accountViewed.getAccountIdentifiers().size() > 0);
+        if (accountViewed.getAccountIdentifiers().size() > 0) {
+            assertNotNull(accountViewed.getAccountIdentifiers().get(0).getKey());
+            assertNotNull(accountViewed.getAccountIdentifiers().get(0).getValue());
+        }
+        assertNotNull(accountViewed.getIdentity());
+
+        String identityId = "0";
+
+        if (accountViewed.getIdentity().size() > 0) {
+            assertNotNull(accountViewed.getIdentity().get(0).getIdentityId());
+            identityId = accountViewed.getIdentity().get(0).getIdentityId();
+            assertNotNull(accountViewed.getIdentity().get(0).getIdentityType());
+            assertNotNull(accountViewed.getIdentity().get(0).getIdentityKyc());
+            assertNotNull(accountViewed.getIdentity().get(0).getAccountRelationship());
+        }
+        assertNotNull(accountViewed.getAccountStatus());
+
+        String patchDataJsonInput = "[{\"op\":\"replace\",\"path\":\"/kycVerificationStatus\",\"value\":\"verified\"}]";
+        agentServiceRequest.setPatchData(patchDataJsonInput);
+        sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(loader.get("CALLBACK_URL")).updateAccountIdentity(new Identifiers(identifierList), identityId);
+			
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
@@ -283,28 +452,29 @@ public class AgentServiceTest {
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         filter.setLimit(20);
         filter.setOffset(0);
 
-        List<Transaction> transactions = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
-        if (transactions.size() > 0) {
-        	assertNotNull(transactions.get(0).getTransactionReference());
-            assertNotNull(transactions.get(0).getTransactionStatus());
-            assertNotNull(transactions.get(0).getAmount());
-            assertNotNull(transactions.get(0).getCurrency());
-            assertNotNull(transactions.get(0).getCreditParty());
-            assertNotNull(transactions.get(0).getDebitParty());
-            assertTrue(transactions.get(0).getCreditParty().size() > 0);
-            assertTrue(transactions.get(0).getDebitParty().size() > 0);
-            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
+        assertNotNull(transactions.getTransactions());
+        if (transactions.getTransactions().size() > 0) {
+            assertNotNull(transactions.getTransactions().get(0).getTransactionReference());
+            assertNotNull(transactions.getTransactions().get(0).getTransactionStatus());
+            assertNotNull(transactions.getTransactions().get(0).getAmount());
+            assertNotNull(transactions.getTransactions().get(0).getCurrency());
+            assertNotNull(transactions.getTransactions().get(0).getCreditParty());
+            assertNotNull(transactions.getTransactions().get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.getTransactions().get(0).getType()));
+            assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
-        
+
         filter.setLimit(20);
         filter.setOffset(20);
-        List<Transaction> transactions1 = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions1 = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
     }
 
@@ -313,7 +483,7 @@ public class AgentServiceTest {
     void checkForServiceAvailabilityTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
         ServiceAvailability serviceAvailability = mmClient.addRequest(new AgentServiceRequest()).viewServiceAvailability();
-        
+
         assertNotNull(serviceAvailability);
         assertNotNull(serviceAvailability.getServiceStatus());
     }
@@ -322,11 +492,11 @@ public class AgentServiceTest {
     @DisplayName("Retrieve a Missing API Response")
     void retrieveMissingAPIResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY")).addCallBackUrl(loader.get("CALLBACK_URL"));
-        
+
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
 
         agentServiceRequest.setAccount(getRequestAccountObject());
-        
+
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("accountid", "15523"));
@@ -336,7 +506,6 @@ public class AgentServiceTest {
         String clientCorrelationId = agentServiceRequest.getClientCorrelationId();
         Account accountResponse = mmClient.addRequest(agentServiceRequest).viewResponse(clientCorrelationId, Account.class);
 
-        
         assertNotNull(sdkResponse);
         assertNotNull(sdkResponse.getServerCorrelationId());
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));

@@ -31,6 +31,18 @@ merchantPaymentRequest.setTransaction(transactionObject);
 AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
 ```
 
+Additionally, if you want to use transaction details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+
+String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+
+merchantPaymentRequest.setTransaction(transactionObjectString );
+AsyncResponse sdkResponse = mmClient.addRequest(merchantPaymentRequest).createMerchantTransaction();
+```
+
 ### Callback Response Example
 
 ```java

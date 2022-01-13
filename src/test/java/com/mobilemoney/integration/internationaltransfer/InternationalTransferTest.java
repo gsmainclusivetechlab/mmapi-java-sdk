@@ -45,6 +45,25 @@ public class InternationalTransferTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
+    
+    @Test
+    @DisplayName("Request a International Transfer Quotation With Json Input Success")
+    void internationalTransferQuotationRequestWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+
+        String quotationJsonString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2000\"}],\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}]}";
+        internationalTransferRequest.setQuotation(quotationJsonString);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createQuotation();
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
 
     @Test
     @DisplayName("Initiate International Transfer Success")
@@ -53,6 +72,25 @@ public class InternationalTransferTest {
         InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
 
         internationalTransferRequest.setTransaction(createInternationalTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createInternationalTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Initiate International Transfer With Json Input Success")
+    void initiateInternationalTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+
+        String internationalTransactionJsonString = "{\"amount\": \"100.00\",\"currency\": \"GBP\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"internationalTransferInformation\": {\"originCountry\": \"GB\"},\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        internationalTransferRequest.setTransaction(internationalTransactionJsonString);
 
         AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
@@ -94,6 +132,31 @@ public class InternationalTransferTest {
         Reversal reversal = new Reversal();
         reversal.setType("reversal");
         internationalTransferRequest.setReversal(reversal);
+        sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("International Transfer Reversal With Json Input Success")
+    void internationalTransferReversalWithJsonInput() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        InternationalTransferRequest internationalTransferRequest = new InternationalTransferRequest();
+
+        String internationalTransactionJsonString = "{\"amount\": \"100.00\",\"currency\": \"GBP\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"internationalTransferInformation\": {\"originCountry\": \"GB\"},\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        internationalTransferRequest.setTransaction(internationalTransactionJsonString);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(internationalTransferRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createInternationalTransaction();
+
+        sdkResponse = mmClient.addRequest(internationalTransferRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        internationalTransferRequest.setReversal(reversalJsonString);
         sdkResponse = mmClient.addRequest(internationalTransferRequest).addCallBack(loader.get("CALLBACK_URL")).createReversal(sdkResponse.getObjectReference());
 
         assertNotNull(sdkResponse);
@@ -194,19 +257,20 @@ public class InternationalTransferTest {
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<Transaction> transactions = mmClient.addRequest(new InternationalTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions = mmClient.addRequest(new InternationalTransferRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
-        if (transactions.size() > 0) {
-        	assertNotNull(transactions.get(0).getTransactionReference());
-            assertNotNull(transactions.get(0).getTransactionStatus());
-            assertNotNull(transactions.get(0).getAmount());
-            assertNotNull(transactions.get(0).getCurrency());
-            assertNotNull(transactions.get(0).getCreditParty());
-            assertNotNull(transactions.get(0).getDebitParty());
-            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
-            assertTrue(transactions.get(0).getCreditParty().size() > 0);
-            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        assertNotNull(transactions.getTransactions());
+        if (transactions.getTransactions().size() > 0) {
+            assertNotNull(transactions.getTransactions().get(0).getTransactionReference());
+            assertNotNull(transactions.getTransactions().get(0).getTransactionStatus());
+            assertNotNull(transactions.getTransactions().get(0).getAmount());
+            assertNotNull(transactions.getTransactions().get(0).getCurrency());
+            assertNotNull(transactions.getTransactions().get(0).getCreditParty());
+            assertNotNull(transactions.getTransactions().get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.getTransactions().get(0).getType()));
+            assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
     }
     

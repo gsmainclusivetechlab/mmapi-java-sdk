@@ -13,7 +13,7 @@ List<AccountIdentifier> identifierList = new ArrayList<>();
 
 identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-List<Bill> bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
+Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
 BillPay billPayment = new BillPay();
 billPayment.setCurrency("<Currency>");
@@ -24,7 +24,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(billPaymentRequest).createBillPa
 
 sdkResponse = mmClient.addRequest(billPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
-List<BillPay> billPayments = mmClient.addRequest(billPaymentRequest).viewBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
+BillPayments billPayments = mmClient.addRequest(billPaymentRequest).viewBillPayment(new Identifiers(identifierList), bills.get(0).getBillReference());
 ```
 
 ### Response Example

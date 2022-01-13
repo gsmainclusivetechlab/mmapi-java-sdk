@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.accountlinking;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,7 +16,6 @@ import org.mockito.Mockito;
 
 import com.mobilemoney.accountlinking.model.Link;
 import com.mobilemoney.accountlinking.request.AccountLinkingRequest;
-import com.mobilemoney.agentservices.request.AgentServiceRequest;
 import com.mobilemoney.base.constants.Mode;
 import com.mobilemoney.base.constants.Status;
 import com.mobilemoney.base.exception.MobileMoneyException;
@@ -31,6 +31,7 @@ import com.mobilemoney.common.model.RequestingOrganisation;
 import com.mobilemoney.common.model.Reversal;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
+import com.mobilemoney.common.model.Transactions;
 import com.mobilemoney.internationaltransfer.model.Address;
 import com.mobilemoney.internationaltransfer.model.IdDocument;
 import com.mobilemoney.internationaltransfer.model.KYCInformation;
@@ -108,9 +109,29 @@ public class AccountLinkingTest {
     }
 
     @Test
+    @DisplayName("Json String To Link Object Test Success")
+    void jsonToLinkObjectTestSuccess() {
+        String linkObjectString = "{\"sourceAccountIdentifiers\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"mode\": \"both\",\"status\": \"active\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
+        Link link = JSONFormatter.fromJSON(linkObjectString, Link.class);
+
+        assertNotNull(link);
+        assertEquals(link.getMode(), "both");
+    }
+
+    @Test
+    @DisplayName("Json String To Link Object Test Failure")
+    void jsonToLinkObjectTestFailure() {
+        String linkObjectString = "{\"sourceAccountIdentifiers\": [{\"key\": \"accountid\",\"value\": \"2999\"}],\"mode\": \"both\",\"status\": \"active\",\"requestingOrganisation\": {\"requestingOrganisationIdentifierType\": \"organisationid\",\"requestingOrganisationIdentifier\": \"testorganisation\"},\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
+        Link link = JSONFormatter.fromJSON(linkObjectString, Link.class);
+
+        assertNotNull(link);
+        assertNotEquals(link.getMode(), "blank");
+    }
+
+    @Test
     @DisplayName("Create Account Link Success")
     void createAccountLinkTestSuccess() throws MobileMoneyException {
-    	AsyncResponse expectedSdkResponse = getAsyncResponse();
+        AsyncResponse expectedSdkResponse = getAsyncResponse();
 
         AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
@@ -129,14 +150,14 @@ public class AccountLinkingTest {
         assertEquals(expectedSdkResponse.getServerCorrelationId(), actualSdkResponse.getServerCorrelationId());
         assertEquals(expectedSdkResponse.getStatus(), actualSdkResponse.getStatus());
     }
-	
-	@Test
-	@DisplayName("Create Account Link Test Failure")
-	void createAccountLinkTestFailure() {
-		AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
-		assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.createAccountLink(null));
-	}
+    @Test
+    @DisplayName("Create Account Link Test Failure")
+    void createAccountLinkTestFailure() {
+        AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+        assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.createAccountLink(null));
+    }
 
     @Test
     @DisplayName("Initiate AccountLink Transfer Success")
@@ -219,7 +240,7 @@ public class AccountLinkingTest {
     @Test
     @DisplayName("Retrieve Transactions Test Success")
     void viewAccountTransactionsTestSuccess() throws MobileMoneyException {
-        List<Transaction> expectedList = getTransactionList();
+    	Transactions expectedList = getTransactionList();
         AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
@@ -230,14 +251,16 @@ public class AccountLinkingTest {
 
         Mockito.doReturn(expectedList).when(accountLinkingRequestSpy).viewAccountTransactions(identifiers);
 
-        List<Transaction> actualList = accountLinkingRequestSpy.viewAccountTransactions(identifiers);
+        Transactions actualList = accountLinkingRequestSpy.viewAccountTransactions(identifiers);
 
         assertNotNull(expectedList);
         assertNotNull(actualList);
-        assertEquals(expectedList.size(), actualList.size());
-        assertTrue(expectedList.size() == 2);
-        assertTrue(actualList.size() == 2);
-        assertEquals(expectedList.get(0).getAmount(), actualList.get(0).getAmount());
+        assertNotNull(expectedList.getTransactions());
+        assertNotNull(actualList.getTransactions());
+        assertEquals(expectedList.getTransactions().size(), actualList.getTransactions().size());
+        assertTrue(expectedList.getTransactions().size() == 2);
+        assertTrue(actualList.getTransactions().size() == 2);
+        assertEquals(expectedList.getTransactions().get(0).getAmount(), actualList.getTransactions().get(0).getAmount());
     }
 
     @Test
@@ -261,14 +284,14 @@ public class AccountLinkingTest {
         assertNotNull(linkResponse);
         assertTrue(expectedResponse.getStatus().equals(linkResponse.getStatus()));
     }
-	
-	@Test
-	@DisplayName("Get Details of a Specific Account Link Test Failure")
-	void viewAccountLinkTestFailure() {
-		AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
-		assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.viewAccountLink(null, null));
-	}
+    @Test
+    @DisplayName("Get Details of a Specific Account Link Test Failure")
+    void viewAccountLinkTestFailure() {
+        AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+
+        assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.viewAccountLink(null, null));
+    }
 
     /**
      * *
@@ -403,7 +426,7 @@ public class AccountLinkingTest {
      *
      * @return
      */
-    private List<Transaction> getTransactionList() {
+    private Transactions getTransactionList() {
         List<Transaction> transactions = new ArrayList<>();
         List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
@@ -425,8 +448,11 @@ public class AccountLinkingTest {
 
         transactions.add(transaction1);
         transactions.add(transaction2);
-
-        return transactions;
+        
+        Transactions transactionsObject = new Transactions();
+        transactionsObject.setTransactions(transactions);
+        
+        return transactionsObject;
     }
 
 }

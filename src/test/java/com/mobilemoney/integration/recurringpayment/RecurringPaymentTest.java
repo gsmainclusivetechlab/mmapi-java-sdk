@@ -46,6 +46,26 @@ public class RecurringPaymentTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
+    
+    @Test
+    @DisplayName("Setup Recurring Payment With Json Input Test Success")
+    void createAccountDebitMandateWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+        List<AccountIdentifier> identifierList = new ArrayList<>();
+
+        identifierList.add(new AccountIdentifier("walletid", "1"));
+        
+        String debitMandateJsonString = "{\"currency\": \"USD\",\"startDate\": \"2018-07-03T10:43:27.405Z\",\"endDate\": \"2028-07-03T10:43:27.405Z\",\"requestDate\": \"2018-07-03T10:43:27.405Z\",\"frequencyType\": \"sixmonths\",\"amountLimit\": \"1000.00\",\"numberOfPayments\": 2,\"payee\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
+        recurringPaymentRequest.setDebitMandate(debitMandateJsonString);
+
+        AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createAccountDebitMandate(new Identifiers(identifierList));
+        
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
 
     @Test
     @DisplayName("Setup Recurring Payment Test Failure")
@@ -91,6 +111,26 @@ public class RecurringPaymentTest {
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
         recurringPaymentRequest.setTransaction(getTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createMerchantTransaction();
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
+    
+    @Test
+    @DisplayName("Take Recurring Payment With Json Input Test Success")
+    void createMerchantTransactionWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+        
+        String transactionObjectString = "{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}";
+        recurringPaymentRequest.setTransaction(transactionObjectString);
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
                 .addCallBack(loader.get("CALLBACK_URL"))
@@ -207,6 +247,33 @@ public class RecurringPaymentTest {
         assertEquals(sdkResponse.getNotificationMethod(), "callback");
         assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
     }
+    
+    @Test
+    @DisplayName("Recurring Payment Reversal With Json Input Test Success")
+    void createReversalWithJsonInputTestSuccess() throws MobileMoneyException {
+        MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+        RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+
+        recurringPaymentRequest.setTransaction(getTransactionObject());
+
+        AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createMerchantTransaction();
+
+        sdkResponse = mmClient.addRequest(recurringPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
+        String txnRef = sdkResponse.getObjectReference();
+
+        String reversalJsonString = "{\"type\": \"reversal\"}";
+        recurringPaymentRequest.setReversal(reversalJsonString);
+        sdkResponse =  mmClient.addRequest(recurringPaymentRequest)
+                .addCallBack(loader.get("CALLBACK_URL"))
+                .createReversal(txnRef);
+
+        assertNotNull(sdkResponse);
+        assertNotNull(sdkResponse.getServerCorrelationId());
+        assertEquals(sdkResponse.getNotificationMethod(), "callback");
+        assertTrue(Arrays.asList("pending", "completed", "failed").contains(sdkResponse.getStatus()));
+    }
 
     @Test
     @DisplayName("Get Service Provider Balance Test Success")
@@ -232,19 +299,20 @@ public class RecurringPaymentTest {
         filter.setLimit(10);
         filter.setOffset(0);
 
-        List<Transaction> transactions = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
+        Transactions transactions = mmClient.addRequest(new RecurringPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
         assertNotNull(transactions);
-        if (transactions.size() > 0) {
-        	assertNotNull(transactions.get(0).getTransactionReference());
-            assertNotNull(transactions.get(0).getTransactionStatus());
-            assertNotNull(transactions.get(0).getAmount());
-            assertNotNull(transactions.get(0).getCurrency());
-            assertNotNull(transactions.get(0).getCreditParty());
-            assertNotNull(transactions.get(0).getDebitParty());
-            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.get(0).getType()));
-            assertTrue(transactions.get(0).getCreditParty().size() > 0);
-            assertTrue(transactions.get(0).getDebitParty().size() > 0);
+        assertNotNull(transactions.getTransactions());
+        if (transactions.getTransactions().size() > 0) {
+            assertNotNull(transactions.getTransactions().get(0).getTransactionReference());
+            assertNotNull(transactions.getTransactions().get(0).getTransactionStatus());
+            assertNotNull(transactions.getTransactions().get(0).getAmount());
+            assertNotNull(transactions.getTransactions().get(0).getCurrency());
+            assertNotNull(transactions.getTransactions().get(0).getCreditParty());
+            assertNotNull(transactions.getTransactions().get(0).getDebitParty());
+            assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transactions.getTransactions().get(0).getType()));
+            assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
+            assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
     }
 

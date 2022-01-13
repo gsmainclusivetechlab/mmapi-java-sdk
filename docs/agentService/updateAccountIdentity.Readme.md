@@ -105,6 +105,18 @@ agentServiceRequest.setPatchData(patchDataList);
 sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").updateAccountIdentity(new Identifiers(identifierList), identityId);
 ```
 
+Additionally, if you want to use patch update details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
+
+String patchDataJsonInput = "[{\"op\":\"replace\",\"path\":\"/kycVerificationStatus\",\"value\":\"verified\"}]";
+
+agentServiceRequest.setPatchData(patchDataJsonInput);
+AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").updateAccountIdentity("<Place your Identifiers Object>", "<Place your identityId>");
+```
+
 ### Response Example
 
 ```java

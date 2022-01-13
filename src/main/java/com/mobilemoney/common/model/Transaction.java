@@ -87,7 +87,7 @@ public class Transaction implements Serializable {
 
     // This can be used to populate additional properties
     private List<MetaData> metadata = new ArrayList<>();
-
+    
     /***
      *
      * @return

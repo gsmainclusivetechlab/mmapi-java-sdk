@@ -38,6 +38,19 @@ disbursementRequest.setBatchTransaction(batchTransaction);
 AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack("<Place your callback URL>").createBatchTransaction();
 ``` 
 
+Additionally, if you want to use batch transaction details as JSON string, you can use the following code;
+
+```java
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+DisbursementRequest disbursementRequest = new DisbursementRequest();
+
+String batchTransactionJsonString = "{\"transactions\": [{\"amount\": \"16.00\",\"currency\": \"USD\",\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"fees\": [],\"customData\": [],\"metadata\": []}]}";
+
+disbursementRequest.setBatchTransaction(batchTransactionJsonString);
+
+AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack("<Place your callback URL>").createBatchTransaction();
+```
+
 ### Response Example
 
 ```java
