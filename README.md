@@ -948,6 +948,7 @@ mvn test -Dtest=com.mobilemoney.unit.merchantpayment.MerchantPaymentTest.java
 Setup your integration config:
 
 1 - Copy the `config.properties.sample` file `config.properties`
+
 2 - Edit `config.properties` with your informations.
 
 Execute:
