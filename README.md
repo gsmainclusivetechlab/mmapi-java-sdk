@@ -913,6 +913,45 @@ Invalid JSON Field
 
 ## Testing
 
-Tests for the SDK are in the src/test/java package. These tests are mainly for SDK development.
+The `test` package contains the test cases. These are logically divided in unit and integration tests. Integration tests require an active `consumer key`, `consumer secret` and `api key`.
+
+For integration tests:
 
 -   Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+
+### Execute unit tests only
+
+```java
+mvn test -Dtest=com.mobilemoney.unit.**
+```
+
+### Execute integration tests only
+
+```java
+mvn test -Dtest=com.mobilemoney.integration.**
+```
+
+To run tests individually:
+
+```java
+mvn test -Dtest=path/to/test/class/file
+```
+
+For example:
+
+```java
+mvn test -Dtest=com.mobilemoney.unit.merchantpayment.MerchantPaymentTest.java
+```
+
+### Execute all tests (unit + integration)
+
+Setup your integration config:
+
+1 - Copy the `config.properties.sample` file `config.properties`
+2 - Edit `config.properties` with your informations.
+
+Execute:
+
+```java
+mvn test
+```
