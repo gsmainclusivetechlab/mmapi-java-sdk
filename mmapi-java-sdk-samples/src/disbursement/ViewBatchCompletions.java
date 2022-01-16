@@ -1,13 +1,13 @@
-package merchantpayment;
+package disbursement;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
-import com.mobilemoney.common.model.ServiceAvailability;
-import com.mobilemoney.merchantpayment.request.MerchantPaymentRequest;
+import com.mobilemoney.disbursement.model.BatchCompletions;
+import com.mobilemoney.disbursement.request.DisbursementRequest;
 
 import base.SDKClient;
 
-public class ViewServiceAvailability extends SDKClient {
+public class ViewBatchCompletions extends SDKClient {
 
 	/***
 	 * 
@@ -18,9 +18,9 @@ public class ViewServiceAvailability extends SDKClient {
 			MMClient mmClient = new MMClient(get("CONSUMER_KEY"), get("CONSUMER_SECRET"), get("API_KEY"));
 			
 			System.out.println("Please wait...");
-			ServiceAvailability serviceAvailability = mmClient.addRequest(new MerchantPaymentRequest()).viewServiceAvailability();
+			BatchCompletions completedTransactions = mmClient.addRequest(new DisbursementRequest()).viewBatchCompletions("REF-1635751208477");
 			
-			System.out.println(String.format("Service Availability Status: %s", serviceAvailability.getServiceStatus()));
+			System.out.println(String.format("Batch Completed Transactions: %d", completedTransactions.getBatchCompletions().size()));
 		} catch (MobileMoneyException ex) {
 			System.out.println(String.format("Mobile Money Exception: %s", ex.getError().getErrorDescription()));
 		}

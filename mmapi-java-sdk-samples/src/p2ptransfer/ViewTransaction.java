@@ -1,13 +1,13 @@
-package merchantpayment;
+package p2ptransfer;
 
 import com.mobilemoney.base.context.MMClient;
 import com.mobilemoney.base.exception.MobileMoneyException;
-import com.mobilemoney.common.model.ServiceAvailability;
-import com.mobilemoney.merchantpayment.request.MerchantPaymentRequest;
+import com.mobilemoney.common.model.Transaction;
+import com.mobilemoney.p2ptransfer.request.P2PTransferRequest;
 
 import base.SDKClient;
 
-public class ViewServiceAvailability extends SDKClient {
+public class ViewTransaction extends SDKClient {
 
 	/***
 	 * 
@@ -16,13 +16,17 @@ public class ViewServiceAvailability extends SDKClient {
 	public static void main(String... args) {
 		try {
 			MMClient mmClient = new MMClient(get("CONSUMER_KEY"), get("CONSUMER_SECRET"), get("API_KEY"));
-			
+			P2PTransferRequest p2PTransferRequest = new P2PTransferRequest();
+
 			System.out.println("Please wait...");
-			ServiceAvailability serviceAvailability = mmClient.addRequest(new MerchantPaymentRequest()).viewServiceAvailability();
-			
-			System.out.println(String.format("Service Availability Status: %s", serviceAvailability.getServiceStatus()));
+
+			String transactionReference = "REF-1636106992007";
+			Transaction transaction = mmClient.addRequest(p2PTransferRequest).viewTransaction(transactionReference);
+
+			System.out.println(String.format("Transaction Amount: %s", transaction.getAmount()));
 		} catch (MobileMoneyException ex) {
 			System.out.println(String.format("Mobile Money Exception: %s", ex.getError().getErrorDescription()));
 		}
+
 	}
 }
