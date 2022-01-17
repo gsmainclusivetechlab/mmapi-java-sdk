@@ -92,17 +92,17 @@ AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
 agentServiceRequest.setAccount(account);
 AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createAccount();
 
-List<AccountIdentifier> identifierList = new ArrayList<>();
-identifierList.add(new AccountIdentifier("<identifier type>", "<identifier>"));
+List<AccountIdentifier> identifierList1 = new ArrayList<>();
+identifierList1.add(new AccountIdentifier("<identifier type>", "<identifier>"));
 
-Account accountViewed = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList));
+Account accountViewed = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList1));
 
 String identityId = accountViewed.getIdentity().get(0).getIdentityId();
 
 List<PatchData> patchDataList = new ArrayList<>();
 patchDataList.add(new PatchData(OP.REPLACE.getOP(), "/kycVerificationStatus", Value.VERIFIED.getValue()));
 agentServiceRequest.setPatchData(patchDataList);
-sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").updateAccountIdentity(new Identifiers(identifierList), identityId);
+sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").updateAccountIdentity(new Identifiers(identifierList1), identityId);
 ```
 
 Additionally, if you want to use patch update details as JSON string, you can use the following code;
