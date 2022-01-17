@@ -33,112 +33,114 @@ public class UpdateAccountIdentity extends SDKClient {
 		try {
 			MMClient mmClient = new MMClient(get("CONSUMER_KEY"), get("CONSUMER_SECRET"), get("API_KEY"));
 			AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
-			
+
 			Account account = new Account();
 
-	        List<AccountIdentifier> identifierList = new ArrayList<>();
-	        
-	        String currentTimeMillis = Long.toString(System.currentTimeMillis());
-	        identifierList.add(new AccountIdentifier("msisdn", "+44" + currentTimeMillis.substring(currentTimeMillis.length() - 10)));
+			List<AccountIdentifier> identifierList = new ArrayList<>();
 
-	        List<Identity> identityList = new ArrayList<>();
-	        Identity identity = new Identity();
+			String currentTimeMillis = Long.toString(System.currentTimeMillis());
+			identifierList.add(new AccountIdentifier("msisdn", "+44" + currentTimeMillis.substring(currentTimeMillis.length() - 10)));
 
-	        List<CustomData> customDataList = new ArrayList<>();
-	        customDataList.add(new CustomData("test", "custom"));
+			List<Identity> identityList = new ArrayList<>();
+			Identity identity = new Identity();
 
-	        List<CustomData> customDataList1 = new ArrayList<>();
-	        customDataList.add(new CustomData("test", "custom1"));
+			List<CustomData> customDataList = new ArrayList<>();
+			customDataList.add(new CustomData("test", "custom"));
 
-	        KYCInformation senderKyc = new KYCInformation();
-	        List<IdDocument> identificationList = new ArrayList<>();
+			List<CustomData> customDataList1 = new ArrayList<>();
+			customDataList.add(new CustomData("test", "custom1"));
 
-	        IdDocument idDocument = new IdDocument("passport");
-	        idDocument.setIdType("passport");
-	        idDocument.setIdNumber("111111");
-	        idDocument.setIssuer("ABC");
-	        idDocument.setIssuerPlace("DEF");
-	        idDocument.setIssuerCountry("AD");
-	        idDocument.setIssueDate("2018-11-20");
-	        idDocument.setExpiryDate("2018-11-20");
-//	        idDocument.setOtherIddescription("test");
-	        identificationList.add(idDocument);
+			KYCInformation senderKyc = new KYCInformation();
+			List<IdDocument> identificationList = new ArrayList<>();
 
-	        Address address = new Address("AD");
-	        address.setAddressLine1("37");
-	        address.setAddressLine2("ABC Drive");
-	        address.setAddressLine3("string");
-	        address.setCity("Berlin");
-	        address.setStateProvince("string");
-	        address.setPostalCode("AF1234");
-	        address.setCountry("AD");
+			IdDocument idDocument = new IdDocument("passport");
+			idDocument.setIdType("passport");
+			idDocument.setIdNumber("111111");
+			idDocument.setIssuer("ABC");
+			idDocument.setIssuerPlace("DEF");
+			idDocument.setIssuerCountry("AD");
+			idDocument.setIssueDate("2018-11-20");
+			idDocument.setExpiryDate("2018-11-20");
+			identificationList.add(idDocument);
 
-	        Name kycSubject = new Name();
-	        kycSubject.setTitle("Mr");
-	        kycSubject.setFirstName("H");
-	        kycSubject.setMiddleName("I");
-	        kycSubject.setLastName("J");
-	        kycSubject.setFullName("H I J");
-	        kycSubject.setNativeName("string");
+			Address address = new Address("AD");
+			address.setAddressLine1("37");
+			address.setAddressLine2("ABC Drive");
+			address.setAddressLine3("string");
+			address.setCity("Berlin");
+			address.setStateProvince("string");
+			address.setPostalCode("AF1234");
+			address.setCountry("AD");
 
-	        senderKyc.setNationality("AD");
-	        senderKyc.setBirthCountry("AD");
-	        senderKyc.setOccupation("Miner");
-	        senderKyc.setEmployerName("string");
-	        senderKyc.setContactPhone("+447777777777");
-	        senderKyc.setGender("m");
-	        senderKyc.setDateOfBirth("2000-11-20");
-	        senderKyc.setEmailAddress("xyz@xyz.com");
-	        senderKyc.setIdDocument(identificationList);
-	        senderKyc.setPostalAddress(address);
-	        senderKyc.setSubjectName(kycSubject);
+			Name kycSubject = new Name();
+			kycSubject.setTitle("Mr");
+			kycSubject.setFirstName("H");
+			kycSubject.setMiddleName("I");
+			kycSubject.setLastName("J");
+			kycSubject.setFullName("H I J");
+			kycSubject.setNativeName("string");
 
-	        identity.setAccountRelationship("accountholder");
-	        identity.setCustomData(customDataList);
-	        identity.setIdentityKyc(senderKyc);
-	        identity.setKycLevel(1);
-	        identity.setKycVerificationEntity("ABC Agent");
-	        identity.setKycVerificationStatus("verified");
-	        identityList.add(identity);
+			senderKyc.setNationality("AD");
+			senderKyc.setBirthCountry("AD");
+			senderKyc.setOccupation("Miner");
+			senderKyc.setEmployerName("string");
+			senderKyc.setContactPhone("+447777777777");
+			senderKyc.setGender("m");
+			senderKyc.setDateOfBirth("2000-11-20");
+			senderKyc.setEmailAddress("xyz@xyz.com");
+			senderKyc.setIdDocument(identificationList);
+			senderKyc.setPostalAddress(address);
+			senderKyc.setSubjectName(kycSubject);
 
-	        List<Fees> feesList = new ArrayList<>();
-	        Fees fees = new Fees();
-	        fees.setFeeType("string");
-	        fees.setFeeAmount("5.46");
-	        fees.setFeeCurrency("AED");
-	        feesList.add(fees);
+			identity.setAccountRelationship("accountholder");
+			identity.setCustomData(customDataList);
+			identity.setIdentityKyc(senderKyc);
+			identity.setKycLevel(1);
+			identity.setKycVerificationEntity("ABC Agent");
+			identity.setKycVerificationStatus("verified");
+			identityList.add(identity);
 
-	        account.setAccountIdentifiers(identifierList);
-	        account.setIdentity(identityList);
-	        account.setAccountType("string");
-	        account.setCustomData(customDataList1);
-	        account.setFees(feesList);
-	        account.setRegisteringEntity("ABC Agent");
-	        account.setRequestDate("2021-02-17T15:41:45.194Z");
-	        
-	        agentServiceRequest.setAccount(account);
+			List<Fees> feesList = new ArrayList<>();
+			Fees fees = new Fees();
+			fees.setFeeType("string");
+			fees.setFeeAmount("5.46");
+			fees.setFeeCurrency("AED");
+			feesList.add(fees);
+
+			account.setAccountIdentifiers(identifierList);
+			account.setIdentity(identityList);
+			account.setAccountType("string");
+			account.setCustomData(customDataList1);
+			account.setFees(feesList);
+			account.setRegisteringEntity("ABC Agent");
+			account.setRequestDate("2021-02-17T15:41:45.194Z");
+
+			agentServiceRequest.setAccount(account);
 
 			System.out.println("Please wait...");
-			
-			AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(get("CALLBACK_URL")).createAccount();
-			
+
+			AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(get("CALLBACK_URL"))
+					.createAccount();
+
 			List<AccountIdentifier> identifierList1 = new ArrayList<>();
-	        identifierList1.add(new AccountIdentifier("walletid", "1"));
-	        
-	        Account accountViewed = mmClient.addRequest(agentServiceRequest).viewAccount(new Identifiers(identifierList1));
-	        
-	        String identityId = "0";
-	        
-	        if (accountViewed.getIdentity().size() > 0) {
-	            identityId = accountViewed.getIdentity().get(0).getIdentityId();
-	        }
-	        
-	        List<PatchData> patchDataList = new ArrayList<>();
-	        patchDataList.add(new PatchData(OP.REPLACE.getOP(), "/kycVerificationStatus", Value.VERIFIED.getValue()));
-	        
-	        agentServiceRequest.setPatchData(patchDataList);
-	        sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(get("CALLBACK_URL")).updateAccountIdentity(new Identifiers(identifierList1), identityId);
-	        
+			identifierList1.add(new AccountIdentifier("walletid", "1"));
+
+			Account accountViewed = mmClient.addRequest(agentServiceRequest)
+					.viewAccount(new Identifiers(identifierList1));
+
+			String identityId = "0";
+
+			if (accountViewed.getIdentity().size() > 0) {
+				identityId = accountViewed.getIdentity().get(0).getIdentityId();
+			}
+
+			List<PatchData> patchDataList = new ArrayList<>();
+			patchDataList.add(new PatchData(OP.REPLACE.getOP(), "/kycVerificationStatus", Value.VERIFIED.getValue()));
+
+			agentServiceRequest.setPatchData(patchDataList);
+			sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack(get("CALLBACK_URL"))
+					.updateAccountIdentity(new Identifiers(identifierList1), identityId);
+
 			System.out.println(String.format("Update Account Identity Status: %s", sdkResponse.getStatus()));
 		} catch (MobileMoneyException ex) {
 			System.out.println(String.format("Mobile Money Exception: %s", ex.getError().getErrorDescription()));

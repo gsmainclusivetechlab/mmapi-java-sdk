@@ -12,7 +12,7 @@ import com.mobilemoney.recurringpayment.request.RecurringPaymentRequest;
 
 import base.SDKClient;
 
-public class viewAccountDebitMandate extends SDKClient {
+public class ViewAccountDebitMandate extends SDKClient {
 
 	/***
 	 * 
@@ -22,18 +22,18 @@ public class viewAccountDebitMandate extends SDKClient {
 		try {
 			MMClient mmClient = new MMClient(get("CONSUMER_KEY"), get("CONSUMER_SECRET"), get("API_KEY"));
 			RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
-			
+
 			List<AccountIdentifier> identifierList = new ArrayList<>();
 
-	        identifierList.add(new AccountIdentifier("walletid", "1"));
-	        
-	        System.out.println("Please wait...");
+			identifierList.add(new AccountIdentifier("walletid", "1"));
 
-	        String debitMandateReference = "REF-1642175609824";
-	        DebitMandate debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
-	                .viewAccountDebitMandate(new Identifiers(identifierList), debitMandateReference);
-	        
-	        System.out.println(String.format("Debit Mandate Status: %s", debitMandateResponse.getMandateStatus()));
+			System.out.println("Please wait...");
+
+			String debitMandateReference = "REF-1642175609824";
+			DebitMandate debitMandateResponse = mmClient.addRequest(recurringPaymentRequest)
+					.viewAccountDebitMandate(new Identifiers(identifierList), debitMandateReference);
+
+			System.out.println(String.format("Debit Mandate Status: %s", debitMandateResponse.getMandateStatus()));
 		} catch (MobileMoneyException ex) {
 			System.out.println(String.format("Mobile Money Exception: %s", ex.getError().getErrorDescription()));
 		}

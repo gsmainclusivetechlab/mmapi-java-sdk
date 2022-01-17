@@ -29,33 +29,34 @@ public class CreateAccountLink extends SDKClient {
 			AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
 
 			List<AccountIdentifier> sourceAccountIdentifiers = new ArrayList<>();
-	        RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
-	        List<CustomData> customDataList = new ArrayList<>();
-	        
-	        sourceAccountIdentifiers.add(new AccountIdentifier("accountid", "2999"));
+			RequestingOrganisation requestingOrganisation = new RequestingOrganisation();
+			List<CustomData> customDataList = new ArrayList<>();
 
-	        customDataList.add(new CustomData("keytest", "keyvalue"));
-	        
-	        requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
-	        requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
-	        
-	        Link link = new Link();
-	        link.setSourceAccountIdentifiers(sourceAccountIdentifiers);
-	        link.setMode(Mode.BOTH.getMode());
-	        link.setStatus(Status.ACTIVE.getStatus());
-	        link.setRequestingOrganisation(requestingOrganisation);
-	        link.setRequestDate("2018-07-03T11:43:27.405Z");
-	        link.setCustomData(customDataList);
-	        
+			sourceAccountIdentifiers.add(new AccountIdentifier("accountid", "2999"));
+
+			customDataList.add(new CustomData("keytest", "keyvalue"));
+
+			requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
+			requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
+
+			Link link = new Link();
+			link.setSourceAccountIdentifiers(sourceAccountIdentifiers);
+			link.setMode(Mode.BOTH.getMode());
+			link.setStatus(Status.ACTIVE.getStatus());
+			link.setRequestingOrganisation(requestingOrganisation);
+			link.setRequestDate("2018-07-03T11:43:27.405Z");
+			link.setCustomData(customDataList);
+
 			accountLinkingRequest.setLink(link);
-	        
-	        List<AccountIdentifier> identifierList = new ArrayList<>();
 
-	        identifierList.add(new AccountIdentifier("accountid", "15523"));
+			List<AccountIdentifier> identifierList = new ArrayList<>();
+
+			identifierList.add(new AccountIdentifier("accountid", "15523"));
 
 			System.out.println("Please wait...");
-			
-			AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest).createAccountLink(new Identifiers(identifierList));
+
+			AsyncResponse sdkResponse = mmClient.addRequest(accountLinkingRequest)
+					.createAccountLink(new Identifiers(identifierList));
 
 			System.out.println(String.format("Account Link Creation Status: %s", sdkResponse.getStatus()));
 		} catch (MobileMoneyException ex) {

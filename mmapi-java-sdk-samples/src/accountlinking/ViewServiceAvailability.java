@@ -21,8 +21,7 @@ public class ViewServiceAvailability extends SDKClient {
 			ServiceAvailability serviceAvailability = mmClient.addRequest(new AccountLinkingRequest())
 					.viewServiceAvailability();
 
-			System.out
-					.println(String.format("Service Availability Status: %s", serviceAvailability.getServiceStatus()));
+			System.out.println(String.format("Service Availability Status: %s", serviceAvailability.getServiceStatus()));
 		} catch (MobileMoneyException ex) {
 			System.out.println(String.format("Mobile Money Exception: %s", ex.getError().getErrorDescription()));
 		}

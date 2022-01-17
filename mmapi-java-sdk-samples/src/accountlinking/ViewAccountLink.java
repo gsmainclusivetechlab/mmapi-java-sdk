@@ -24,10 +24,11 @@ public class ViewAccountLink extends SDKClient {
 
 			List<AccountIdentifier> identifierList = new ArrayList<>();
 
-	        identifierList.add(new AccountIdentifier("accountid", "15523"));
-	        
+			identifierList.add(new AccountIdentifier("accountid", "15523"));
+
 			System.out.println("Please wait...");
-			Link linkResponse = mmClient.addRequest(new AccountLinkingRequest()).viewAccountLink(new Identifiers(identifierList), "REF-1642397088123");
+			Link linkResponse = mmClient.addRequest(new AccountLinkingRequest())
+					.viewAccountLink(new Identifiers(identifierList), "REF-1642397088123");
 
 			System.out.println(String.format("Account Link View Status: %s", linkResponse.getStatus()));
 		} catch (MobileMoneyException ex) {

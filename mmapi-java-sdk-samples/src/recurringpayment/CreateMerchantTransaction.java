@@ -24,27 +24,26 @@ public class CreateMerchantTransaction extends SDKClient {
 			RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
 
 			List<AccountIdentifier> debitPartyList = new ArrayList<>();
-	        List<AccountIdentifier> creditPartyList = new ArrayList<>();
+			List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-	        debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
-	        creditPartyList.add(new AccountIdentifier("walletid", "1"));
+			debitPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
+			creditPartyList.add(new AccountIdentifier("walletid", "1"));
 
-	        Transaction transaction = new Transaction();
-	        transaction.setDebitParty(debitPartyList);
-	        transaction.setCreditParty(creditPartyList);
-	        transaction.setAmount("16.00");
-	        transaction.setCurrency("USD");
-	        
-	        recurringPaymentRequest.setTransaction(transaction);
+			Transaction transaction = new Transaction();
+			transaction.setDebitParty(debitPartyList);
+			transaction.setCreditParty(creditPartyList);
+			transaction.setAmount("16.00");
+			transaction.setCurrency("USD");
+
+			recurringPaymentRequest.setTransaction(transaction);
 
 			System.out.println("Please wait...");
 			AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack(get("CALLBACK_URL"))
 					.createMerchantTransaction();
-		
+
 			System.out.println(String.format("Create Merchant Transaction Status: %s", sdkResponse.getStatus()));
 		} catch (MobileMoneyException ex) {
 			System.out.println(String.format("Mobile Money Exception: %s", ex.getError().getErrorDescription()));
 		}
 	}
 }
-

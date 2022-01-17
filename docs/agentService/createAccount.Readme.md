@@ -90,7 +90,7 @@ account.setFees(feesList);
 account.setRegisteringEntity("ABC Agent");
 account.setRequestDate("2021-02-17T15:41:45.194Z");
 
-agentServiceRequest.setAccount(getRequestAccountObject());
+agentServiceRequest.setAccount(account);
 AsyncResponse sdkResponse = mmClient.addRequest(agentServiceRequest).addCallBack("<Place your callback URL>").createAccount();
 ```
 
