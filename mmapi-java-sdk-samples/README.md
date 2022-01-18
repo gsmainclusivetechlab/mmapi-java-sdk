@@ -1,11 +1,7 @@
-# GSMA Mobile Money Payments Java SDK Sample
+# GSMA Mobile Money Payments Java SDK Samples
 
-This SDK provides for an easy way to connect to [GSMA Mobile Money API](https://developer.mobilemoneyapi.io/1.2).
-
-Please refer to the following documentation for installation instructions and usage information.
-
--   [API Documentation](https://developer.mobilemoneyapi.io/1.2)
--   [Java SDK Documentation](docs/)
+This project contains a set of samples that you can explore to understand what the SDK can do for you. 
+In order to run these sample codes, you must have a valid `consumer key`, `consumer secret` and `api key`.
 
 
 ## Requirements
@@ -13,15 +9,8 @@ Please refer to the following documentation for installation instructions and us
 -   Java JDK-1.8 or higher
 -   Apache Maven 3 or higher
 
-## Installation
 
-1. Build the jar file using  'mvn clean package' command
-2. Copy 'mmapi-java-sdk' jar file to your project's classpath
+## Setup
 
-In order to build the SDK from the source code you need to use Apache Maven and Java 1.8+
-
-- Run 'mvn clean package' to build jar file
-
-### For Testing
-
+- Copy 'mmapi-java-sdk' jar file to your project's classpath
 - Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
