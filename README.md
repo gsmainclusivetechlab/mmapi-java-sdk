@@ -6,6 +6,7 @@ Please refer to the following documentation for installation instructions and us
 
 -   [API Documentation](https://developer.mobilemoneyapi.io/1.2)
 -   [Java SDK Documentation](docs/)
+-   [Java SDK Sample Codes](mmapi-java-sdk-samples/src/)
 
 ## Index
 
@@ -911,21 +912,33 @@ Invalid JSON Field
 </tbody>
 </table>
 
+
 ## Testing
 
-The `test` package contains the test cases. These are logically divided in unit and integration tests. Integration tests require an active `consumer key`, `consumer secret` and `api key`.
+The `test` package contains the test cases. These are logically divided into unit and integration tests. 
 
-For integration tests:
+### Unit tests
 
--   Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+Those tests are located in `src/test/java/com/mobilemoney/unit` and are responsible for ensuring each class is behaving as expected, 
+without considering the rest of the system. Unit tests heavily leverage `mocking` and are an essential part of our testing harness.
 
-### Execute unit tests only
+To run unit tests,
 
 ```java
 mvn test -Dtest=com.mobilemoney.unit.**
 ```
 
-### Execute integration tests only
+### Integration tests
+
+Those tests are located in `src/test/java/com/mobilemoney/integration` and are responsible for ensuring a proper communication with server/simulator. 
+With the integration tests, we ensure all communications between the SDK and the server/simulator are behaving accordingly.
+
+For integration test:
+
+-   You will need a valid `consumer key`, `consumer secret` and `api key`.
+-   Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+
+To run the integration tests,
 
 ```java
 mvn test -Dtest=com.mobilemoney.integration.**
@@ -948,7 +961,6 @@ mvn test -Dtest=com.mobilemoney.unit.merchantpayment.MerchantPaymentTest.java
 Setup your integration config:
 
 1 - Copy the `config.properties.sample` file `config.properties`
-
 2 - Edit `config.properties` with your informations.
 
 Execute:
