@@ -6,6 +6,7 @@ Please refer to the following documentation for installation instructions and us
 
 -   [API Documentation](https://developer.mobilemoneyapi.io/1.2)
 -   [Java SDK Documentation](docs/)
+-   [Java SDK Sample Codes](mmapi-java-sdk-samples/src/)
 
 ## Index
 
@@ -18,7 +19,16 @@ This document contains the following sections:
 -  [Setting Up](#setting-up)
 -  [Handling Errors](#handling-errors)
 -  [Use Cases](#use-cases)
+    -   [Merchant Payments](#merchant-payments)
+    -   [Disbursements](#disbursements)
+    -   [International Transfers](#international-transfers)
+    -   [P2P Transfers](#p2p-transfers)
+    -   [Recurring Payments](#recurring-payments)
+    -   [Account Linking](#account-linking)
+    -   [Bill Payments](#bill-payments)
+    -   [Agent Services](#agent-services)
 -  [Testing](#testing)
+-  [Samples](#samples)
 
 ## Requirements
 
@@ -39,7 +49,7 @@ In order to build the SDK from the source code you need to use Apache Maven and 
 ### Development and Testing
 
 1. Tests for the SDK are in the src/test/java package.
-2. Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+2. Rename `config.properties.sample` file in `src\test\resources` to `config.properties` and replace placeholders with values for your `consumer key`, `consumer secret` and `api key`.
 3. From the test package, run JUnit test for each test classes
 
 ## Setting Up
@@ -911,21 +921,33 @@ Invalid JSON Field
 </tbody>
 </table>
 
+
 ## Testing
 
-The `test` package contains the test cases. These are logically divided in unit and integration tests. Integration tests require an active `consumer key`, `consumer secret` and `api key`.
+The `test` package contains the test cases. These are logically divided into unit and integration tests. 
 
-For integration tests:
+### Unit tests
 
--   Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+Those tests are located in `src/test/java/com/mobilemoney/unit` and are responsible for ensuring each class is behaving as expected, 
+without considering the rest of the system. Unit tests heavily leverage `mocking` and are an essential part of our testing harness.
 
-### Execute unit tests only
+To run unit tests,
 
 ```java
 mvn test -Dtest=com.mobilemoney.unit.**
 ```
 
-### Execute integration tests only
+### Integration tests
+
+Those tests are located in `src/test/java/com/mobilemoney/integration` and are responsible for ensuring a proper communication with server/simulator. 
+With the integration tests, we ensure all communications between the SDK and the server/simulator are behaving accordingly.
+
+For integration test:
+
+-   You will need a valid `consumer key`, `consumer secret` and `api key`.
+-   Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+
+To run the integration tests,
 
 ```java
 mvn test -Dtest=com.mobilemoney.integration.**
@@ -945,14 +967,33 @@ mvn test -Dtest=com.mobilemoney.unit.merchantpayment.MerchantPaymentTest.java
 
 ### Execute all tests (unit + integration)
 
-Setup your integration config:
-
-1 - Copy the `config.properties.sample` file `config.properties`
-
-2 - Edit `config.properties` with your informations.
-
-Execute:
-
 ```java
 mvn test
 ```
+
+## Samples
+
+The sample code snippets are all completely independent and self-contained. You can analyze them to get an understanding of how a particular method can be implemented in your application. Sample code snippets can be found [here](mmapi-java-sdk-samples/src/). Steps to run the sample code snippets are as follows:
+
+- Clone this repository:
+
+```java
+git clone https://github.com/gsmainclusivetechlab/mmapi-java-sdk.git
+```
+
+- Import `mmapi-java-sdk-samples` project into your IDE
+- Copy 'mmapi-java-sdk' jar file to your project's classpath
+- Rename `config.properties.sample` file in `src\test\resources` to `config.properties` and replace placeholders with values for your `consumer key`, `consumer secret` and `api key`.
+
+For example:
+
+```java
+CONSUMER_KEY=<your_consumer_key_here>
+CONSUMER_SECRET=<your_consumer_secret_here>
+API_KEY=<your_api_key_here>
+CALLBACK_URL=<your_callback_url_here>
+```
+
+You are now ready to run your sample codes.
+
+- Run individual samples
