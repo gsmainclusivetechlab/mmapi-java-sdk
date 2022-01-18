@@ -19,7 +19,16 @@ This document contains the following sections:
 -  [Setting Up](#setting-up)
 -  [Handling Errors](#handling-errors)
 -  [Use Cases](#use-cases)
+    -   [Merchant Payments](#merchant-payments)
+    -   [Disbursements](#disbursements)
+    -   [International Transfers](#international-transfers)
+    -   [P2P Transfers](#p2p-transfers)
+    -   [Recurring Payments](#recurring-payments)
+    -   [Account Linking](#account-linking)
+    -   [Bill Payments](#bill-payments)
+    -   [Agent Services](#agent-services)
 -  [Testing](#testing)
+-  [Samples](#samples)
 
 ## Requirements
 
@@ -40,7 +49,7 @@ In order to build the SDK from the source code you need to use Apache Maven and 
 ### Development and Testing
 
 1. Tests for the SDK are in the src/test/java package.
-2. Copy the config.properties.sample file to config.properties and enter your credentials in the appropriate fields.
+2. Rename `config.properties.sample` file in `src\test\resources` to `config.properties` and replace placeholders with values for your `consumer key`, `consumer secret` and `api key`.
 3. From the test package, run JUnit test for each test classes
 
 ## Setting Up
@@ -961,3 +970,30 @@ mvn test -Dtest=com.mobilemoney.unit.merchantpayment.MerchantPaymentTest.java
 ```java
 mvn test
 ```
+
+## Samples
+
+The sample code snippets are all completely independent and self-contained. You can analyze them to get an understanding of how a particular method can be implemented in your application. Sample code snippets can be found [here](mmapi-java-sdk-samples/src/). Steps to run the sample code snippets are as follows:
+
+- Clone this repository:
+
+```java
+git clone https://github.com/gsmainclusivetechlab/mmapi-java-sdk.git
+```
+
+- Import `mmapi-java-sdk-samples` project into your IDE
+- Copy 'mmapi-java-sdk' jar file to your project's classpath
+- Rename `config.properties.sample` file in `src\test\resources` to `config.properties` and replace placeholders with values for your `consumer key`, `consumer secret` and `api key`.
+
+For example:
+
+```java
+CONSUMER_KEY=<your_consumer_key_here>
+CONSUMER_SECRET=<your_consumer_secret_here>
+API_KEY=<your_api_key_here>
+CALLBACK_URL=<your_callback_url_here>
+```
+
+You are now ready to run your sample codes.
+
+- Run individual samples
