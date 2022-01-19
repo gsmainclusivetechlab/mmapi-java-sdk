@@ -14,7 +14,7 @@ In order to run these sample codes, you must have a valid `consumer key`, `consu
 
 - Clone https://github.com/gsmainclusivetechlab/mmapi-java-sdk.git
 - Import `mmapi-java-sdk-samples` project into your IDE
-- Copy 'mmapi-java-sdk' jar file to your project's classpath
+- Copy 'mmapi-java-sdk' jar file from `jar` folder to your project's classpath or build `mmapi-java-sdk` project using 'mvn clean package' command and copy this jar file to classpath
 - Rename `config.properties.sample` file in `src\test\resources` to `config.properties` and replace placeholders with values for your `consumer key`, `consumer secret` and `api key`.
 
 For example:
