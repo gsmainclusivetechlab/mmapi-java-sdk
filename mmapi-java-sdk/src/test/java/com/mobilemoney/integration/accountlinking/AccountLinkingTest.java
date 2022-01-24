@@ -348,6 +348,21 @@ class AccountLinkingTest {
         	assertNotNull(linkResponse.getSourceAccountIdentifiers().get(0).getValue());
         }
     }
+
+	@Test
+	@DisplayName("Check if Callback URL is valid Test Fail")
+	void validateCallbackURLTestFail() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+		AccountLinkingRequest accountLinkingRequest = new AccountLinkingRequest();
+		
+		accountLinkingRequest.setLink(getLinkSuccessObject());
+		
+		List<AccountIdentifier> identifierList = new ArrayList<>();
+		
+		identifierList.add(new AccountIdentifier("accountid", "15523"));
+		
+		assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(accountLinkingRequest).addCallBack("https:sample.com").createAccountLink(new Identifiers(identifierList)));
+	}
     
     /***
      *
@@ -359,8 +374,8 @@ class AccountLinkingTest {
         List<AccountIdentifier> debitPartyList = new ArrayList<>();
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
 
-        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-        creditPartyList.add(new AccountIdentifier("accountid", "2999"));
+        debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
         Transaction transaction = new Transaction();
         transaction.setDebitParty(debitPartyList);

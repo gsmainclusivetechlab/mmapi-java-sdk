@@ -125,9 +125,21 @@ public class ResourceUtils {
 			if (NotificationType.POLLING != notificationType && (!StringUtils.isNullOrEmpty(callBackURL)
 					|| !StringUtils.isNullOrEmpty(apiContext.getCallBackUrl()))) {
 				if (!StringUtils.isNullOrEmpty(callBackURL)) {
-					apiContext.addHTTPHeader(Constants.CALL_BACK_URL, callBackURL);
+					if(isValidURL(callBackURL)) {
+						apiContext.addHTTPHeader(Constants.CALL_BACK_URL, callBackURL);
+					} else {
+						throw new MobileMoneyException(
+								new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+										Constants.INVALID_FORMAT_CODE).errorDescription(Constants.INVALID_CALLBACK_URL_FORMAT_ERROR).build());
+					}
 				} else if (!StringUtils.isNullOrEmpty(apiContext.getCallBackUrl())) {
-					apiContext.addHTTPHeader(Constants.CALL_BACK_URL, apiContext.getCallBackUrl());
+					if(isValidURL(apiContext.getCallBackUrl())) {
+						apiContext.addHTTPHeader(Constants.CALL_BACK_URL, apiContext.getCallBackUrl());
+					} else {
+						throw new MobileMoneyException(
+								new HttpErrorResponse.HttpErrorResponseBuilder(Constants.VALIDATION_ERROR_CATEGORY,
+										Constants.INVALID_FORMAT_CODE).errorDescription(Constants.INVALID_CALLBACK_URL_FORMAT_ERROR).build());
+					}
 				}
 			} else {
 				if (apiContext.getHTTPHeaders().containsKey(Constants.CALL_BACK_URL)) {
@@ -319,5 +331,15 @@ public class ResourceUtils {
 		} catch (NumberFormatException e) {
 			return 0;
 		}
+	}
+	
+	/***
+	 * Check if URL is valid
+	 *
+	 * @param URL
+	 * @return
+	 */
+	public static boolean isValidURL(String URL) {
+		return URL.matches("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 	}
 }

@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.internationaltransfer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.util.JSONFormatter;
+import com.mobilemoney.base.util.ResourceUtils;
 import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Balance;
@@ -53,7 +55,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Json String To Quotation Object Test Success")
     void jsonToQuotationObjectTestSuccess() {
-        String quotationObjectString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2000\"}],\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}]}";
+        String quotationObjectString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}]}";
         Quotation quotation = JSONFormatter.fromJSON(quotationObjectString, Quotation.class);
 
         assertNotNull(quotation);
@@ -63,7 +65,7 @@ public class InternationalTransferTest {
     @Test
     @DisplayName("Json String To Quotation Object Test Failure")
     void jsonToQuotationObjectTestFailure() {
-        String quotationObjectString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"accountid\",\"value\": \"2000\"}],\"debitParty\": [{\"key\": \"accountid\",\"value\": \"2999\"}]}";
+        String quotationObjectString = "{\"subType\": \"abc\",\"requestAmount\": \"75.30\",\"requestCurrency\": \"RWF\",\"chosenDeliveryMethod\": \"agent\",\"originCountry\": \"AD\",\"receivingCountry\": \"AD\",\"sendingServiceProviderCountry\": \"AD\",\"requestDate\": \"2018-07-03T11:43:27.405Z\",\"senderKyc\": {\"birthCountry\": \"GB\",\"contactPhone\": \"+447125588999\",\"dateOfBirth\": \"1970-07-03T11:43:27.405Z\",\"emailAddress\": \"luke.skywalkeraaabbb@gmail.com\",\"employerName\": \"MFX\",\"gender\": \"m\",\"nationality\": \"GB\",\"occupation\": \"Manager\",\"postalAddress\": {\"country\": \"GB\"},\"subjectName\": {\"title\": \"Mr\",\"firstName\": \"Luke\",\"middleName\": \"R\",\"lastName\": \"Skywalker\",\"fullName\": \"Luke R Skywalker\",\"nativeName\": \"ABC\"},\"idDocument\": [{\"idType\": \"nationalidcard\",\"idNumber\": \"1234567\",\"issueDate\": \"2018-07-03T11:43:27.405Z\",\"expiryDate\": \"2021-07-03T11:43:27.405Z\",\"issuer\": \"UKPA\",\"issuerPlace\": \"GB\",\"issuerCountry\": \"GB\",\"otherIddescription\": \"test\"}]},\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}],\"creditParty\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"debitParty\": [{\"key\": \"msisdn\",\"value\": \"+44012345678\"}]}";
         Quotation quotation = JSONFormatter.fromJSON(quotationObjectString, Quotation.class);
 
         assertNotNull(quotation);
@@ -237,6 +239,24 @@ public class InternationalTransferTest {
         assertNotNull(actualResponse);
         assertEquals(expectedResponse.getServiceStatus(), actualResponse.getServiceStatus());
     }
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Success")
+	void validateURLTestSuccess() {
+		assertTrue(ResourceUtils.isValidURL("https://sample.com"));
+		assertTrue(ResourceUtils.isValidURL("http://sample"));
+	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Fail")
+	void validateURLTestFail() {
+		assertFalse(ResourceUtils.isValidURL("https:/sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("htt://sample.com"));
+		assertFalse(ResourceUtils.isValidURL("//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:"));
+	}
 
     /**
      * *
@@ -358,10 +378,8 @@ public class InternationalTransferTest {
         requestingOrganisation.setRequestingOrganisationIdentifier("testorganisation");
         requestingOrganisation.setRequestingOrganisationIdentifierType("organisationid");
 
-        // debitPartyList.add(new AccountIdentifier("walletid", "1"));
-        // creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
-        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-        creditPartyList.add(new AccountIdentifier("accountid", "2999"));
+         debitPartyList.add(new AccountIdentifier("walletid", "1"));
+         creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 
         transaction.setAmount("100.00");
         transaction.setCurrency("GBP");
@@ -418,8 +436,8 @@ public class InternationalTransferTest {
         senderKyc.setPostalAddress(address);
         senderKyc.setSubjectName(kycSubject);
 
-        debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-        creditPartyList.add(new AccountIdentifier("accountid", "2000"));
+        debitPartyList.add(new AccountIdentifier("walletid", "1"));
+        creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
         customDataList.add(new CustomData("keytest", "keyvalue"));
 
         Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);

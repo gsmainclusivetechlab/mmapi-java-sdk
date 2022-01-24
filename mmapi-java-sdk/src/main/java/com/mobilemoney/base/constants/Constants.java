@@ -160,6 +160,9 @@ public final class Constants {
     // Generic Error
     public static final String GENERIC_ERROR_CODE = "GenericError";
 
+    // Invalid Format
+    public static final String INVALID_FORMAT_CODE = "InvalidFormat";
+
     // Transaction Object Is Null
     public static final String TRANSACTION_OBJECT_INIT_ERROR = "Transaction object is not initialized";
     
@@ -195,6 +198,9 @@ public final class Constants {
     
     // Patch Data Object Is Null
     public static final String PATCH_DATA_OBJECT_INIT_ERROR = "Patch Data object is not initialized";
+
+    // Invalid Callback URL format
+    public static final String INVALID_CALLBACK_URL_FORMAT_ERROR = "Invalid Callback URL format";
     
     // X-Records-Available-Count from ResponseHeader
     public static final String RECORDS_AVAILABLE_COUNT = "X-Records-Available-Count";

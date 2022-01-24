@@ -295,7 +295,7 @@ public class RecurringPaymentTest {
         TransactionFilter filter = new TransactionFilter();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         filter.setLimit(10);
         filter.setOffset(0);
 
@@ -333,7 +333,7 @@ public class RecurringPaymentTest {
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).createAccountDebitMandate(new Identifiers(identifierList));
@@ -344,6 +344,19 @@ public class RecurringPaymentTest {
         assertNotNull(debitMandateResponse);
         assertNotNull(debitMandateResponse.getMandateReference());
     }
+
+	@Test
+	@DisplayName("Check if Callback URL is valid Test Fail")
+	void validateCallbackURLTestFail() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+		RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
+		List<AccountIdentifier> identifierList = new ArrayList<>();
+		
+		identifierList.add(new AccountIdentifier("walletid", "1"));
+		recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
+		
+		assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(recurringPaymentRequest).addCallBack("https:sample.com").createAccountDebitMandate(new Identifiers(identifierList)));
+	}
 
     /***
      *

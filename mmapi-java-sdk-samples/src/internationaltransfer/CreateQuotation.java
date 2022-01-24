@@ -68,8 +68,8 @@ public class CreateQuotation extends SDKClient {
 			senderKyc.setPostalAddress(address);
 			senderKyc.setSubjectName(kycSubject);
 
-			debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-			creditPartyList.add(new AccountIdentifier("accountid", "2000"));
+			debitPartyList.add(new AccountIdentifier("walletid", "1"));
+			creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 			customDataList.add(new CustomData("keytest", "keyvalue"));
 
 			Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);

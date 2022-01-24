@@ -24,7 +24,7 @@ public class ViewAuthorisationCode  extends SDKClient {
 			MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
 			List<AccountIdentifier> identifierList = new ArrayList<>();
 
-			identifierList.add(new AccountIdentifier("accountid", "2000"));
+			identifierList.add(new AccountIdentifier("accountid", "2999"));
 			
 			System.out.println("Please wait...");
 			

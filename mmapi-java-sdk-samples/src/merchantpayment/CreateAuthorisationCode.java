@@ -26,7 +26,7 @@ public class CreateAuthorisationCode  extends SDKClient {
 			AuthorisationCode authorisationCode = new AuthorisationCode();
 			List<AccountIdentifier> identifierList = new ArrayList<>();
 
-			identifierList.add(new AccountIdentifier("accountid", "2000"));
+			identifierList.add(new AccountIdentifier("accountid", "2999"));
 
 			authorisationCode.setCodeLifetime(5);
 			authorisationCode.setAmount("17.00");

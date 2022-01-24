@@ -411,6 +411,17 @@ public class DisbursementTest {
         assertNotNull(balance);
     }
 
+	@Test
+	@DisplayName("Check if Callback URL is valid Test Fail")
+	void validateCallbackURLTestFail() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+		DisbursementRequest disbursementRequest = new DisbursementRequest();
+
+		disbursementRequest.setTransaction(getTransactionObject());
+		
+		assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(disbursementRequest).addCallBack("https:sample.com").createDisbursementTransaction());
+	}
+
     /***
      *
      * @return

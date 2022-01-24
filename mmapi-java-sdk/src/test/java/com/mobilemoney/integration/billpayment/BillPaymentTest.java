@@ -268,6 +268,19 @@ public class BillPaymentTest {
 		assertNotNull(serviceAvailability.getServiceStatus());
 	}
 
+	@Test
+	@DisplayName("Check if Callback URL is valid Test Fail")
+	void validateCallbackURLTestFail() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"),
+				loader.get("API_KEY"));
+		BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
+
+		billPaymentRequest.setTransaction(getTransactionObject());
+
+		assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(billPaymentRequest)
+				.addCallBack("https:sample.com").createBillTransaction());
+	}
+
 	/***
 	 *
 	 * @return
