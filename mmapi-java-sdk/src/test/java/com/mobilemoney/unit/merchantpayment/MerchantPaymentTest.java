@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.merchantpayment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,6 +18,7 @@ import org.mockito.internal.util.reflection.FieldSetter;
 
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.util.JSONFormatter;
+import com.mobilemoney.base.util.ResourceUtils;
 import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.AuthorisationCode;
@@ -424,6 +426,24 @@ public class MerchantPaymentTest {
         assertEquals(expectedAuthorisationCode.getAuthorisationCode(), actualAuthorisationCode.getAuthorisationCode());
         assertEquals(expectedAuthorisationCode.getCodeState(), actualAuthorisationCode.getCodeState());
     }
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Success")
+	void validateURLTestSuccess() {
+		assertTrue(ResourceUtils.isValidURL("https://sample.com"));
+		assertTrue(ResourceUtils.isValidURL("http://sample"));
+	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Fail")
+	void validateURLTestFail() {
+		assertFalse(ResourceUtils.isValidURL("https:/sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("htt://sample.com"));
+		assertFalse(ResourceUtils.isValidURL("//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:"));
+	}
 
     /**
      * *

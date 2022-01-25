@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.p2ptransfer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.util.JSONFormatter;
+import com.mobilemoney.base.util.ResourceUtils;
 import com.mobilemoney.common.model.AccountHolderName;
 import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.AsyncResponse;
@@ -239,6 +241,24 @@ public class P2PTransferTest {
 		assertEquals(expectedBalance.getAccountStatus(), actualBalance.getAccountStatus());
 		assertEquals(expectedBalance.getAvailableBalance(), actualBalance.getAvailableBalance());
 	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Success")
+	void validateURLTestSuccess() {
+		assertTrue(ResourceUtils.isValidURL("https://sample.com"));
+		assertTrue(ResourceUtils.isValidURL("http://sample"));
+	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Fail")
+	void validateURLTestFail() {
+		assertFalse(ResourceUtils.isValidURL("https:/sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("htt://sample.com"));
+		assertFalse(ResourceUtils.isValidURL("//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:"));
+	}
 
 	/***
 	 * 
@@ -422,8 +442,8 @@ public class P2PTransferTest {
 		senderKyc.setPostalAddress(address);
 		senderKyc.setSubjectName(kycSubject);
 
-		debitPartyList.add(new AccountIdentifier("accountid", "2999"));
-		creditPartyList.add(new AccountIdentifier("accountid", "2000"));
+		debitPartyList.add(new AccountIdentifier("walletid", "1"));
+		creditPartyList.add(new AccountIdentifier("msisdn", "+44012345678"));
 		customDataList.add(new CustomData("keytest", "keyvalue"));
 
 		Quotation quotation = new Quotation("75.30", "RWF", creditPartyList, debitPartyList);

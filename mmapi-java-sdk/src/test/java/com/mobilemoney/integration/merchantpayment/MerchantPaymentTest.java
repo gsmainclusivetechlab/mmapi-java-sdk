@@ -266,7 +266,7 @@ public class MerchantPaymentTest {
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         //identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         filter.setLimit(10);
         filter.setOffset(0);
 
@@ -346,6 +346,17 @@ public class MerchantPaymentTest {
 
         assertNotNull(balance);
     }
+
+	@Test
+	@DisplayName("Check if Callback URL is valid Test Fail")
+	void validateCallbackURLTestFail() throws MobileMoneyException {
+		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
+		MerchantPaymentRequest merchantPaymentRequest = new MerchantPaymentRequest();
+		
+		merchantPaymentRequest.setTransaction(getTransactionObject());
+		
+		assertThrows(MobileMoneyException.class, () -> mmClient.addRequest(merchantPaymentRequest).addCallBack("https:sample.com").createMerchantTransaction());
+	}
 
     /***
      *

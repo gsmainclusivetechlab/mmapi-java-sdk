@@ -1,6 +1,7 @@
 package com.mobilemoney.unit.accountlinking;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +21,7 @@ import com.mobilemoney.base.constants.Mode;
 import com.mobilemoney.base.constants.Status;
 import com.mobilemoney.base.exception.MobileMoneyException;
 import com.mobilemoney.base.util.JSONFormatter;
+import com.mobilemoney.base.util.ResourceUtils;
 import com.mobilemoney.common.model.AccountIdentifier;
 import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Balance;
@@ -292,6 +294,24 @@ public class AccountLinkingTest {
 
         assertThrows(MobileMoneyException.class, () -> accountLinkingRequest.viewAccountLink(null, null));
     }
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Success")
+	void validateURLTestSuccess() {
+		assertTrue(ResourceUtils.isValidURL("https://sample.com"));
+		assertTrue(ResourceUtils.isValidURL("http://sample"));
+	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Fail")
+	void validateURLTestFail() {
+		assertFalse(ResourceUtils.isValidURL("https:/sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("htt://sample.com"));
+		assertFalse(ResourceUtils.isValidURL("//sample.com"));
+		assertFalse(ResourceUtils.isValidURL("https:"));
+	}
 
     /**
      * *

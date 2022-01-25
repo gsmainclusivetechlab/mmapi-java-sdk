@@ -1,7 +1,9 @@
 package com.mobilemoney.unit.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,5 +79,23 @@ public class UtilityClassTest extends ResourceUtils {
 		assertEquals(true, StringUtils.isNullOrEmpty(""));
 		assertEquals(true, StringUtils.isNullOrEmpty(" "));
 		assertEquals(false, StringUtils.isNullOrEmpty("mmapi"));
+	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Success")
+	void validateURLTestSuccess() {
+		assertTrue(isValidURL("https://sample.com"));
+		assertTrue(isValidURL("http://sample"));
+	}
+	
+	@Test
+	@DisplayName("Check if URL is valid Test Fail")
+	void validateURLTestFail() {
+		assertFalse(isValidURL("https:/sample.com"));
+		assertFalse(isValidURL("https:sample.com"));
+		assertFalse(isValidURL("https//sample.com"));
+		assertFalse(isValidURL("htt://sample.com"));
+		assertFalse(isValidURL("//sample.com"));
+		assertFalse(isValidURL("https:"));
 	}
 }
