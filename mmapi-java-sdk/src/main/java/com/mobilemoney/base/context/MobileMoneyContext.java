@@ -70,6 +70,7 @@ public class MobileMoneyContext {
                 }
             }
         }
+        instance.callBackUrl = callBackUrl;
     }
 
     /***
