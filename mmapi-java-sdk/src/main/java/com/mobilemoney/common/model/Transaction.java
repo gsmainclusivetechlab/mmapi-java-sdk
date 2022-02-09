@@ -74,19 +74,19 @@ public class Transaction implements Serializable {
     private KYCInformation senderKyc;
 
     // A collection of key/value pairs that enable the party to be identified
-    private List<AccountIdentifier> debitParty = new ArrayList<>();
+    private List<AccountIdentifier> debitParty;
 
     // A collection of key/value pairs that enable the party to be identified
-    private List<AccountIdentifier> creditParty = new ArrayList<>();
+    private List<AccountIdentifier> creditParty;
 
     // All fees that are applicable to the object
-    private List<Fees> fees = new ArrayList<>();
+    private List<Fees> fees;
 
     // This can be used to populate provider specific fields
-    private List<CustomData> customData = new ArrayList<>();
+    private List<CustomData> customData;
 
     // This can be used to populate additional properties
-    private List<MetaData> metadata = new ArrayList<>();
+    private List<MetaData> metadata;
     
     /***
      *
