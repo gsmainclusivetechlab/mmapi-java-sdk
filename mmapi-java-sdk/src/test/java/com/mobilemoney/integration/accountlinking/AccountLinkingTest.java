@@ -265,7 +265,7 @@ class AccountLinkingTest {
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("accountid", "2999"));
-        filter.setLimit(10);
+        filter.setLimit(5);
         filter.setOffset(0);
 
         Transactions transactions = mmClient.addRequest(new AccountLinkingRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);

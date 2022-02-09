@@ -267,7 +267,7 @@ public class MerchantPaymentTest {
 
         //identifierList.add(new AccountIdentifier("msisdn", "+44012345678"));
         identifierList.add(new AccountIdentifier("accountid", "2999"));
-        filter.setLimit(10);
+        filter.setLimit(5);
         filter.setOffset(0);
 
         Transactions transactions = mmClient.addRequest(new MerchantPaymentRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);

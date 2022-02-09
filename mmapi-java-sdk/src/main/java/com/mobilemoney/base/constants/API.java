@@ -8,7 +8,7 @@ public final class API {
     public static final String SANDBOX_URL = "https://sandbox.mobilemoneyapi.io/2/oauth/simulator/v1.2/mm";
 
     // Product Environment URL
-    public static final String PRODUCTION_URL = "TBD";
+    public static final String PRODUCTION_URL = "https://sandbox.mobilemoneyapi.io/2/oauth/simulator/v1.2/mm";
 
     // REST Sandbox Access Token Endpoint
     public static final String SANDBOX_ACCESS_TOKEN_URL = "https://sandbox.mobilemoneyapi.io/v1/oauth/accesstoken";

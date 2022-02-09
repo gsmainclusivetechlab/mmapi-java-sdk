@@ -453,7 +453,7 @@ public class AgentServiceTest {
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
         identifierList.add(new AccountIdentifier("accountid", "2999"));
-        filter.setLimit(20);
+        filter.setLimit(5);
         filter.setOffset(0);
 
         Transactions transactions = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
@@ -471,10 +471,6 @@ public class AgentServiceTest {
             assertTrue(transactions.getTransactions().get(0).getCreditParty().size() > 0);
             assertTrue(transactions.getTransactions().get(0).getDebitParty().size() > 0);
         }
-
-        filter.setLimit(20);
-        filter.setOffset(20);
-        Transactions transactions1 = mmClient.addRequest(new AgentServiceRequest()).viewAccountTransactions(new Identifiers(identifierList), filter);
 
     }
 
