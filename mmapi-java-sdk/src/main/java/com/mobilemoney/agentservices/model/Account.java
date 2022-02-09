@@ -30,7 +30,7 @@ public class Account implements Serializable {
     private String accountType;
 
     //A collection of key/value pairs. These can be used to populate provider specific fields.
-    private List<CustomData> customData = new ArrayList<>();
+    private List<CustomData> customData;
 
     //Returns all fees that are applicable to the object.
     private List<Fees> fees;

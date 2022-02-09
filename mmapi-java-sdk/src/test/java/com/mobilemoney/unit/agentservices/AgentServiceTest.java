@@ -208,7 +208,7 @@ public class AgentServiceTest {
         Identifiers identifiers = new Identifiers(identifierList);
 
         TransactionFilter filter = new TransactionFilter();
-        filter.setLimit(20);
+        filter.setLimit(5);
         filter.setOffset(0);
 
         Mockito.doReturn(expectedList).when(agentServiceRequestSpy).viewAccountTransactions(identifiers, filter);
