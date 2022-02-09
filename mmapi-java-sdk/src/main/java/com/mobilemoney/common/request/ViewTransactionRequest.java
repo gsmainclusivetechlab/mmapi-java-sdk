@@ -126,7 +126,7 @@ public class ViewTransactionRequest extends CommonRequest {
         
         String resourcePath = API.CREATE_TRANSACTION_REVERSAL.replace(Constants.TRANSACTION_TYPE, "reversals").replace(Constants.TRANSACTION_REFERENCE, transactionReference);
         MobileMoneyContext.getContext().getHTTPHeaders().put(Constants.CORRELATION_ID, this.clientCorrelationId);
-        return createRequest(HttpMethod.POST, resourcePath, this.reversal.toJSON(), notificationType, callBackURL, AsyncResponse.class);
+        return createRequest(HttpMethod.POST, resourcePath, new Type(this.reversal.getType()).toJSON(), notificationType, callBackURL, AsyncResponse.class);
     }
 
     /***
@@ -156,5 +156,32 @@ public class ViewTransactionRequest extends CommonRequest {
         }
         
         return resourcePath;
+    }
+    
+    /***
+     * Type: Utility class
+     *
+     */
+    private static class Type {
+        // Transaction type
+        private String type;
+
+        /***
+         * Constructor with single parameter
+         *
+         * @param type
+         */
+        public Type(String type) {
+            this.type = type;
+        }
+
+        /***
+         * Returns JSON object
+         *
+         * @return
+         */
+        public String toJSON() {
+            return JSONFormatter.toJSON(this);
+        }
     }
 }
