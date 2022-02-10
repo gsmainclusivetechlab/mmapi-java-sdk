@@ -5,7 +5,7 @@ public final class API {
     private API() {}
 
     // Sandbox Environment URL
-    public static final String SANDBOX_URL = "https://sandbox.mobilemoneyapi.io/2/oauth/simulator/v1.2/mm";
+    public static final String SANDBOX_URL = "https://sandbox.mobilemoneyapi.io/simulator/v1.2/passthrough/mm";
 
     // Product Environment URL
     public static final String PRODUCTION_URL = "https://sandbox.mobilemoneyapi.io/2/oauth/simulator/v1.2/mm";

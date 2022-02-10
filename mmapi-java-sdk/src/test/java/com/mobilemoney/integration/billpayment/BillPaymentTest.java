@@ -206,7 +206,7 @@ public class BillPaymentTest {
 
 	@Test
 	@DisplayName("Retrieve Missing Bill Payment")
-	void retrieveMissingBillPayment() throws MobileMoneyException {
+	void viewResponseTestSuccess() throws MobileMoneyException {
 		MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"),
 				loader.get("API_KEY"));
 		BillPaymentRequest billPaymentRequest = new BillPaymentRequest();

@@ -486,7 +486,7 @@ public class AgentServiceTest {
 
     @Test
     @DisplayName("Retrieve a Missing API Response")
-    void retrieveMissingAPIResponseTestSuccess() throws MobileMoneyException {
+    void viewResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
 
         AgentServiceRequest agentServiceRequest = new AgentServiceRequest();
