@@ -151,9 +151,15 @@ public class DisbursementTest {
 
         assertNotNull(batchResponse);
         assertNotNull(batchResponse.getBatchId());
-        assertNotNull(batchResponse.getApprovalDate());
-        assertNotNull(batchResponse.getCompletionDate());
         assertTrue(Arrays.asList("created", "approved", "completed").contains(batchResponse.getBatchStatus()));
+        
+        if ("approved".equals(batchResponse.getBatchStatus())) {
+        	assertNotNull(batchResponse.getApprovalDate());
+        }
+        
+        if ("completed".equals(batchResponse.getBatchStatus())) {
+        	assertNotNull(batchResponse.getCompletionDate());
+        }
     }
 
     @Test
@@ -330,7 +336,7 @@ public class DisbursementTest {
 
     @Test
     @DisplayName("Retrieve Missing API Response")
-    void retrieveMissingResponse() throws MobileMoneyException {
+    void viewResponseTestSuccess() throws MobileMoneyException {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         DisbursementRequest disbursementRequest = new DisbursementRequest();
 
@@ -338,13 +344,18 @@ public class DisbursementTest {
         AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack(loader.get("CALLBACK_URL")).createDisbursementTransaction();
 
         String clientCorrelationId = disbursementRequest.getClientCorrelationId();
-        BatchTransaction transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, BatchTransaction.class);
+        Transaction transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, Transaction.class);
 
         assertNotNull(transaction);
-        assertNotNull(transaction.getBatchId());
-        assertNotNull(transaction.getApprovalDate());
-        assertNotNull(transaction.getCompletionDate());
-        assertTrue(Arrays.asList("created", "approved", "completed").contains(transaction.getBatchStatus()));
+        assertNotNull(transaction.getTransactionReference());
+        assertNotNull(transaction.getTransactionStatus());
+        assertNotNull(transaction.getAmount());
+        assertNotNull(transaction.getCurrency());
+        assertNotNull(transaction.getCreditParty());
+        assertNotNull(transaction.getDebitParty());
+        assertTrue(Arrays.asList("billpay", "deposit", "disbursement", "transfer", "merchantpay", "inttransfer", "adjustment", "reversal", "withdrawal").contains(transaction.getType()));
+        assertTrue(transaction.getCreditParty().size() > 0);
+        assertTrue(transaction.getDebitParty().size() > 0);
     }
 
     @Test
