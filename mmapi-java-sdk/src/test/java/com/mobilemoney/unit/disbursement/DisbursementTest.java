@@ -293,17 +293,17 @@ public class DisbursementTest {
     @Test
     @DisplayName("Retrieve Missing API Response")
     void retrieveMissingResponse() throws MobileMoneyException {
-        BatchTransaction expectedBatchTransaction = getBatchTransactionObject();
+        Transaction expectedTransaction = getTransactionObject();
         DisbursementRequest disbursementRequest = new DisbursementRequest();
         DisbursementRequest disbursementRequestSpy = Mockito.spy(disbursementRequest);
 
-        Mockito.doReturn(expectedBatchTransaction).when(disbursementRequestSpy).viewResponse("clientCorrelationId", BatchTransaction.class);
+        Mockito.doReturn(expectedTransaction).when(disbursementRequestSpy).viewResponse("clientCorrelationId", Transaction.class);
 
-        BatchTransaction actualBatchTransaction = disbursementRequestSpy.viewResponse("clientCorrelationId", BatchTransaction.class);
+        Transaction actualTransaction = disbursementRequestSpy.viewResponse("clientCorrelationId", Transaction.class);
 
-        assertNotNull(expectedBatchTransaction);
-        assertNotNull(actualBatchTransaction);
-        assertEquals(expectedBatchTransaction.getBatchId(), actualBatchTransaction.getBatchId());
+        assertNotNull(expectedTransaction);
+        assertNotNull(actualTransaction);
+        assertEquals(expectedTransaction.getAmount(), actualTransaction.getAmount());
     }
 
     @Test

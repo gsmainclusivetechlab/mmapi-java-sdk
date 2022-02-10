@@ -27,7 +27,7 @@ AsyncResponse sdkResponse = mmClient.addRequest(disbursementRequest).addCallBack
 
 String clientCorrelationId = disbursementRequest.getClientCorrelationId();
 
-BatchTransaction transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, BatchTransaction.class);
+Transaction transaction = mmClient.addRequest(disbursementRequest).viewResponse(clientCorrelationId, Transaction.class);
 ```
 
 ### Response Example
