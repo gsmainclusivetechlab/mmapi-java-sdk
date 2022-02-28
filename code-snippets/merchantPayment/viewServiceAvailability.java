@@ -1,0 +1,2 @@
+MMClient mmClient = new MMClient("<Place your consumer key>", "<Place your consumer secret>", "<Place your API key>");
+ServiceAvailability serviceAvailability = mmClient.addRequest(new MerchantPaymentRequest()).viewServiceAvailability();
