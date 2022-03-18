@@ -36,7 +36,7 @@ public class RecurringPaymentTest {
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest).addCallBack(loader.get("CALLBACK_URL")).createAccountDebitMandate(new Identifiers(identifierList));
@@ -54,7 +54,7 @@ public class RecurringPaymentTest {
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         
         String debitMandateJsonString = "{\"currency\": \"USD\",\"startDate\": \"2018-07-03T10:43:27.405Z\",\"endDate\": \"2028-07-03T10:43:27.405Z\",\"requestDate\": \"2018-07-03T10:43:27.405Z\",\"frequencyType\": \"sixmonths\",\"amountLimit\": \"1000.00\",\"numberOfPayments\": 2,\"payee\": [{\"key\": \"walletid\",\"value\": \"1\"}],\"customData\": [{\"key\": \"keytest\",\"value\": \"keyvalue\"}]}";
         recurringPaymentRequest.setDebitMandate(debitMandateJsonString);
@@ -87,7 +87,7 @@ public class RecurringPaymentTest {
         RecurringPaymentRequest recurringPaymentRequest = new RecurringPaymentRequest();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)
@@ -190,7 +190,7 @@ public class RecurringPaymentTest {
         List<AccountIdentifier> creditPartyList = new ArrayList<>();
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("walletid", "1"));
+        identifierList.add(new AccountIdentifier("accountid", "2999"));
         recurringPaymentRequest.setDebitMandate(getAccountDebitMandateObject());
 
         AsyncResponse sdkResponse = mmClient.addRequest(recurringPaymentRequest)

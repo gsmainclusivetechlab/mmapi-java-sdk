@@ -250,7 +250,7 @@ class AccountLinkingTest {
         MMClient mmClient = new MMClient(loader.get("CONSUMER_KEY"), loader.get("CONSUMER_SECRET"), loader.get("API_KEY"));
         List<AccountIdentifier> identifierList = new ArrayList<>();
 
-        identifierList.add(new AccountIdentifier("accountid", "15523"));
+        identifierList.add(new AccountIdentifier("walletid", "1"));
 
         Balance balance = mmClient.addRequest(new AccountLinkingRequest()).viewAccountBalance(new Identifiers(identifierList));
 

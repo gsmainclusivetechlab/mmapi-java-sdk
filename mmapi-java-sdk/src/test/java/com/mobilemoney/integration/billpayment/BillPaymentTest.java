@@ -25,6 +25,7 @@ import com.mobilemoney.common.model.AsyncResponse;
 import com.mobilemoney.common.model.Identifiers;
 import com.mobilemoney.common.model.ServiceAvailability;
 import com.mobilemoney.common.model.Transaction;
+import com.mobilemoney.common.model.Filter;
 import com.mobilemoney.config.PropertiesLoader;
 
 public class BillPaymentTest {
@@ -147,7 +148,7 @@ public class BillPaymentTest {
 		BillPaymentRequest billPaymentRequest = new BillPaymentRequest();
 		List<AccountIdentifier> identifierList = new ArrayList<>();
 
-		identifierList.add(new AccountIdentifier("walletid", "1"));
+		identifierList.add(new AccountIdentifier("accountid", "1"));
 
 		Bills bills = mmClient.addRequest(billPaymentRequest).viewAccountBills(new Identifiers(identifierList));
 
@@ -158,8 +159,10 @@ public class BillPaymentTest {
 
 		sdkResponse = mmClient.addRequest(billPaymentRequest).viewRequestState(sdkResponse.getServerCorrelationId());
 
+		Filter filter = new Filter();
+		filter.setLimit(1);
 		BillPayments billPayments = mmClient.addRequest(billPaymentRequest)
-				.viewBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference());
+				.viewBillPayment(new Identifiers(identifierList), bills.getBills().get(0).getBillReference(), filter);
 
 		assertNotNull(billPayments);
 		assertNotNull(billPayments.getBillPayments());
